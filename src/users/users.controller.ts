@@ -29,8 +29,8 @@ export class UsersController {
   // }))
   @Get()
   getUsers(@Query() query) {
-    console.log("pageNumber", query.pageNumber);
-    console.log("pageSize", query.pageSize);
+    // console.log("pageNumber", query.pageNumber);
+    // console.log("pageSize", query.pageSize);
 
     const searchLogin = query.searchLoginTerm as string || "";
     const searchEmail = query.searchEmailTerm as string || "";

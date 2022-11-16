@@ -25,12 +25,13 @@ const validateOrRejectModel = async (model: any, ctor: { new(): any }) => {
 
 @Injectable()
 export class UsersService {
+
   constructor(protected usersRepository: UsersRepository) {
   }
 
-  // findUsers(term: string) {
-  //   return this.usersRepository.findUsers(term);
-  // }
+  async clearAllUsers():Promise<void>{
+    await this.usersRepository.clearAll()
+  }
 
   async findAll(searchLogin: string, searchEmail: string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewUserDto[]>> {
     const result = await this.usersRepository.findAll(searchLogin, searchEmail, paginationParams);

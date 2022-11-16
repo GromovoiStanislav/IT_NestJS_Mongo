@@ -1,0 +1,11 @@
+import { Module } from "@nestjs/common";
+import { TestingController } from "./testing.controller";
+import { TestingService } from "./testing.service";
+import { UsersModule } from "../users/users.module";
+
+@Module({
+  imports: [UsersModule],
+  controllers: [TestingController],
+  providers:[TestingService],
+})
+export class TestingModule {}
