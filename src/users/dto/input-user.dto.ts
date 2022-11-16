@@ -11,6 +11,7 @@ export class InputUserDto {
   @Length(6, 20)
   password: string
 
+  @IsNotEmpty()
   @IsEmail()
   email: string
 }
