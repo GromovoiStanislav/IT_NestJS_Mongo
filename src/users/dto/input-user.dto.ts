@@ -1,18 +1,17 @@
-//import { IsEmail, IsInt, Length, Min } from "class-validator";
+import { IsString, IsNotEmpty, IsEmail, Length } from "class-validator";
 
 export class InputUserDto {
+  @IsString()
+  @IsNotEmpty()
+  @Length(3, 10)
   login: string
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(6, 20)
   password: string
+
+  @IsEmail()
   email: string
 }
 
-
-// export class CreateUserInputModelType {
-//   @Length(3, 10)
-//   name: string;
-//   @IsEmail({}, { message: "Incorrect email" })
-//   email: string;
-//   @IsInt()
-//   @Min(0)
-//   childrenCount: number;
-// }

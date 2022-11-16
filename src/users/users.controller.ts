@@ -8,13 +8,13 @@ import {
   Param,
   Post,
   Put,
-  Query, UseGuards
+  Query, UseGuards, UsePipes, ValidationPipe
 } from "@nestjs/common";
 
 
 import { InputUserDto } from "./dto/input-user.dto";
 import { UsersService } from "./users.service";
-import { PaginationParams } from "./dto/paginationParams.dto";
+import { PaginationParams } from "../commonDto/paginationParams.dto";
 
 
 @Controller("users")
@@ -23,26 +23,31 @@ export class UsersController {
   constructor(protected usersService: UsersService) {
   }
 
-  // @Get()
-  // getUsers(@Query("name") name: string) {
-  //   return this.usersService.findUsers(name);
-  // }
 
-
+  // @UsePipes(new ValidationPipe({
+  //   transform: true,
+  // }))
   @Get()
   getUsers(@Query() query) {
+    console.log("pageNumber", query.pageNumber);
+    console.log("pageSize", query.pageSize);
 
     const searchLogin = query.searchLoginTerm as string || "";
     const searchEmail = query.searchEmailTerm as string || "";
+    const sortBy = query.sortBy as string || "createdAt";
+    const sortDirection = query.sortDirection as string || "desc";
+    const pageNumber = parseInt(query.pageNumber) || 1;
+    const pageSize = parseInt(query.pageSize) || 10;
+
 
     const paginationParams: PaginationParams = {
-      pageNumber: Number(query.pageNumber) || 1,
-      pageSize: Number(query.pageSize) || 10,
-      sortBy: query.sortBy as string || "createdAt",
-      sortDirection: query.sortDirection as string || "desc"
+      pageNumber,
+      pageSize,
+      sortBy: sortBy.trim(),
+      sortDirection: sortDirection.trim()
     };
 
-    return this.usersService.findAll(searchLogin, searchEmail, paginationParams);
+    return this.usersService.findAll(searchLogin.trim(), searchEmail.trim(), paginationParams);
   }
 
   @Delete(":id")
@@ -55,7 +60,7 @@ export class UsersController {
     return;
   }
 
-
+  @UsePipes(new ValidationPipe())
   @Post()
   @HttpCode(HttpStatus.CREATED)//201
   async createUser(@Body() inputUser: InputUserDto) {

@@ -5,8 +5,8 @@ import { validateOrReject } from "class-validator";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { InputUserDto } from "./dto/input-user.dto";
 import { ViewUserDto } from "./dto/view-user.dto";
-import { PaginatorDto } from "./dto/paginator.dto";
-import { PaginationParams } from "./dto/paginationParams.dto";
+import { PaginatorDto } from "../commonDto/paginator.dto";
+import { PaginationParams } from "../commonDto/paginationParams.dto";
 
 const uid = () => String(Date.now());
 
