@@ -7,8 +7,7 @@ import { InputUserDto } from "./dto/input-user.dto";
 import { ViewUserDto } from "./dto/view-user.dto";
 import { PaginatorDto } from "../commonDto/paginator.dto";
 import { PaginationParams } from "../commonDto/paginationParams.dto";
-
-const uid = () => String(Date.now());
+import uid from "../utils/IdGenerator";
 
 
 const validateOrRejectModel = async (model: any, ctor: { new(): any }) => {

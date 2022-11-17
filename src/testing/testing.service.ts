@@ -13,7 +13,7 @@ export class TestingService {
     await Promise.all([
       this.usersService.clearAllUsers(),
       this.blogsService.clearAllBlogs()
-    ]);
+    ]).catch(()=>{});
   }
 
 }
