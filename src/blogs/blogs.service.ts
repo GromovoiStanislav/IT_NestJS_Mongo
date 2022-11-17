@@ -3,6 +3,8 @@ import { BlogsRepository } from "./blogs.repository";
 import { ViewBlogDto } from "./dto/view-blog.dto";
 import { InputBlogDto } from "./dto/input-blog.dto";
 import BlogMapper from "./dto/blogsMapper";
+import { PaginationParams } from "../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../commonDto/paginator.dto";
 
 @Injectable()
 export class BlogsService {
@@ -29,6 +31,11 @@ export class BlogsService {
       return BlogMapper.fromModelToView(blog);
     }
     return null;
+  }
+
+  async getAllBlogs(searchName: string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
+    const result = await this.blogsRepository.getAllBlogs(searchName, paginationParams);
+    return BlogMapper.fromModelsToPaginator(result)
   }
 
 

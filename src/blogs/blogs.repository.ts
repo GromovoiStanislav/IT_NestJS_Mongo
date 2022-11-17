@@ -33,30 +33,21 @@ export class BlogsRepository {
   }
 
 
-  async findAll(searchLogin: string, searchEmail: string, {
+  async getAllBlogs(searchName: string, {
     pageNumber,
     pageSize,
     sortBy,
     sortDirection
   }: PaginationParams): Promise<PaginatorDto<Blog[]>> {
 
-    const loginRegExp = RegExp(`${searchLogin}`, "i");
-    const emailRegExp = RegExp(`${searchEmail}`, "i");
+    const nameRegExp = RegExp(`${searchName}`, "i");
 
     type FilterType = {
       [key: string]: unknown
     }
     const filter: FilterType = {};
-
-    if (searchLogin !== "" && searchEmail !== "") {
-      filter.$or = [
-        { login: loginRegExp },
-        { email: emailRegExp }
-      ];
-    } else if (searchLogin !== "") {
-      filter.login = loginRegExp;
-    } else if (searchEmail !== "") {
-      filter.email = emailRegExp;
+    if (searchName !== "") {
+      filter.name = nameRegExp;
     }
 
     const items = await this.blogModel.find(filter).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
