@@ -13,23 +13,30 @@ export class BlogsRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {
   }
 
+
   async clearAll(): Promise<void> {
     await this.blogModel.deleteMany({});
   }
 
-  async deleteBlog(blogId: string): Promise<boolean> {
-    const result = await this.blogModel.deleteOne({ id: blogId });
-    return result.deletedCount > 0;
+
+  async deleteBlog(blogId: string): Promise<Blog | null> {
+    return this.blogModel.findOneAndDelete({ id: blogId });
   }
+
 
   async createBlog(createBlogDto: CreateBlogDto): Promise<Blog> {
     const createdBlog = new this.blogModel(createBlogDto);
-    return createdBlog.save();
+    return await createdBlog.save();
+  }
+
+
+  async updateBlog(blogId: string, updateBlogDto: CreateBlogDto): Promise<Blog | null> {
+    return this.blogModel.findOneAndUpdate({ id: blogId }, updateBlogDto);
   }
 
 
   async getOneBlog(blogId: string): Promise<Blog | null> {
-    return await this.blogModel.findOne({ id: blogId });
+    return this.blogModel.findOne({ id: blogId });
   }
 
 

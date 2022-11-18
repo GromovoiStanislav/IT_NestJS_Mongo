@@ -6,7 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
-  Post, Query,
+  Post, Put, Query,
   UsePipes,
   ValidationPipe
 } from "@nestjs/common";
@@ -29,6 +29,18 @@ export class BlogsController {
   }
 
 
+  @UsePipes(new ValidationPipe())
+  @Put()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateBlog(@Param("id") blogId: string, @Body() inputBlog: InputBlogDto): Promise<void> {
+    const result = await this.blogsService.updateBlog(blogId, inputBlog);
+    if (!result) {
+      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+    }
+    return;
+  }
+
+
   @Get()
   getAllBlogs(@Query() query): Promise<PaginatorDto<ViewBlogDto[]>> {
     const searchNameTerm = query.searchNameTerm as string || "";
@@ -36,7 +48,6 @@ export class BlogsController {
     const sortDirection = query.sortDirection as string || "desc";
     const pageNumber = parseInt(query.pageNumber) || 1;
     const pageSize = parseInt(query.pageSize) || 10;
-
 
     const paginationParams: PaginationParams = {
       pageNumber,
@@ -68,5 +79,6 @@ export class BlogsController {
     }
     return;
   }
+
 
 }

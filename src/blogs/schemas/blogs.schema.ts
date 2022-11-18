@@ -15,7 +15,7 @@ export class Blog {
   youtubeUrl: string;
 
   @Prop()
-  createdAt: string;
+  description: string;
 
 }
 
