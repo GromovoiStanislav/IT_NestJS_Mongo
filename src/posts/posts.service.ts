@@ -4,10 +4,10 @@ import { InputPostDto } from "./dto/input-post.dto";
 import { ViewPostDto } from "./dto/view-post.dto";
 import PostMapper from "./dto/postsMapper";
 import { BlogsService } from "../blogs/blogs.service";
-import { ExtendedLikesInfoDto } from "../commonDto/extendedLikesInfoDto";
 import { Post } from "./schemas/posts.schema";
 import { PaginationParams } from "../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../commonDto/paginator.dto";
+import { InputBlogPostDto } from "./dto/input-blog-post.dto";
 
 
 @Injectable()
@@ -42,6 +42,18 @@ export class PostsService {
   }
 
 
+  async createPostByBlogId(blogId: string, inputPost: InputBlogPostDto): Promise<ViewPostDto | null> {
+    const blog = await this.blogsService.getOneBlog(blogId);
+    if (!blog) {
+      return null
+    }
+
+    const post = await this.postsRepository.createPost(PostMapper.fromInputToCreate({...inputPost,blogId}, blog.name));
+    return PostMapper.fromModelToView(post);
+  }
+
+
+
   async getOnePost(postId: string): Promise<ViewPostDto | null> {
     const post = await this.postsRepository.getOnePost(postId);
     if (post) {
@@ -54,6 +66,11 @@ export class PostsService {
 
   async getAllPosts(paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
     const result = await this.postsRepository.getAllPosts(paginationParams);
+    return PostMapper.fromModelsToPaginator(result)
+  }
+
+  async getAllPostsByBlogId(blogId:string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
+    const result = await this.postsRepository.getAllPosts(paginationParams, blogId);
     return PostMapper.fromModelsToPaginator(result)
   }
 

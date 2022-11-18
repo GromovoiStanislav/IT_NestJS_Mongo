@@ -48,14 +48,12 @@ export class BlogsRepository {
     sortDirection
   }: PaginationParams): Promise<PaginatorDto<Blog[]>> {
 
-    const nameRegExp = RegExp(`${searchName}`, "i");
-
     type FilterType = {
       [key: string]: unknown
     }
     const filter: FilterType = {};
-    if (searchName !== "") {
-      filter.name = nameRegExp;
+    if (searchName) {
+      filter.name = RegExp(`${searchName}`, "i");
     }
 
     const items = await this.blogModel.find(filter).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })

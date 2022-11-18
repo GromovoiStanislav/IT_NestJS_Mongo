@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Post, PostDocument } from "./schemas/posts.schema";
-import { Blog } from "../blogs/schemas/blogs.schema";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { PaginationParams } from "../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../commonDto/paginator.dto";
@@ -34,18 +33,25 @@ export class PostsRepository {
     return this.postModel.findOne({ id: postId });
   }
 
-
   async getAllPosts({
     pageNumber,
     pageSize,
     sortBy,
     sortDirection
-  }: PaginationParams): Promise<PaginatorDto<Post[]>> {
+  }: PaginationParams,blogId?:string): Promise<PaginatorDto<Post[]>> {
 
-    const items = await this.postModel.find().sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
+    type FilterType = {
+      [key: string]: unknown
+    }
+    const filter: FilterType = {};
+    if (blogId) {
+      filter.blogId = blogId;
+    }
+
+    const items = await this.postModel.find(filter).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
       .limit(pageSize).skip((pageNumber - 1) * pageSize);
 
-    const totalCount = await this.postModel.countDocuments();
+    const totalCount = await this.postModel.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
 
