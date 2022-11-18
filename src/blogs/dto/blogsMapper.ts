@@ -4,6 +4,7 @@ import { InputBlogDto } from "./input-blog.dto";
 import { ViewBlogDto } from "./view-blog.dto";
 import uid from "../../utils/IdGenerator";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { UpdateBlogDto } from "./update-blog.dto";
 
 export default class BlogMapper {
 
@@ -14,6 +15,14 @@ export default class BlogMapper {
     createdBlog.youtubeUrl = inputBlog.youtubeUrl;
     createdBlog.description = inputBlog.description;
     return createdBlog
+  }
+
+  static fromInputToUpdate(inputBlog: InputBlogDto): UpdateBlogDto {
+    const updatedBlog =  new UpdateBlogDto();
+    updatedBlog.name = inputBlog.name;
+    updatedBlog.youtubeUrl = inputBlog.youtubeUrl;
+    updatedBlog.description = inputBlog.description;
+    return updatedBlog
   }
 
   static fromModelToView(blog: Blog): ViewBlogDto {

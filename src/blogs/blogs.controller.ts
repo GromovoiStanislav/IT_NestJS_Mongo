@@ -30,7 +30,7 @@ export class BlogsController {
 
 
   @UsePipes(new ValidationPipe())
-  @Put()
+  @Put(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param("id") blogId: string, @Body() inputBlog: InputBlogDto): Promise<void> {
     const result = await this.blogsService.updateBlog(blogId, inputBlog);

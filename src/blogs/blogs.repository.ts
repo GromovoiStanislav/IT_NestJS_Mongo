@@ -5,6 +5,7 @@ import { Blog, BlogDocument } from "./schemas/blogs.schema";
 import { CreateBlogDto } from "./dto/create-blog.dto";
 import { PaginatorDto } from "../commonDto/paginator.dto";
 import { PaginationParams } from "../commonDto/paginationParams.dto";
+import { UpdateBlogDto } from "./dto/update-blog.dto";
 
 
 @Injectable()
@@ -30,7 +31,7 @@ export class BlogsRepository {
   }
 
 
-  async updateBlog(blogId: string, updateBlogDto: CreateBlogDto): Promise<Blog | null> {
+  async updateBlog(blogId: string, updateBlogDto: UpdateBlogDto): Promise<Blog | null> {
     return this.blogModel.findOneAndUpdate({ id: blogId }, updateBlogDto);
   }
 

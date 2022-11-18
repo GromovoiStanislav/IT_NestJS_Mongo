@@ -25,7 +25,7 @@ export class BlogsService {
 
 
   async updateBlog(blogId: string, inputBlog: InputBlogDto): Promise<Blog | null> {
-    return this.blogsRepository.updateBlog(blogId, BlogMapper.fromInputToCreate(inputBlog));
+    return this.blogsRepository.updateBlog(blogId, BlogMapper.fromInputToUpdate(inputBlog));
   }
 
 
