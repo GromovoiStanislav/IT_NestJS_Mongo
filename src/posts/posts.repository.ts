@@ -1,0 +1,56 @@
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Post, PostDocument } from "./schemas/posts.schema";
+import { Blog } from "../blogs/schemas/blogs.schema";
+import { CreatePostDto } from "./dto/create-post.dto";
+import { PaginationParams } from "../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../commonDto/paginator.dto";
+
+@Injectable()
+export class PostsRepository {
+
+  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {
+  }
+
+
+  async clearAll(): Promise<void> {
+    await this.postModel.deleteMany({});
+  }
+
+
+  async deletePost(postId: string): Promise<Post | null> {
+    return this.postModel.findOneAndDelete({ id: postId });
+  }
+
+
+  async createPost(createPostDto: CreatePostDto): Promise<Post> {
+    const createdPost = new this.postModel(createPostDto);
+    return await createdPost.save();
+  }
+
+
+  async getOnePost(postId: string): Promise<Post | null> {
+    return this.postModel.findOne({ id: postId });
+  }
+
+
+  async getAllPosts({
+    pageNumber,
+    pageSize,
+    sortBy,
+    sortDirection
+  }: PaginationParams): Promise<PaginatorDto<Post[]>> {
+
+    const items = await this.postModel.find().sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
+      .limit(pageSize).skip((pageNumber - 1) * pageSize);
+
+    const totalCount = await this.postModel.countDocuments();
+    const pagesCount = Math.ceil(totalCount / pageSize);
+    const page = pageNumber;
+
+    return { pagesCount, page, pageSize, totalCount, items };
+  }
+
+
+}
