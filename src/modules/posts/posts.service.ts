@@ -48,7 +48,7 @@ export class PostsService {
     if (blog) {
       blogName = blog.name;
     }
-    return this.postsRepository.updatePost(postId, PostMapper.fromInputToCreate(inputPost, blogName));
+    return this.postsRepository.updatePost(postId, PostMapper.fromUpdateToCreate(inputPost, blogName));
   }
 
 

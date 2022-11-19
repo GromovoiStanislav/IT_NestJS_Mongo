@@ -5,6 +5,7 @@ import { Post, PostDocument } from "./schemas/posts.schema";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { UpdatePostDto } from "./dto/update-post.dto";
 
 
 @Injectable()
@@ -15,7 +16,7 @@ export class PostsRepository {
 
 
   async clearAll(): Promise<void> {
-    //await this.postModel.deleteMany({});
+    await this.postModel.deleteMany({});
   }
 
 
@@ -29,7 +30,7 @@ export class PostsRepository {
     return await createdPost.save();
   }
 
-  async updatePost(postId: string, updatePostDto: CreatePostDto): Promise<Post | null> {
+  async updatePost(postId: string, updatePostDto: UpdatePostDto): Promise<Post | null> {
     return this.postModel.findOneAndUpdate({ id: postId }, updatePostDto);
   }
 

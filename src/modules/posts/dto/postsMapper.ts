@@ -6,20 +6,31 @@ import { InputPostDto } from "./input-post.dto";
 import { ViewPostDto } from "./view-post.dto";
 import { Post } from "../schemas/posts.schema";
 import { ExtendedLikesInfoDto } from "../../../commonDto/extendedLikesInfoDto";
+import { UpdatePostDto } from "./update-post.dto";
 
 
 export default class PostMapper {
 
   static fromInputToCreate(inputPost: InputPostDto, blogName:string): CreatePostDto {
-    const createdPost =  new CreatePostDto();
-    createdPost.id = uid();
-    createdPost.title = inputPost.title;
-    createdPost.shortDescription = inputPost.shortDescription;
-    createdPost.content = inputPost.content;
-    createdPost.blogId = inputPost.blogId;
-    createdPost.blogName = blogName;
-    createdPost.createdAt = dateAt();
-    return createdPost
+    const createPost =  new CreatePostDto();
+    createPost.id = uid();
+    createPost.title = inputPost.title;
+    createPost.shortDescription = inputPost.shortDescription;
+    createPost.content = inputPost.content;
+    createPost.blogId = inputPost.blogId;
+    createPost.blogName = blogName;
+    createPost.createdAt = dateAt();
+    return createPost
+  }
+
+  static fromUpdateToCreate(inputPost: InputPostDto, blogName:string): UpdatePostDto {
+    const updatePost =  new UpdatePostDto();
+    updatePost.title = inputPost.title;
+    updatePost.shortDescription = inputPost.shortDescription;
+    updatePost.content = inputPost.content;
+    updatePost.blogId = inputPost.blogId;
+    updatePost.blogName = blogName;
+    return updatePost
   }
 
 
