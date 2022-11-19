@@ -13,6 +13,7 @@ export default class PostMapper {
   static fromInputToCreate(inputPost: InputPostDto, blogName:string): CreatePostDto {
     const createdPost =  new CreatePostDto();
     createdPost.id = uid();
+    console.log(createdPost.id);
     createdPost.title = inputPost.title;
     createdPost.shortDescription = inputPost.shortDescription;
     createdPost.content = inputPost.content;
