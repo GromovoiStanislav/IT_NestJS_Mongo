@@ -5,6 +5,7 @@ import { ViewBlogDto } from "./view-blog.dto";
 import uid from "../../../utils/IdGenerator";
 import { PaginatorDto } from "../../../commonDto/paginator.dto";
 import { UpdateBlogDto } from "./update-blog.dto";
+import dateAt from "../../../utils/DateGenerator";
 
 export default class BlogMapper {
 
@@ -14,6 +15,7 @@ export default class BlogMapper {
     createdBlog.name = inputBlog.name;
     createdBlog.websiteUrl = inputBlog.websiteUrl;
     createdBlog.description = inputBlog.description;
+    createdBlog.createdAt = dateAt();
     return createdBlog
   }
 
@@ -31,6 +33,7 @@ export default class BlogMapper {
     viewBlog.name = blog.name;
     viewBlog.websiteUrl = blog.websiteUrl;
     viewBlog.description = blog.description;
+    viewBlog.createdAt = blog.createdAt;
     return viewBlog;
   }
 

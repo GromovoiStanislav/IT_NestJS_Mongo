@@ -17,6 +17,9 @@ export class Blog {
   @Prop()
   description: string;
 
+  @Prop()
+  createdAt: string;
+
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
