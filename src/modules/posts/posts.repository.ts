@@ -15,7 +15,7 @@ export class PostsRepository {
 
 
   async clearAll(): Promise<void> {
-    await this.postModel.deleteMany({});
+    //await this.postModel.deleteMany({});
   }
 
 

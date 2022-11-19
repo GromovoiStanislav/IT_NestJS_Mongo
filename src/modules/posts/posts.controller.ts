@@ -57,7 +57,7 @@ export class PostsController {
   async getOnePost(@Param("id") postId: string): Promise<ViewPostDto> {
     const result = await this.postsService.getOnePost(postId);
     if (!result) {
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+      throw new HttpException("Not Found Get", HttpStatus.NOT_FOUND);
     }
     return result;
   }

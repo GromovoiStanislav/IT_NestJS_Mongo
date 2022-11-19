@@ -69,7 +69,6 @@ export class PostsService {
   async getOnePost(postId: string): Promise<ViewPostDto | null> {
     const post = await this.postsRepository.getOnePost(postId);
     if (post) {
-
       return PostMapper.fromModelToView(post);
     }
     return null;
