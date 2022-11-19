@@ -8,6 +8,6 @@ export class ViewPostDto {
   blogId: string
   blogName: string
   createdAt: string
-  extendedLikesInfo: ExtendedLikesInfoDto
+  //extendedLikesInfo: ExtendedLikesInfoDto
 
 }
