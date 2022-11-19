@@ -2,8 +2,8 @@ import { Blog } from "../schemas/blogs.schema";
 import { CreateBlogDto } from "./create-blog.dto";
 import { InputBlogDto } from "./input-blog.dto";
 import { ViewBlogDto } from "./view-blog.dto";
-import uid from "../../utils/IdGenerator";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import uid from "../../../utils/IdGenerator";
+import { PaginatorDto } from "../../../commonDto/paginator.dto";
 import { UpdateBlogDto } from "./update-blog.dto";
 
 export default class BlogMapper {
@@ -12,7 +12,7 @@ export default class BlogMapper {
     const createdBlog =  new CreateBlogDto();
     createdBlog.id = uid();
     createdBlog.name = inputBlog.name;
-    createdBlog.youtubeUrl = inputBlog.youtubeUrl;
+    createdBlog.websiteUrl = inputBlog.websiteUrl;
     createdBlog.description = inputBlog.description;
     return createdBlog
   }
@@ -20,7 +20,7 @@ export default class BlogMapper {
   static fromInputToUpdate(inputBlog: InputBlogDto): UpdateBlogDto {
     const updatedBlog =  new UpdateBlogDto();
     updatedBlog.name = inputBlog.name;
-    updatedBlog.youtubeUrl = inputBlog.youtubeUrl;
+    updatedBlog.websiteUrl = inputBlog.websiteUrl;
     updatedBlog.description = inputBlog.description;
     return updatedBlog
   }
@@ -29,7 +29,7 @@ export default class BlogMapper {
     const viewBlog = new ViewBlogDto();
     viewBlog.id = blog.id;
     viewBlog.name = blog.name;
-    viewBlog.youtubeUrl = blog.youtubeUrl;
+    viewBlog.websiteUrl = blog.websiteUrl;
     viewBlog.description = blog.description;
     return viewBlog;
   }

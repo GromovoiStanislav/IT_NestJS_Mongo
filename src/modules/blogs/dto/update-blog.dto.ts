@@ -1,5 +1,5 @@
 export class UpdateBlogDto {
   name: string
-  youtubeUrl: string
+  websiteUrl: string
   description: string
 }

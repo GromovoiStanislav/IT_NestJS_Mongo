@@ -5,9 +5,9 @@ import { validateOrReject } from "class-validator";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { InputUserDto } from "./dto/input-user.dto";
 import { ViewUserDto } from "./dto/view-user.dto";
-import { PaginatorDto } from "../commonDto/paginator.dto";
-import { PaginationParams } from "../commonDto/paginationParams.dto";
-import uid from "../utils/IdGenerator";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import uid from "../../utils/IdGenerator";
 
 
 const validateOrRejectModel = async (model: any, ctor: { new(): any }) => {

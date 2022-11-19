@@ -3,8 +3,8 @@ import { BlogsRepository } from "./blogs.repository";
 import { ViewBlogDto } from "./dto/view-blog.dto";
 import { InputBlogDto } from "./dto/input-blog.dto";
 import BlogMapper from "./dto/blogsMapper";
-import { PaginationParams } from "../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../commonDto/paginator.dto";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { Blog } from "./schemas/blogs.schema";
 
 @Injectable()

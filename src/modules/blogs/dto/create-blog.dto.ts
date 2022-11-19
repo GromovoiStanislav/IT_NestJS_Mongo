@@ -1,6 +1,6 @@
 export class CreateBlogDto {
   id: string
   name: string
-  youtubeUrl: string
+  websiteUrl: string
   description: string
 }

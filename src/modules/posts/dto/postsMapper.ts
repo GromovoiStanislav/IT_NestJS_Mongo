@@ -1,11 +1,11 @@
-import uid from "../../utils/IdGenerator";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import uid from "../../../utils/IdGenerator";
+import { PaginatorDto } from "../../../commonDto/paginator.dto";
 import { CreatePostDto } from "./create-post.dto";
-import dateAt from "../../utils/DateGenerator";
+import dateAt from "../../../utils/DateGenerator";
 import { InputPostDto } from "./input-post.dto";
 import { ViewPostDto } from "./view-post.dto";
 import { Post } from "../schemas/posts.schema";
-import { ExtendedLikesInfoDto } from "../../commonDto/extendedLikesInfoDto";
+import { ExtendedLikesInfoDto } from "../../../commonDto/extendedLikesInfoDto";
 
 
 export default class PostMapper {

@@ -15,6 +15,6 @@ export class InputBlogDto {
   @MaxLength(100)
   @Matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/ as RegExp)
   @IsUrl()
-  youtubeUrl: string
+  websiteUrl: string
 }
 

@@ -12,7 +12,7 @@ export class Blog {
   name: string;
 
   @Prop()
-  youtubeUrl: string;
+  websiteUrl: string;
 
   @Prop()
   description: string;

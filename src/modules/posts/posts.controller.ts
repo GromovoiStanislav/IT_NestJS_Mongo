@@ -12,8 +12,8 @@ import {
 import { PostsService } from "./posts.service";
 import { InputPostDto } from "./dto/input-post.dto";
 import { ViewPostDto } from "./dto/view-post.dto";
-import { PaginatorDto } from "../commonDto/paginator.dto";
-import { PaginationParams } from "../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
 
 @Controller('posts')
 export class PostsController {

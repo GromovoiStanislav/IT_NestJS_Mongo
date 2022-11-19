@@ -3,8 +3,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./schemas/users.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { PaginatorDto } from "../commonDto/paginator.dto";
-import { PaginationParams } from "../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
 
 
 @Injectable()

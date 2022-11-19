@@ -3,8 +3,8 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Post, PostDocument } from "./schemas/posts.schema";
 import { CreatePostDto } from "./dto/create-post.dto";
-import { PaginationParams } from "../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../commonDto/paginator.dto";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
 
 @Injectable()
 export class PostsRepository {

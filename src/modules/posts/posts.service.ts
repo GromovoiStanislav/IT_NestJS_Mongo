@@ -5,8 +5,8 @@ import { ViewPostDto } from "./dto/view-post.dto";
 import PostMapper from "./dto/postsMapper";
 import { BlogsService } from "../blogs/blogs.service";
 import { Post } from "./schemas/posts.schema";
-import { PaginationParams } from "../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../commonDto/paginator.dto";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { InputBlogPostDto } from "./dto/input-blog-post.dto";
 
 

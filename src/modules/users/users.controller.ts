@@ -14,7 +14,7 @@ import {
 
 import { InputUserDto } from "./dto/input-user.dto";
 import { UsersService } from "./users.service";
-import { PaginationParams } from "../commonDto/paginationParams.dto";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
 
 
 @Controller("users")
