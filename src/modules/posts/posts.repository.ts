@@ -6,6 +6,7 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 
+
 @Injectable()
 export class PostsRepository {
 
@@ -26,6 +27,10 @@ export class PostsRepository {
   async createPost(createPostDto: CreatePostDto): Promise<Post> {
     const createdPost = new this.postModel(createPostDto);
     return await createdPost.save();
+  }
+
+  async updatePost(postId: string, updatePostDto: CreatePostDto): Promise<Post | null> {
+    return this.postModel.findOneAndUpdate({ id: postId }, updatePostDto);
   }
 
 

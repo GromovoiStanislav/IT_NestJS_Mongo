@@ -5,7 +5,7 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
-  Param, Post, Query,
+  Param, Post, Put, Query,
   UsePipes,
   ValidationPipe
 } from "@nestjs/common";
@@ -38,6 +38,18 @@ export class PostsController {
   @HttpCode(HttpStatus.CREATED)
   async createPost(@Body() inputPost: InputPostDto): Promise<ViewPostDto> {
     return await this.postsService.createPost(inputPost);
+  }
+
+
+  @UsePipes(new ValidationPipe())
+  @Put(":id")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updatePost(@Param("id") postId: string, @Body() inputPost: InputPostDto): Promise<void>{
+    const result = await this.postsService.updatePost(postId, inputPost);
+    if (!result) {
+      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+    }
+    return;
   }
 
 

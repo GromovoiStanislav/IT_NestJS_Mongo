@@ -42,16 +42,28 @@ export class PostsService {
   }
 
 
+  async updatePost(postId: string, inputPost: InputPostDto): Promise<Post | null> {
+    let blogName = "";
+    const blog = await this.blogsService.getOneBlog(inputPost.blogId);
+    if (blog) {
+      blogName = blog.name;
+    }
+    return this.postsRepository.updatePost(postId, PostMapper.fromInputToCreate(inputPost, blogName));
+  }
+
+
   async createPostByBlogId(blogId: string, inputPost: InputBlogPostDto): Promise<ViewPostDto | null> {
     const blog = await this.blogsService.getOneBlog(blogId);
     if (!blog) {
-      return null
+      return null;
     }
 
-    const post = await this.postsRepository.createPost(PostMapper.fromInputToCreate({...inputPost,blogId}, blog.name));
+    const post = await this.postsRepository.createPost(PostMapper.fromInputToCreate({
+      ...inputPost,
+      blogId
+    }, blog.name));
     return PostMapper.fromModelToView(post);
   }
-
 
 
   async getOnePost(postId: string): Promise<ViewPostDto | null> {
@@ -66,12 +78,12 @@ export class PostsService {
 
   async getAllPosts(paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
     const result = await this.postsRepository.getAllPosts(paginationParams);
-    return PostMapper.fromModelsToPaginator(result)
+    return PostMapper.fromModelsToPaginator(result);
   }
 
-  async getAllPostsByBlogId(blogId:string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
+  async getAllPostsByBlogId(blogId: string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
     const result = await this.postsRepository.getAllPosts(paginationParams, blogId);
-    return PostMapper.fromModelsToPaginator(result)
+    return PostMapper.fromModelsToPaginator(result);
   }
 
 }
