@@ -23,6 +23,7 @@ export default class PostMapper {
     return createPost
   }
 
+
   static fromUpdateToCreate(inputPost: InputPostDto, blogName:string): UpdatePostDto {
     const updatePost =  new UpdatePostDto();
     updatePost.title = inputPost.title;
