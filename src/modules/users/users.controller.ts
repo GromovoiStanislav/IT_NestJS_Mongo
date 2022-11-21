@@ -25,9 +25,6 @@ export class UsersController {
   }
 
 
-  // @UsePipes(new ValidationPipe({
-  //   transform: true,
-  // }))
   @Get()
   getUsers(@Query() query) {
     // console.log("pageNumber", query.pageNumber);
