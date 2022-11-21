@@ -15,8 +15,9 @@ import {
 import { InputUserDto } from "./dto/input-user.dto";
 import { UsersService } from "./users.service";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { BaseAuthGuard } from "../../guards/base.auth.guard";
 
-
+@UseGuards(BaseAuthGuard)
 @Controller("users")
 export class UsersController {
 
