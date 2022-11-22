@@ -1,6 +1,13 @@
 export class ViewUserDto {
-  id: string
-  login: string
-  email: string
-  createdAt: string
+  id: string;
+  login: string;
+  email: string;
+  createdAt: string;
+  banInfo: ViewBanUsersInfo;
+}
+
+export class ViewBanUsersInfo {
+  isBanned: boolean = false;
+  banDate: string = '';
+  banReason: string = '';
 }
