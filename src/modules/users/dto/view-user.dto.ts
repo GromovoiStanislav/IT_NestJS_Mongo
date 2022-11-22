@@ -8,6 +8,6 @@ export class ViewUserDto {
 
 export class ViewBanUsersInfo {
   isBanned: boolean = false;
-  banDate: string = '';
-  banReason: string = '';
+  banDate: string;
+  banReason: string;
 }
