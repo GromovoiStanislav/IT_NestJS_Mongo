@@ -22,8 +22,9 @@ import { BaseAuthGuard } from "../../guards/base.auth.guard";
 export class UsersController {
 
   constructor(
+    //protected usersService: UsersService,
     private commandBus: CommandBus,
-    protected usersService: UsersService) {
+    ) {
   }
 
 

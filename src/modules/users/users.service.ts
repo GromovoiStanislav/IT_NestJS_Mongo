@@ -96,22 +96,18 @@ export class UsersService {
   constructor(protected usersRepository: UsersRepository) {
   }
 
-
   async clearAllUsers(): Promise<void> {
     await this.usersRepository.clearAll();
   }
-
 
   async findAll(searchLogin: string, searchEmail: string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewUserDto[]>> {
     const result = await this.usersRepository.findAll(searchLogin, searchEmail, paginationParams);
     return UsersMapper.fromModelsToPaginator(result);
   }
 
-
   async deleteUser(userId: string): Promise<boolean> {
     return this.usersRepository.deleteUser(userId);
   }
-
 
   async createUser(inputUser: InputUserDto): Promise<ViewUserDto> {
     const createUser = UsersMapper.fromInputToCreate(inputUser);
