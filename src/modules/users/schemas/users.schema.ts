@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, raw, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 
 export type UserDocument = HydratedDocument<User>;
@@ -19,6 +19,19 @@ export class User {
 
   @Prop()
   createdAt: string;
+
+  @Prop(raw({
+    confirmationCode: { type: String },
+    isConfirmed: { type: Boolean }
+  }))
+  emailConfirmation: Record<string, any>;
+
+  @Prop(raw({
+    recoveryCode: { type: String },
+    isConfirmed: { type: Boolean }
+  }))
+  recoveryPassword: Record<string, any>;
+
 
 }
 

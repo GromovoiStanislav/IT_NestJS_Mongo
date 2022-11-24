@@ -4,9 +4,10 @@ import { TestingService } from "./testing.service";
 import { UsersModule } from "../users/users.module";
 import { BlogsModule } from "../blogs/blogs.module";
 import { PostsModule } from "../posts/posts.module";
+import { CqrsModule } from "@nestjs/cqrs";
 
 @Module({
-  imports: [UsersModule, BlogsModule,PostsModule],
+  imports: [CqrsModule,UsersModule, BlogsModule, PostsModule],
   controllers: [TestingController],
   providers: [TestingService]
 })
