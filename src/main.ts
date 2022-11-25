@@ -8,21 +8,22 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe({
-    transform:true,
+    transform: true,
+    whitelist: true,
     stopAtFirstError: true,
     exceptionFactory: (errors) => {
       const errorsForResponse = [];
       errors.forEach(e => {
         Object.keys(e.constraints).forEach(key => {
-          errorsForResponse.push({ field: e.property, message:e.constraints[key] })
-        })
+          errorsForResponse.push({ field: e.property, message: e.constraints[key] });
+        });
       });
       throw new BadRequestException(errorsForResponse);
     }
   }));
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter());
-  const configService = app.get(ConfigService)
-  await app.listen(configService.get('PORT'));
+  const configService = app.get(ConfigService);
+  await app.listen(configService.get("PORT"));
   //await app.listen(3000);
 }
 

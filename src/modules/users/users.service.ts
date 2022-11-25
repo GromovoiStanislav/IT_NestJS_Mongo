@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import * as bcryptjs from "bcryptjs";
 import { UsersRepository } from "./users.repository";
 import { InputUserDto } from "./dto/input-user.dto";
 import { ViewUserDto } from "./dto/view-user.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import {generateHash} from '../../utils/bcryptUtils'
 
 import UsersMapper from "./dto/usersMapper";
 
@@ -77,17 +77,6 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     return UsersMapper.fromModelToView(await this.usersRepository.createUser(createUser));
   }
 }
-
-
-///////////////////////////////////////////////
-const generateHash = async (password: string): Promise<string> => {
-  return await bcryptjs.hash(password, 10);
-};
-
-const comparePassword = async (password: string, hash: string): Promise<boolean> => {
-  return await bcryptjs.compare(password, hash);
-};
-
 
 ///////////////////////////////////////////////
 @Injectable()
