@@ -18,6 +18,7 @@ import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { ViewPostDto } from "../posts/dto/view-post.dto";
 import { PostsService } from "../posts/posts.service";
 import { InputBlogPostDto } from "../posts/dto/input-blog-post.dto";
+import { Pagination } from "../../decorators/paginationDecorator";
 
 @Controller("blogs")
 export class BlogsController {
@@ -101,21 +102,7 @@ export class BlogsController {
 
 
   @Get(":blogId/posts")
-  async getOnePost(@Param("blogId") blogId: string, @Query() query): Promise<PaginatorDto<ViewPostDto[]>> {
-
-    const sortBy = query.sortBy as string || "createdAt";
-    const sortDirection = query.sortDirection as string || "desc";
-    const pageNumber = parseInt(query.pageNumber) || 1;
-    const pageSize = parseInt(query.pageSize) || 10;
-
-    const paginationParams: PaginationParams = {
-      pageNumber,
-      pageSize,
-      sortBy: sortBy.trim(),
-      sortDirection: sortDirection.trim()
-    };
-
-
+  async getOnePost(@Param("blogId") blogId: string, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
     if (!await this.blogsService.getOneBlog(blogId)) {
       throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
     }

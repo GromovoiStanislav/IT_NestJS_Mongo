@@ -14,8 +14,9 @@ import { InputPostDto } from "./dto/input-post.dto";
 import { ViewPostDto } from "./dto/view-post.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { Pagination } from "../../decorators/paginationDecorator";
 
-@Controller('posts')
+@Controller("posts")
 export class PostsController {
 
   constructor(protected postsService: PostsService) {
@@ -44,7 +45,7 @@ export class PostsController {
   @UsePipes(new ValidationPipe())
   @Put(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async updatePost(@Param("id") postId: string, @Body() inputPost: InputPostDto): Promise<void>{
+  async updatePost(@Param("id") postId: string, @Body() inputPost: InputPostDto): Promise<void> {
     const result = await this.postsService.updatePost(postId, inputPost);
     if (!result) {
       throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
@@ -64,22 +65,9 @@ export class PostsController {
 
 
   @Get()
-  getAllPosts(@Query() query): Promise<PaginatorDto<ViewPostDto[]>> {
-    const sortBy = query.sortBy as string || "createdAt";
-    const sortDirection = query.sortDirection as string || "desc";
-    const pageNumber = parseInt(query.pageNumber) || 1;
-    const pageSize = parseInt(query.pageSize) || 10;
-
-    const paginationParams: PaginationParams = {
-      pageNumber,
-      pageSize,
-      sortBy: sortBy.trim(),
-      sortDirection: sortDirection.trim()
-    };
-
+  getAllPosts(@Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
     return this.postsService.getAllPosts(paginationParams);
   }
-
 
 
 }
