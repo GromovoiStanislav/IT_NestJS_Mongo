@@ -12,5 +12,7 @@ export const configModule = ConfigModule.forRoot({
       .default('development'),
     MONGO_URI: Joi.string().required(),
     PORT: Joi.number().default(3000),
+    EMAIL: Joi.string().required(),
+    EMAIL_PASSWORD: Joi.string().required(),
   }),
 });

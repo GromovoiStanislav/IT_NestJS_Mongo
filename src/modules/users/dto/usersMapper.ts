@@ -9,13 +9,21 @@ import { PaginatorDto } from "../../../commonDto/paginator.dto";
 
 export default class UsersMapper {
 
-  static fromInputToCreate(inputUser: InputUserDto): CreateUserDto {
+  static fromInputToCreate(inputUser: InputUserDto, confirmationCode: string): CreateUserDto {
     const user = new CreateUserDto();
     user.id = uid();
     user.login = inputUser.login;
     user.password = inputUser.password;
     user.email = inputUser.email;
     user.createdAt = dateAt();
+    user.emailConfirmation = {
+      confirmationCode: confirmationCode,
+      isConfirmed: false
+    };
+    user.recoveryPassword = {
+      recoveryCode: "",
+      isConfirmed: false
+    };
     return user;
   }
 
@@ -29,14 +37,14 @@ export default class UsersMapper {
     return viewUser;
   }
 
-  static fromModelsToPaginator(users: PaginatorDto<User[]>): PaginatorDto<ViewUserDto[]>{
+  static fromModelsToPaginator(users: PaginatorDto<User[]>): PaginatorDto<ViewUserDto[]> {
     return {
       pagesCount: users.pagesCount,
       page: users.page,
       pageSize: users.pageSize,
       totalCount: users.totalCount,
-      items:users.items.map(user => UsersMapper.fromModelToView(user))
-    }
+      items: users.items.map(user => UsersMapper.fromModelToView(user))
+    };
   }
 
 

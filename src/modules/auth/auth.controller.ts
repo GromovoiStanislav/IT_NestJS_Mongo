@@ -13,7 +13,7 @@ export class AuthController {
   }
 
   @Post('registration')
-  //@HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() inputUser: InputUserDto){
     return this.commandBus.execute(new RegisterUserCommand(inputUser))
   }

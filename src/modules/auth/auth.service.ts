@@ -1,9 +1,10 @@
+import { CommandBus } from "@nestjs/cqrs";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import {v4 as uuidv4} from 'uuid'
+
+import { EmailAdapter } from "../../utils/email-adapter";
 import { CreateUserCommand } from "../users/users.service";
 import { InputUserDto } from "./dto/input-user.dto";
-import { CommandBus } from "@nestjs/cqrs";
-
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-
 
 
 export class RegisterUserCommand {
@@ -13,10 +14,28 @@ export class RegisterUserCommand {
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand> {
-  constructor(private commandBus: CommandBus,) {}
+  constructor(private commandBus: CommandBus,
+              private emailAdapter: EmailAdapter) {}
 
   async execute(command: RegisterUserCommand) {
-    console.log(command);
-    return this.commandBus.execute(new CreateUserCommand(command.inputUser));
+
+
+    const subject = 'Thank for your registration'
+    const confirmation_code = uuidv4()
+    const message = `
+        <div>
+           <h1>Thank for your registration</h1>
+           <p>To finish registration please follow the link below:
+              <a href='https://it-nest.vercel.app/auth/registration-confirmation?code=${confirmation_code}'>complete registration</a>
+          </p>
+        </div>`
+
+    const isEmailSend = await this.emailAdapter.sendEmail(command.inputUser.email, subject, message)
+    if (isEmailSend) {
+      await this.commandBus.execute(new CreateUserCommand(command.inputUser,confirmation_code))
+      return true
+    }
+    return false
+
   }
 }

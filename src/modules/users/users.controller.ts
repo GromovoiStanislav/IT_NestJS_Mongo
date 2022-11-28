@@ -49,7 +49,7 @@ export class UsersController {
   @Post()
   @HttpCode(HttpStatus.CREATED)//201
   async createUser(@Body() inputUser: InputUserDto) {
-    return this.commandBus.execute(new CreateUserCommand(inputUser));
+    return this.commandBus.execute(new CreateUserCommand(inputUser,''));
   }
 
 }

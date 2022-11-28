@@ -88,7 +88,7 @@ export class DeleteUserUseCase implements ICommandHandler<DeleteUserCommand> {
 
 ////////////////////////////////////////////////////////////
 export class CreateUserCommand {
-  constructor(public inputUser: InputUserDto) {
+  constructor(public inputUser: InputUserDto, public confirmationCode: string) {
   }
 }
 
@@ -98,7 +98,7 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
   }
 
   async execute(command: CreateUserCommand) {
-    const createUser = UsersMapper.fromInputToCreate(command.inputUser);
+    const createUser = UsersMapper.fromInputToCreate(command.inputUser, command.confirmationCode);
     createUser.password = await generateHash(createUser.password);
     return UsersMapper.fromModelToView(await this.usersRepository.createUser(createUser));
   }
