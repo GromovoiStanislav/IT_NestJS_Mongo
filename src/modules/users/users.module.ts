@@ -5,7 +5,7 @@ import {
   ClearAllUsersUseCase,
   CreateUserUseCase,
   DeleteUserUseCase,
-  FindAllUsersUseCase
+  FindAllUsersUseCase, GetUserByLoginOrEmailUseCase
 } from "./users.service";
 import { User, UserSchema } from "./schemas/users.schema";
 import { UsersRepository } from "./users.repository";
@@ -15,7 +15,8 @@ const useCases = [
   ClearAllUsersUseCase,
   FindAllUsersUseCase,
   DeleteUserUseCase,
-  CreateUserUseCase
+  CreateUserUseCase,
+  GetUserByLoginOrEmailUseCase
 ];
 
 @Module({

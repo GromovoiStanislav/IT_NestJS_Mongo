@@ -104,3 +104,18 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
   }
 }
 
+////////////////////////////////////////////////////////////
+export class GetUserByLoginOrEmailCommand {
+  constructor(public search: string) {
+  }
+}
+
+@CommandHandler(GetUserByLoginOrEmailCommand)
+export class GetUserByLoginOrEmailUseCase implements ICommandHandler<GetUserByLoginOrEmailCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: GetUserByLoginOrEmailCommand) {
+    return await this.usersRepository.findUserByLoginOrEmail(command.search);
+  }
+}

@@ -3,7 +3,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./schemas/users.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 
 
@@ -21,7 +20,17 @@ export class UsersRepository {
     return result.deletedCount > 0;
   }
 
+  async findUserByLoginOrEmail(search): Promise<User> {
 
+    const filter = {
+      $or: [
+        { login: search },
+        { email: search },
+      ],
+    };
+
+    return this.userModel.findOne(filter)
+  }
 
   async countDocuments(filter): Promise<number> {
     return this.userModel.count(filter);

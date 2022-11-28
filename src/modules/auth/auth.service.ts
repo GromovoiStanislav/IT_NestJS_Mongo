@@ -3,8 +3,9 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import {v4 as uuidv4} from 'uuid'
 
 import { EmailAdapter } from "../../utils/email-adapter";
-import { CreateUserCommand } from "../users/users.service";
+import { CreateUserCommand, GetUserByLoginOrEmailCommand } from "../users/users.service";
 import { InputUserDto } from "./dto/input-user.dto";
+import { BadRequestException } from "@nestjs/common";
 
 
 export class RegisterUserCommand {
@@ -19,6 +20,12 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
 
   async execute(command: RegisterUserCommand) {
 
+    if(await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.inputUser.login))){
+      throw new BadRequestException([{field: 'login', message: 'login already exists'}])
+    }
+    if(await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.inputUser.email))){
+      throw new BadRequestException([{field: 'email', message: 'email already exists'}])
+    }
 
     const subject = 'Thank for your registration'
     const confirmation_code = uuidv4()
