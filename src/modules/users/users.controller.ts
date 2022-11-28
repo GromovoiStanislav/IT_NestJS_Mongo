@@ -13,7 +13,7 @@ import {
 import { CommandBus } from "@nestjs/cqrs";
 
 import { InputUserDto } from "./dto/input-user.dto";
-import { CreateUserCommand, DeleteUserCommand, FindAllUsersCommand, UsersService } from "./users.service";
+import { CreateUserCommand, DeleteUserCommand, FindAllUsersCommand } from "./users.service";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { Pagination } from "../../decorators/paginationDecorator";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
@@ -23,7 +23,6 @@ import { PaginationParams } from "../../commonDto/paginationParams.dto";
 export class UsersController {
 
   constructor(
-    //protected usersService: UsersService,
     private commandBus: CommandBus
   ) {
   }
@@ -31,18 +30,14 @@ export class UsersController {
 
   @Get()
   getUsers(@Query() query, @Pagination() paginationParams: PaginationParams) {
-    console.log(paginationParams);
     const searchLogin = query.searchLoginTerm as string || "";
     const searchEmail = query.searchEmailTerm as string || "";
-
-    //return this.usersService.findAll(searchLogin.trim(), searchEmail.trim(), paginationParams);
     return this.commandBus.execute(new FindAllUsersCommand(searchLogin.trim(), searchEmail.trim(), paginationParams));
   }
 
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)//204
   async deleteUser(@Param("id") userId: string) {
-    //const result = await this.usersService.deleteUser(userId);
     const result = await this.commandBus.execute(new DeleteUserCommand(userId));
     if (!result) {
       throw new HttpException("Specified user is not exists", HttpStatus.NOT_FOUND);
@@ -54,7 +49,6 @@ export class UsersController {
   @Post()
   @HttpCode(HttpStatus.CREATED)//201
   async createUser(@Body() inputUser: InputUserDto) {
-    //return await this.usersService.createUser(inputUser);
     return this.commandBus.execute(new CreateUserCommand(inputUser));
   }
 

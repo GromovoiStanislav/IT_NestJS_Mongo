@@ -22,40 +22,19 @@ export class UsersRepository {
   }
 
 
-  async findAll(searchLogin: string, searchEmail: string, {
+
+  async countDocuments(filter): Promise<number> {
+    return this.userModel.count(filter);
+  }
+
+  async findUsers(filter, {
     pageNumber,
     pageSize,
     sortBy,
     sortDirection
-  }: PaginationParams): Promise<PaginatorDto<User[]>> {
-
-    const loginRegExp = RegExp(`${searchLogin}`, 'i')
-    const emailRegExp = RegExp(`${searchEmail}`, 'i')
-
-    type FilterType = {
-      [key: string]: unknown
-    }
-    const filter: FilterType = {}
-
-    if (searchLogin !== '' && searchEmail !== '') {
-      filter.$or = [
-        {login: loginRegExp},
-        {email: emailRegExp}
-      ]
-    } else if (searchLogin !== '') {
-      filter.login = loginRegExp
-    } else if (searchEmail !== '') {
-      filter.email = emailRegExp
-    }
-
-    const items = await this.userModel.find(filter).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
+  }: PaginationParams): Promise<User[]> {
+    return this.userModel.find(filter).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
       .limit(pageSize).skip((pageNumber - 1) * pageSize);
-
-    const totalCount = await this.userModel.countDocuments(filter)
-    const pagesCount = Math.ceil(totalCount / pageSize)
-    const page = pageNumber
-
-    return { pagesCount, page, pageSize, totalCount, items };
   }
 
 

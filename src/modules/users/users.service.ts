@@ -1,15 +1,14 @@
-import { Injectable } from "@nestjs/common";
 import { UsersRepository } from "./users.repository";
 import { InputUserDto } from "./dto/input-user.dto";
-import { ViewUserDto } from "./dto/view-user.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import {generateHash} from '../../utils/bcryptUtils'
+import { generateHash } from "../../utils/bcryptUtils";
 
 import UsersMapper from "./dto/usersMapper";
 
 
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { User } from "./schemas/users.schema";
 
 //////////////////////////////////////////////////////////////
 export class ClearAllUsersCommand {
@@ -39,7 +38,34 @@ export class FindAllUsersUseCase implements ICommandHandler<FindAllUsersCommand>
   }
 
   async execute(command: FindAllUsersCommand) {
-    const result = await this.usersRepository.findAll(command.searchLogin, command.searchEmail, command.paginationParams);
+
+    const loginRegExp = RegExp(`${command.searchLogin}`, "i");
+    const emailRegExp = RegExp(`${command.searchEmail}`, "i");
+
+    type FilterType = {
+      [key: string]: unknown
+    }
+    const filter: FilterType = {};
+
+    if (command.searchLogin !== "" && command.searchEmail !== "") {
+      filter.$or = [
+        { login: loginRegExp },
+        { email: emailRegExp }
+      ];
+    } else if (command.searchLogin !== "") {
+      filter.login = loginRegExp;
+    } else if (command.searchEmail !== "") {
+      filter.email = emailRegExp;
+    }
+
+    const items = await this.usersRepository.findUsers(filter, command.paginationParams);
+
+    const { pageSize, pageNumber } = command.paginationParams;
+    const totalCount = await this.usersRepository.countDocuments(filter);
+    const pagesCount = Math.ceil(totalCount / pageSize);
+    const page = pageNumber;
+
+    const result: PaginatorDto<User[]> = { pagesCount, page, pageSize, totalCount, items };
     return UsersMapper.fromModelsToPaginator(result);
   }
 }
@@ -76,33 +102,5 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     createUser.password = await generateHash(createUser.password);
     return UsersMapper.fromModelToView(await this.usersRepository.createUser(createUser));
   }
-}
-
-///////////////////////////////////////////////
-@Injectable()
-export class UsersService {
-
-  constructor(protected usersRepository: UsersRepository) {
-  }
-
-  async clearAllUsers(): Promise<void> {
-    await this.usersRepository.clearAll();
-  }
-
-  async findAll(searchLogin: string, searchEmail: string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewUserDto[]>> {
-    const result = await this.usersRepository.findAll(searchLogin, searchEmail, paginationParams);
-    return UsersMapper.fromModelsToPaginator(result);
-  }
-
-  async deleteUser(userId: string): Promise<boolean> {
-    return this.usersRepository.deleteUser(userId);
-  }
-
-  async createUser(inputUser: InputUserDto): Promise<ViewUserDto> {
-    const createUser = UsersMapper.fromInputToCreate(inputUser);
-    createUser.password = await generateHash(createUser.password);
-    return UsersMapper.fromModelToView(await this.usersRepository.createUser(createUser));
-  }
-
 }
 

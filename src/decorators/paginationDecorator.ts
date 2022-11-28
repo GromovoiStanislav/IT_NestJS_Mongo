@@ -1,23 +1,32 @@
-
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import { PaginationParams } from "../commonDto/paginationParams.dto";
 
 export const Pagination = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const query = ctx.switchToHttp().getRequest().query;
 
-    const sortBy = query.sortBy as string || "createdAt";
-    const sortDirection = query.sortDirection as string || "desc";
-    const pageNumber = parseInt(query.pageNumber) || 1;
-    const pageSize = parseInt(query.pageSize) || 10;
+    let sortBy = query.sortBy as string || 'createdAt';
+    let sortDirection = query.sortDirection as string || '';
+    let pageNumber = parseInt(query.pageNumber);
+    let pageSize = parseInt(query.pageSize);
+
+    sortBy = sortBy.trim();
+
+    sortDirection = sortDirection.toLowerCase().trim();
+    if (!["asc", "desc"].includes(sortDirection)) {
+      sortDirection = "desc";
+    }
+
+    pageNumber = isNaN(pageNumber) ? 1 : pageNumber;
+    pageSize = isNaN(pageSize) ? 10 : pageSize;
 
     const paginationParams: PaginationParams = {
       pageNumber,
       pageSize,
-      sortBy: sortBy.trim(),
-      sortDirection: sortDirection.trim()
+      sortBy,
+      sortDirection
     };
 
     return paginationParams;
-  },
+  }
 );

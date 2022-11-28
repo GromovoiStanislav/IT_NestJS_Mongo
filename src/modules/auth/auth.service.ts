@@ -1,4 +1,4 @@
-import { CreateUserCommand, UsersService } from "../users/users.service";
+import { CreateUserCommand } from "../users/users.service";
 import { InputUserDto } from "./dto/input-user.dto";
 import { CommandBus } from "@nestjs/cqrs";
 

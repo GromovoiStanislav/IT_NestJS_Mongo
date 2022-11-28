@@ -6,7 +6,6 @@ import {
   CreateUserUseCase,
   DeleteUserUseCase,
   FindAllUsersUseCase,
-  UsersService
 } from "./users.service";
 import { User, UserSchema } from "./schemas/users.schema";
 import { UsersRepository } from "./users.repository";
@@ -22,8 +21,8 @@ const useCases = [
 @Module({
   imports: [CqrsModule, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
   controllers: [UsersController],
-  providers: [...useCases, UsersService, UsersRepository],
-  exports: [...useCases, UsersService, UsersRepository]
+  providers: [...useCases, UsersRepository],
+  exports: [...useCases, UsersRepository]
 })
 export class UsersModule {
 }
