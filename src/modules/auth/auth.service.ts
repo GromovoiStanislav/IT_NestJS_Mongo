@@ -5,7 +5,7 @@ import {v4 as uuidv4} from 'uuid'
 import { EmailAdapter } from "../../utils/email-adapter";
 import {
   ConfirmUserCommand,
-  CreateUserCommand,
+  CreateUserCommand, GetUserByConfirmationCodeCommand,
   GetUserByLoginOrEmailCommand,
   UpdateConfirmCodeCommand
 } from "../users/users.service";
@@ -93,7 +93,7 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
   }
 
   async execute(command: ConfirmEmailCommand) {
-    const user = await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.confirmationCode))
+    const user = await this.commandBus.execute(new GetUserByConfirmationCodeCommand(command.confirmationCode))
     if (!user) {
       throw new BadRequestException([{field: 'code', message: 'code not exist'}])
     }
