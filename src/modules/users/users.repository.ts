@@ -53,7 +53,7 @@ export class UsersRepository {
   }
 
   async updateConfirmCode(userId: string, confirmationCode: string): Promise<void> {
-    this.userModel.findOneAndUpdate({ id: userId }, { "emailConfirmation.confirmationCode": confirmationCode });
+    await this.userModel.findOneAndUpdate({ id: userId }, { "emailConfirmation.confirmationCode": confirmationCode });
   }
 
 
