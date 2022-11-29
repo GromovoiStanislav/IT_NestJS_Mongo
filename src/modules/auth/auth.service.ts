@@ -129,8 +129,8 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
       if (compareOK) {
         //const deviceId = uuidv4() // т.е. это Сессия
         return {
-          accessToken: 'accessToken',// await jwtService.createAuthJWT(user.id),
-          refreshToken: 'refreshToken'//await jwtService.createRefreshJWT(user.id, deviceId, ip, title)
+          accessToken: 'access.Token.',// await jwtService.createAuthJWT(user.id),
+          refreshToken: 'refresh.Token.'//await jwtService.createRefreshJWT(user.id, deviceId, ip, title)
         }
       }
     }
