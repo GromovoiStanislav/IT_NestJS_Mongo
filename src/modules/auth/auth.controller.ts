@@ -2,8 +2,9 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 
 import { InputUserDto } from "./dto/input-user.dto";
-import { RegisterUserCommand,ResendConfirmationCodeCommand } from "./auth.service";
+import { RegisterUserCommand,ResendConfirmationCodeCommand,ConfirmEmailCommand } from "./auth.service";
 import { InputEmailDto } from "./dto/input-email.dto";
+import { InputCodeDto } from "./dto/input-code.dto";
 
 
 
@@ -22,8 +23,8 @@ export class AuthController {
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async registrationConfirmation(@Body() inputUser: InputUserDto){
-    //return this.commandBus.execute(new RegisterUserCommand(inputUser))
+  async registrationConfirmation(@Body() inputCode: InputCodeDto){
+    return this.commandBus.execute(new ConfirmEmailCommand(inputCode.code))
   }
 
   @Post('registration-email-resending')

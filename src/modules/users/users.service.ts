@@ -120,6 +120,7 @@ export class GetUserByLoginOrEmailUseCase implements ICommandHandler<GetUserByLo
   }
 }
 
+
 ////////////////////////////////////////////////////////////
 export class UpdateConfirmCodeCommand {
   constructor(public userId: string, public confirmationCode: string) {
@@ -133,5 +134,38 @@ export class UpdateConfirmCodeUseCase implements ICommandHandler<UpdateConfirmCo
 
   async execute(command: UpdateConfirmCodeCommand) {
     await this.usersRepository.updateConfirmCode(command.userId, command.confirmationCode);
+  }
+}
+
+////////////////////////////////////////////////////////////
+export class GetUserByConfirmationCodeCommand {
+  constructor(public confirmationCode: string) {
+  }
+}
+
+@CommandHandler(GetUserByConfirmationCodeCommand)
+export class GetUserByConfirmationCodeUseCase implements ICommandHandler<GetUserByConfirmationCodeCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: GetUserByConfirmationCodeCommand) {
+    return await this.usersRepository.findUserByConfirmationCode(command.confirmationCode);
+  }
+}
+
+
+////////////////////////////////////////////////////////////
+export class ConfirmUserCommand {
+  constructor(public userId: string) {
+  }
+}
+
+@CommandHandler(ConfirmUserCommand)
+export class ConfirmUserUseCase implements ICommandHandler<ConfirmUserCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: ConfirmUserCommand) {
+    return await this.usersRepository.confirmUser(command.userId);
   }
 }

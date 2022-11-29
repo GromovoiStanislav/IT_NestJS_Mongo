@@ -57,4 +57,12 @@ export class UsersRepository {
   }
 
 
+  async findUserByConfirmationCode(confirmationCode: string): Promise<User | null> {
+    return this.userModel.findOne({ "emailConfirmation.confirmationCode": confirmationCode });
+  }
+
+  async confirmUser(userId: string): Promise<void> {
+    this.userModel.findOneAndUpdate({ id: userId }, { "emailConfirmation.isConfirmed": true });
+  }
+
 }

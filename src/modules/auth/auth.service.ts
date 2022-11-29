@@ -3,7 +3,12 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import {v4 as uuidv4} from 'uuid'
 
 import { EmailAdapter } from "../../utils/email-adapter";
-import { CreateUserCommand, GetUserByLoginOrEmailCommand, UpdateConfirmCodeCommand } from "../users/users.service";
+import {
+  ConfirmUserCommand,
+  CreateUserCommand,
+  GetUserByLoginOrEmailCommand,
+  UpdateConfirmCodeCommand
+} from "../users/users.service";
 import { InputUserDto } from "./dto/input-user.dto";
 import { BadRequestException } from "@nestjs/common";
 
@@ -44,6 +49,7 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
   }
 }
 
+
 /////////////////////////////////////////////////////////////////
 export class ResendConfirmationCodeCommand {
   constructor(public email: string) {
@@ -72,5 +78,29 @@ export class ResendConfirmationCodeUseCase implements ICommandHandler<ResendConf
     if (isEmailSend) {
       await this.commandBus.execute(new UpdateConfirmCodeCommand(user.id, confirmation_code))
     }
+  }
+}
+
+
+/////////////////////////////////////////////////////////////////
+export class ConfirmEmailCommand {
+  constructor(public confirmationCode: string) {
+  }
+}
+@CommandHandler(ConfirmEmailCommand)
+export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand> {
+  constructor(private commandBus: CommandBus) {
+  }
+
+  async execute(command: ConfirmEmailCommand) {
+    const user = await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.confirmationCode))
+    if (!user) {
+      throw new BadRequestException([{field: 'code', message: 'code not exist'}])
+    }
+    if (user.emailConfirmation?.isConfirmed) {
+      throw new BadRequestException([{field: 'code', message: 'code already confirmed'}])
+    }
+
+    await this.commandBus.execute(new ConfirmUserCommand(user.id))
   }
 }
