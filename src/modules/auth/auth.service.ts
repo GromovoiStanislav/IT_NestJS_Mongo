@@ -58,10 +58,10 @@ export class ResendConfirmationCodeUseCase implements ICommandHandler<ResendConf
 
     const user = await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.email))
     if (!user) {
-      return
+      throw new BadRequestException([{field: 'email', message: 'email not exist'}])
     }
     if (user.emailConfirmation?.isConfirmed) {
-      return
+      throw new BadRequestException([{field: 'email', message: 'email already confirmed'}])
     }
 
     const subject = 'Thank for your registration'
