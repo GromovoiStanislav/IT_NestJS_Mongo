@@ -1,4 +1,3 @@
-import { Injectable } from "@nestjs/common";
 import { BlogsRepository } from "./blogs.repository";
 import { ViewBlogDto } from "./dto/view-blog.dto";
 import { InputBlogDto } from "./dto/input-blog.dto";
@@ -25,43 +24,125 @@ export class ClearAllBlogsUseCase implements ICommandHandler<ClearAllBlogsComman
   }
 }
 
-
 //////////////////////////////////////////////////////////////
-@Injectable()
-export class BlogsService {
+export class CreateBlogCommand {
+  constructor(public inputBlog: InputBlogDto) {
+  }
+}
 
+@CommandHandler(CreateBlogCommand)
+export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
   constructor(protected blogsRepository: BlogsRepository) {
   }
 
-
-  async createBlog(inputBlog: InputBlogDto): Promise<ViewBlogDto> {
-    const blog = await this.blogsRepository.createBlog(BlogMapper.fromInputToCreate(inputBlog));
+  async execute(command: CreateBlogCommand): Promise<ViewBlogDto> {
+    const blog = await this.blogsRepository.createBlog(BlogMapper.fromInputToCreate(command.inputBlog));
     return BlogMapper.fromModelToView(blog);
   }
+}
 
+//////////////////////////////////////////////////////////////
+export class UpdateBlogCommand {
+  constructor(public blogId: string, public inputBlog: InputBlogDto) {
+  }
+}
 
-  async updateBlog(blogId: string, inputBlog: InputBlogDto): Promise<Blog | null> {
-    return this.blogsRepository.updateBlog(blogId, BlogMapper.fromInputToUpdate(inputBlog));
+@CommandHandler(UpdateBlogCommand)
+export class UpdateBlogUseCase implements ICommandHandler<UpdateBlogCommand> {
+  constructor(protected blogsRepository: BlogsRepository) {
   }
 
+  async execute(command: UpdateBlogCommand): Promise<Blog | null> {
+    return this.blogsRepository.updateBlog(command.blogId, BlogMapper.fromInputToUpdate(command.inputBlog));
+  }
+}
 
-  async deleteBlog(blogId: string): Promise<Blog | null> {
-    return this.blogsRepository.deleteBlog(blogId);
+//////////////////////////////////////////////////////////////
+export class DeleteBlogCommand {
+  constructor(public blogId: string) {
+  }
+}
+
+@CommandHandler(DeleteBlogCommand)
+export class DeleteBlogUseCase implements ICommandHandler<DeleteBlogCommand> {
+  constructor(protected blogsRepository: BlogsRepository) {
   }
 
+  async execute(command: DeleteBlogCommand): Promise<Blog | null> {
+    return this.blogsRepository.deleteBlog(command.blogId);
+  }
+}
 
-  async getOneBlog(blogId: string): Promise<ViewBlogDto | null> {
-    const blog = await this.blogsRepository.getOneBlog(blogId);
+
+//////////////////////////////////////////////////////////////
+export class GetOneBlogCommand {
+  constructor(public blogId: string) {
+  }
+}
+
+@CommandHandler(GetOneBlogCommand)
+export class GetOneBlogUseCase implements ICommandHandler<GetOneBlogCommand> {
+  constructor(protected blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: GetOneBlogCommand): Promise<ViewBlogDto | null> {
+    const blog = await this.blogsRepository.getOneBlog(command.blogId);
     if (blog) {
       return BlogMapper.fromModelToView(blog);
     }
     return null;
   }
+}
 
 
-  async getAllBlogs(searchName: string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
-    const result = await this.blogsRepository.getAllBlogs(searchName, paginationParams);
-    return BlogMapper.fromModelsToPaginator(result);
+//////////////////////////////////////////////////////////////
+export class GetAllBlogsCommand {
+  constructor(public searchName: string, public paginationParams: PaginationParams) {
+  }
+}
+
+@CommandHandler(GetAllBlogsCommand)
+export class GetAllBlogsUseCase implements ICommandHandler<GetAllBlogsCommand> {
+  constructor(protected blogsRepository: BlogsRepository) {
   }
 
+  async execute(command: GetAllBlogsCommand): Promise<PaginatorDto<ViewBlogDto[]>> {
+    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams);
+    return BlogMapper.fromModelsToPaginator(result);
+  }
 }
+
+
+
+
+//////////////////////////////////////////////////////////////
+// @Injectable()
+// export class BlogsService {
+//
+//   constructor(protected blogsRepository: BlogsRepository) {
+//   }
+//
+//   // async updateBlog(blogId: string, inputBlog: InputBlogDto): Promise<Blog | null> {
+//   //   return this.blogsRepository.updateBlog(blogId, BlogMapper.fromInputToUpdate(inputBlog));
+//   // }
+//
+//   // async deleteBlog(blogId: string): Promise<Blog | null> {
+//   //   return this.blogsRepository.deleteBlog(blogId);
+//   // }
+//
+//
+//   // async getOneBlog(blogId: string): Promise<ViewBlogDto | null> {
+//   //   const blog = await this.blogsRepository.getOneBlog(blogId);
+//   //   if (blog) {
+//   //     return BlogMapper.fromModelToView(blog);
+//   //   }
+//   //   return null;
+//   // }
+//
+//
+//   // async getAllBlogs(searchName: string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
+//   //   const result = await this.blogsRepository.getAllBlogs(searchName, paginationParams);
+//   //   return BlogMapper.fromModelsToPaginator(result);
+//   // }
+//
+// }

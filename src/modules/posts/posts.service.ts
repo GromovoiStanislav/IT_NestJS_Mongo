@@ -3,19 +3,16 @@ import { PostsRepository } from "./posts.repository";
 import { InputPostDto } from "./dto/input-post.dto";
 import { ViewPostDto } from "./dto/view-post.dto";
 import PostMapper from "./dto/postsMapper";
-import { BlogsService } from "../blogs/blogs.service";
+import { GetOneBlogCommand } from "../blogs/blogs.service";
 import { Post } from "./schemas/posts.schema";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { InputBlogPostDto } from "./dto/input-blog-post.dto";
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 
 
 //////////////////////////////////////////////////////////////
-export class ClearAllPostsCommand {
-  constructor() {
-  }
-}
+export class ClearAllPostsCommand {}
 
 @CommandHandler(ClearAllPostsCommand)
 export class ClearAllPostsCase implements ICommandHandler<ClearAllPostsCommand> {
@@ -32,8 +29,8 @@ export class ClearAllPostsCase implements ICommandHandler<ClearAllPostsCommand> 
 export class PostsService {
 
   constructor(
+    private commandBus: CommandBus,
     protected postsRepository: PostsRepository,
-    private blogsService: BlogsService
   ) {
   }
 
@@ -45,7 +42,7 @@ export class PostsService {
 
   async createPost(inputPost: InputPostDto): Promise<ViewPostDto> {
     let blogName = "";
-    const blog = await this.blogsService.getOneBlog(inputPost.blogId);
+    const blog = await this.commandBus.execute(new GetOneBlogCommand(inputPost.blogId))
     if (blog) {
       blogName = blog.name;
     }
@@ -57,7 +54,7 @@ export class PostsService {
 
   async updatePost(postId: string, inputPost: InputPostDto): Promise<Post | null> {
     let blogName = "";
-    const blog = await this.blogsService.getOneBlog(inputPost.blogId);
+    const blog = await this.commandBus.execute(new GetOneBlogCommand(inputPost.blogId))
     if (blog) {
       blogName = blog.name;
     }
@@ -66,7 +63,7 @@ export class PostsService {
 
 
   async createPostByBlogId(blogId: string, inputPost: InputBlogPostDto): Promise<ViewPostDto | null> {
-    const blog = await this.blogsService.getOneBlog(blogId);
+    const blog = await this.commandBus.execute(new GetOneBlogCommand(blogId));
     if (!blog) {
       return null;
     }

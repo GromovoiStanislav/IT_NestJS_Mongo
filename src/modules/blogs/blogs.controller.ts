@@ -3,15 +3,17 @@ import {
   Controller, Delete,
   Get,
   HttpCode,
-  HttpException,
-  HttpStatus,
+  HttpStatus, NotFoundException,
   Param,
   Post, Put, Query,
-  UsePipes,
-  ValidationPipe
 } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
-import { BlogsService } from "./blogs.service";
+import {
+  CreateBlogCommand,
+  DeleteBlogCommand, GetAllBlogsCommand,
+  GetOneBlogCommand,
+  UpdateBlogCommand
+} from "./blogs.service";
 import { InputBlogDto } from "./dto/input-blog.dto";
 import { ViewBlogDto } from "./dto/view-blog.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
@@ -25,71 +27,65 @@ import { Pagination } from "../../decorators/paginationDecorator";
 export class BlogsController {
   constructor(
     private commandBus: CommandBus,
-    protected blogsService: BlogsService,
     protected postsService: PostsService) {
   }
 
-  @UsePipes(new ValidationPipe())
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createBlog(@Body() inputBlog: InputBlogDto): Promise<ViewBlogDto> {
-    return await this.blogsService.createBlog(inputBlog);
+    return this.commandBus.execute(new CreateBlogCommand(inputBlog))
   }
 
 
-  @UsePipes(new ValidationPipe())
   @Put(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param("id") blogId: string, @Body() inputBlog: InputBlogDto): Promise<void> {
-    const result = await this.blogsService.updateBlog(blogId, inputBlog);
+    //const result = await this.blogsService.updateBlog(blogId, inputBlog);
+    const result = await this.commandBus.execute(new UpdateBlogCommand(blogId, inputBlog))
     if (!result) {
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+      //throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     return;
-  }
-
-
-  @Get()
-  getAllBlogs(@Query() query): Promise<PaginatorDto<ViewBlogDto[]>> {
-    const searchNameTerm = query.searchNameTerm as string || "";
-    const sortBy = query.sortBy as string || "createdAt";
-    const sortDirection = query.sortDirection as string || "desc";
-    const pageNumber = parseInt(query.pageNumber) || 1;
-    const pageSize = parseInt(query.pageSize) || 10;
-
-    const paginationParams: PaginationParams = {
-      pageNumber,
-      pageSize,
-      sortBy: sortBy.trim(),
-      sortDirection: sortDirection.trim()
-    };
-
-    return this.blogsService.getAllBlogs(searchNameTerm.trim(), paginationParams);
-  }
-
-
-  @Get(":id")
-  async getOneBlog(@Param("id") blogId: string): Promise<ViewBlogDto> {
-    const result = await this.blogsService.getOneBlog(blogId);
-    if (!result) {
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
-    }
-    return result;
   }
 
 
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param("id") blogId: string): Promise<void> {
-    const result = await this.blogsService.deleteBlog(blogId);
+    //const result = await this.blogsService.deleteBlog(blogId);
+    const result = await this.commandBus.execute(new DeleteBlogCommand(blogId))
     if (!result) {
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     return;
   }
 
 
-  @UsePipes(new ValidationPipe())
+  @Get(":id")
+  async getOneBlog(@Param("id") blogId: string): Promise<ViewBlogDto> {
+    const result = await this.commandBus.execute(new GetOneBlogCommand(blogId))
+    //const result = await this.blogsService.getOneBlog(blogId);
+    if (!result) {
+      throw new NotFoundException();
+    }
+    return result;
+  }
+
+
+  @Get()
+  getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
+    const searchNameTerm = query.searchNameTerm as string || "";
+    //return this.blogsService.getAllBlogs(searchNameTerm.trim(), paginationParams);
+    return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams))
+  }
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
   @Post(":blogId/posts")
   @HttpCode(HttpStatus.CREATED)
   async createPostByBlogId(
@@ -97,7 +93,7 @@ export class BlogsController {
     @Body() inputPost: InputBlogPostDto): Promise<ViewPostDto> {
     const result = await this.postsService.createPostByBlogId(blogId, inputPost);
     if (!result) {
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     return result;
   }
@@ -105,8 +101,8 @@ export class BlogsController {
 
   @Get(":blogId/posts")
   async getOnePost(@Param("blogId") blogId: string, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
-    if (!await this.blogsService.getOneBlog(blogId)) {
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+    if (!await this.commandBus.execute(new GetOneBlogCommand(blogId))) {
+      throw new NotFoundException();
     }
     return await this.postsService.getAllPostsByBlogId(blogId, paginationParams);
   }
