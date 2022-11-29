@@ -14,5 +14,6 @@ export const configModule = ConfigModule.forRoot({
     PORT: Joi.number().default(3000),
     EMAIL: Joi.string().required(),
     EMAIL_PASSWORD: Joi.string().required(),
+    SECRET: Joi.string().required(),
   }),
 });

@@ -12,6 +12,7 @@ import {
   UpdateConfirmCodeCommand
 } from "../users/users.service";
 import { comparePassword } from "../../utils/bcryptUtils";
+import { JWT_Service } from "../../utils/jwtService";
 
 
 ////////////////////////////////////////////////////////////////////
@@ -119,7 +120,10 @@ export class LoginUserCommand {
 
 @CommandHandler(LoginUserCommand)
 export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
-  constructor(private commandBus: CommandBus) {
+  constructor(
+    private commandBus: CommandBus,
+    private jwtService: JWT_Service,
+    ) {
   }
 
   async execute(command: LoginUserCommand) {
@@ -129,8 +133,9 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
       if (compareOK) {
         //const deviceId = uuidv4() // т.е. это Сессия
         return {
-          accessToken: 'access.Token.',// await jwtService.createAuthJWT(user.id),
-          refreshToken: 'refresh.Token.'//await jwtService.createRefreshJWT(user.id, deviceId, ip, title)
+          accessToken: await this.jwtService.createAuthJWT(user.id),
+          refreshToken: await this.jwtService.createRefreshJWT(user.id)
+          //refreshToken: await this.jwtService.createRefreshJWT(user.id, deviceId, ip, title)
         }
       }
     }

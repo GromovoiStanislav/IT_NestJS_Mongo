@@ -10,6 +10,7 @@ import {
 import { UsersModule } from "../users/users.module";
 import { EmailAdapter } from "../../utils/email-adapter";
 import { Settings } from "../../settings";
+import { JWT_Service } from "../../utils/jwtService";
 
 const useCases= [
   RegisterUserUseCase,
@@ -23,6 +24,6 @@ const useCases= [
 @Module({
   imports:[CqrsModule,UsersModule],
   controllers: [AuthController],
-  providers: [...useCases,EmailAdapter,Settings],
+  providers: [...useCases,EmailAdapter,JWT_Service,Settings],
 })
 export class AuthModule {}
