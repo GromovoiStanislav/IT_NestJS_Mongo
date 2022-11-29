@@ -25,11 +25,11 @@ export class UsersRepository {
     const filter = {
       $or: [
         { login: search },
-        { email: search },
-      ],
+        { email: search }
+      ]
     };
 
-    return this.userModel.findOne(filter)
+    return this.userModel.findOne(filter);
   }
 
   async countDocuments(filter): Promise<number> {
@@ -50,6 +50,10 @@ export class UsersRepository {
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
+  }
+
+  async updateConfirmCode(userId: string, confirmationCode: string): Promise<void> {
+    this.userModel.findOneAndUpdate({ id: userId }, { "emailConfirmation.confirmationCode": confirmationCode });
   }
 
 

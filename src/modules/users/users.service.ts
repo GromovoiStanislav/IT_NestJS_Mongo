@@ -119,3 +119,19 @@ export class GetUserByLoginOrEmailUseCase implements ICommandHandler<GetUserByLo
     return await this.usersRepository.findUserByLoginOrEmail(command.search);
   }
 }
+
+////////////////////////////////////////////////////////////
+export class UpdateConfirmCodeCommand {
+  constructor(public userId: string, public confirmationCode: string) {
+  }
+}
+
+@CommandHandler(UpdateConfirmCodeCommand)
+export class UpdateConfirmCodeUseCase implements ICommandHandler<UpdateConfirmCodeCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: UpdateConfirmCodeCommand) {
+    await this.usersRepository.updateConfirmCode(command.userId, command.confirmationCode);
+  }
+}
