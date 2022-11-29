@@ -8,8 +8,26 @@ import { Post } from "./schemas/posts.schema";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { InputBlogPostDto } from "./dto/input-blog-post.dto";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 
 
+//////////////////////////////////////////////////////////////
+export class ClearAllPostsCommand {
+  constructor() {
+  }
+}
+
+@CommandHandler(ClearAllPostsCommand)
+export class ClearAllPostsCase implements ICommandHandler<ClearAllPostsCommand> {
+  constructor(protected postsRepository: PostsRepository) {
+  }
+
+  async execute(command: ClearAllPostsCommand) {
+    await this.postsRepository.clearAll();
+  }
+}
+
+//////////////////////////////////////////////////////////////
 @Injectable()
 export class PostsService {
 
@@ -17,11 +35,6 @@ export class PostsService {
     protected postsRepository: PostsRepository,
     private blogsService: BlogsService
   ) {
-  }
-
-
-  async clearAllPosts(): Promise<void> {
-    await this.postsRepository.clearAll();
   }
 
 

@@ -5,10 +5,11 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
-  Param, Post, Put, Query,
+  Param, Post, Put,
   UsePipes,
   ValidationPipe
 } from "@nestjs/common";
+import { CommandBus } from "@nestjs/cqrs";
 import { PostsService } from "./posts.service";
 import { InputPostDto } from "./dto/input-post.dto";
 import { ViewPostDto } from "./dto/view-post.dto";
@@ -18,8 +19,9 @@ import { Pagination } from "../../decorators/paginationDecorator";
 
 @Controller("posts")
 export class PostsController {
-
-  constructor(protected postsService: PostsService) {
+  constructor(
+    private commandBus: CommandBus,
+    protected postsService: PostsService) {
   }
 
 

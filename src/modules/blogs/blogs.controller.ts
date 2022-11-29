@@ -10,6 +10,7 @@ import {
   UsePipes,
   ValidationPipe
 } from "@nestjs/common";
+import { CommandBus } from "@nestjs/cqrs";
 import { BlogsService } from "./blogs.service";
 import { InputBlogDto } from "./dto/input-blog.dto";
 import { ViewBlogDto } from "./dto/view-blog.dto";
@@ -23,6 +24,7 @@ import { Pagination } from "../../decorators/paginationDecorator";
 @Controller("blogs")
 export class BlogsController {
   constructor(
+    private commandBus: CommandBus,
     protected blogsService: BlogsService,
     protected postsService: PostsService) {
   }

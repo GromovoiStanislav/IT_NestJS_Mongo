@@ -1,26 +1,25 @@
-import { Injectable } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { ClearAllUsersCommand } from "../users/users.service";
-import { BlogsService } from "../blogs/blogs.service";
-import { PostsService } from "../posts/posts.service";
+import { ClearAllBlogsCommand } from "../blogs/blogs.service";
+import { ClearAllPostsCommand } from "../posts/posts.service";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 
-@Injectable()
-export class TestingService {
 
-  constructor(
-    private commandBus: CommandBus,
-    private blogsService: BlogsService,
-    private postsService: PostsService
-  ) {
+//////////////////////////////////////////////////////////////////
+export class DeleteAllDataCommand {
+  constructor() {
   }
+}
+@CommandHandler(DeleteAllDataCommand)
+export class DeleteAllDataUseCase implements ICommandHandler<DeleteAllDataCommand> {
+  constructor(private commandBus: CommandBus) {}
 
-  async deleteAllData(): Promise<void> {
+  async execute(command:DeleteAllDataCommand){
     await Promise.all([
       this.commandBus.execute(new ClearAllUsersCommand()),
-      this.blogsService.clearAllBlogs(),
-      this.postsService.clearAllPosts()
+      this.commandBus.execute(new ClearAllBlogsCommand()),
+      this.commandBus.execute(new ClearAllPostsCommand()),
     ]).catch(() => {
     });
   }
-
 }

@@ -1,16 +1,16 @@
 import { Controller, Delete, HttpCode, HttpStatus } from "@nestjs/common";
-import { TestingService } from "./testing.service";
+import { DeleteAllDataCommand  } from "./testing.service";
+import { CommandBus } from "@nestjs/cqrs";
 
 @Controller("testing")
 export class TestingController {
-
-  constructor(protected testingService: TestingService) {
+  constructor(private commandBus: CommandBus) {
   }
 
   @Delete("all-data")
   @HttpCode(HttpStatus.NO_CONTENT)//204
   async deleteAllData() {
-    await this.testingService.deleteAllData()
+    return this.commandBus.execute(new DeleteAllDataCommand());
   }
 
 }

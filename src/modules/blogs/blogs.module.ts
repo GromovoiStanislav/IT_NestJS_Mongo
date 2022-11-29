@@ -1,17 +1,22 @@
 import { forwardRef, Module } from "@nestjs/common";
 import { BlogsController } from "./blogs.controller";
-import { BlogsService } from "./blogs.service";
+import { BlogsService, ClearAllBlogsUseCase } from "./blogs.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Blog, BlogSchema } from "./schemas/blogs.schema";
 import { BlogsRepository } from "./blogs.repository";
 import { PostsModule } from "../posts/posts.module";
+import { CqrsModule } from "@nestjs/cqrs";
 
+const useCases = [ClearAllBlogsUseCase];
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), forwardRef(() => PostsModule)],
+  imports: [CqrsModule, MongooseModule.forFeature([{
+    name: Blog.name,
+    schema: BlogSchema
+  }]), forwardRef(() => PostsModule)],
   controllers: [BlogsController],
-  providers: [BlogsService, BlogsRepository],
-  exports: [BlogsService, BlogsRepository]
+  providers: [...useCases, BlogsService, BlogsRepository],
+  exports: [...useCases, BlogsService, BlogsRepository]
 })
 export class BlogsModule {
 }

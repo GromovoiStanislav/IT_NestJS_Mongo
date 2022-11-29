@@ -6,15 +6,31 @@ import BlogMapper from "./dto/blogsMapper";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { Blog } from "./schemas/blogs.schema";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 
+
+//////////////////////////////////////////////////////////////
+export class ClearAllBlogsCommand {
+  constructor() {
+  }
+}
+
+@CommandHandler(ClearAllBlogsCommand)
+export class ClearAllBlogsUseCase implements ICommandHandler<ClearAllBlogsCommand> {
+  constructor(protected blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: ClearAllBlogsCommand) {
+    await this.blogsRepository.clearAll();
+  }
+}
+
+
+//////////////////////////////////////////////////////////////
 @Injectable()
 export class BlogsService {
 
   constructor(protected blogsRepository: BlogsRepository) {
-  }
-
-  async clearAllBlogs(): Promise<void> {
-    await this.blogsRepository.clearAll();
   }
 
 
@@ -45,7 +61,7 @@ export class BlogsService {
 
   async getAllBlogs(searchName: string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
     const result = await this.blogsRepository.getAllBlogs(searchName, paginationParams);
-    return BlogMapper.fromModelsToPaginator(result)
+    return BlogMapper.fromModelsToPaginator(result);
   }
 
 }

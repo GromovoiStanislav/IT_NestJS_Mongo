@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,7 +6,6 @@ import {
   HttpCode, HttpException, HttpStatus,
   Param,
   Post,
-  Put,
   Query, UseGuards, UsePipes, ValidationPipe
 } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
