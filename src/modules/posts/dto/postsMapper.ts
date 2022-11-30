@@ -44,7 +44,7 @@ export default class PostMapper {
     viewPost.blogId = post.blogId;
     viewPost.blogName = post.blogName;
     viewPost.createdAt = post.createdAt;
-    //viewPost.extendedLikesInfo = new ExtendedLikesInfoDto();
+    viewPost.extendedLikesInfo = new ExtendedLikesInfoDto();
     return viewPost;
   }
 
