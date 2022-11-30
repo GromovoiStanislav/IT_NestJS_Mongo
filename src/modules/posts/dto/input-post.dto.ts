@@ -12,15 +12,14 @@ import { GetOneBlogCommand } from "../../blogs/blogs.service";
 import { Injectable } from "@nestjs/common";
 
 
-
-@ValidatorConstraint({ name: 'BlogIsExist', async: false })
+@ValidatorConstraint({ name: "BlogIsExist", async: false })
 @Injectable()
 class BlogIsExist implements ValidatorConstraintInterface {
-  constructor(private commandBus: CommandBus) {}
+  constructor(private commandBus: CommandBus) {
+  }
 
-  async validate(blogId: string){
-    if(await this.commandBus.execute(new GetOneBlogCommand(blogId)))
-      return false
+  async validate(value: string) {
+    return !!(await this.commandBus.execute(new GetOneBlogCommand(value)));
   }
 
   defaultMessage() {
@@ -30,28 +29,28 @@ class BlogIsExist implements ValidatorConstraintInterface {
 
 
 export class InputPostDto {
-  @Transform(({value}:TransformFnParams)=>value?.trim())
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsString()
   @IsNotEmpty()
   @MaxLength(30)
-  title: string
+  title: string;
 
-  @Transform(({value}:TransformFnParams)=>value?.trim())
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
-  shortDescription: string
+  shortDescription: string;
 
-  @Transform(({value}:TransformFnParams)=>value?.trim())
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsString()
   @IsNotEmpty()
   @MaxLength(1000)
-  content: string
+  content: string;
 
-  @Transform(({value}:TransformFnParams)=>value?.trim())
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsString()
   @IsNotEmpty()
-  //@Validate(BlogIsExist)
-  blogId: string
+    //@Validate(BlogIsExist)
+  blogId: string;
 }
 

@@ -9,12 +9,10 @@ import { TestingModule } from "./modules/testing/testing.module";
 import { BlogsModule } from "./modules/blogs/blogs.module";
 import { PostsModule } from "./modules/posts/posts.module";
 import { AuthModule } from "./modules/auth/auth.module";
-import { JwtModule } from "@nestjs/jwt";
 
 
 @Module({
-  imports: [configModule, DatabaseModule, UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule,
-    JwtModule.register({})],
+  imports: [configModule, DatabaseModule, UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule],
   controllers: [AppController],
   providers: [AppService]
 })

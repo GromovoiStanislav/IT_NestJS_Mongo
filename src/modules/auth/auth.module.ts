@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { AuthController } from "./auth.controller";
 import { CqrsModule } from "@nestjs/cqrs";
-import { JwtService } from "@nestjs/jwt";
+
 import {
   ConfirmEmailUseCase,
   LoginUserUseCase,
@@ -11,7 +11,7 @@ import {
 
 import { EmailAdapter } from "../../utils/email-adapter";
 import { Settings } from "../../settings";
-import { JWT_Service } from "../../utils/jwtService";
+import { JWT_Module } from "../jwt/jwt.module";
 
 
 const useCases = [
@@ -23,9 +23,9 @@ const useCases = [
 
 
 @Module({
-  imports: [CqrsModule],
+  imports: [CqrsModule,JWT_Module],
   controllers: [AuthController],
-  providers: [...useCases, EmailAdapter, JWT_Service, JwtService, Settings]
+  providers: [...useCases, EmailAdapter, Settings]
 })
 export class AuthModule {
 }

@@ -12,7 +12,7 @@ import {
   UpdateConfirmCodeCommand
 } from "../users/users.service";
 import { comparePassword } from "../../utils/bcryptUtils";
-import { JWT_Service } from "../../utils/jwtService";
+import { JWT_Service } from "../jwt/jwtService";
 
 
 ////////////////////////////////////////////////////////////////////

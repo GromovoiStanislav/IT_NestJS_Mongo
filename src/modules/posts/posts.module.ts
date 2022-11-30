@@ -12,12 +12,10 @@ import {
 import { PostsRepository } from "./posts.repository";
 import { Post, PostSchema } from "./schemas/posts.schema";
 import { CqrsModule } from "@nestjs/cqrs";
-import { JWT_Service } from "../../utils/jwtService";
-import { Settings } from "../../settings";
-import { JwtService } from "@nestjs/jwt";
 import { PostLike, PostLikeSchema } from "./schemas/post-likes.schema";
 import { PostLikesRepository } from "./postLikes.repository";
 import { UserIdMiddleware } from "../../middlewares/userId.middleware";
+import { JWT_Module } from "../jwt/jwt.module";
 
 const useCases = [
   ClearAllPostsUseCase,
@@ -36,12 +34,12 @@ const useCases = [
     MongooseModule.forFeature([
       { name: Post.name, schema: PostSchema },
       { name: PostLike.name, schema: PostLikeSchema }
-    ])],
+    ]),
+    JWT_Module],
   controllers: [PostsController],
-  providers: [...useCases, PostsRepository,PostLikesRepository, JWT_Service, JwtService, Settings]
-
+  providers: [...useCases, PostsRepository, PostLikesRepository]
 })
-//export class PostsModule {}
+
 export class PostsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
