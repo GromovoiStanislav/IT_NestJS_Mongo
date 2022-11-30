@@ -4,7 +4,7 @@ export const CurrentUserId = createParamDecorator(
   (data: unknown, context: ExecutionContext): number => {
     const request = context.switchToHttp().getRequest();
     if (!request.userid) {
-      throw Error("JwtAuthGuard must be used");
+      throw Error("BearerAuthGuard must be used");
     }
     return request.userid;
   }
