@@ -12,7 +12,7 @@ export class BearerAuthGuard implements CanActivate {
   constructor(private jwtService: JWT_Service) {
   }
 
-//: boolean | Promise<boolean> | Observable<boolean>
+  //: boolean | Promise<boolean> | Observable<boolean>
   async canActivate(
     context: ExecutionContext
   ) {
