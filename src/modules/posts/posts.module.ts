@@ -41,11 +41,11 @@ const useCases = [
   providers: [...useCases, PostsRepository,PostLikesRepository, JWT_Service, JwtService, Settings]
 
 })
-export class PostsModule {}
-// export class PostsModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     consumer
-//       .apply(UserIdMiddleware)
-//       .forRoutes('posts');
-//   }
-// }
+//export class PostsModule {}
+export class PostsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserIdMiddleware)
+      .forRoutes('posts');
+  }
+}

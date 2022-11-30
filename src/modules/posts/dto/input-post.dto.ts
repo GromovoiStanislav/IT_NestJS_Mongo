@@ -49,7 +49,7 @@ export class InputPostDto {
   @Transform(({value}:TransformFnParams)=>value?.trim())
   @IsString()
   @IsNotEmpty()
-  //@Validate(BlogIsExist)
+  @Validate(BlogIsExist)
   blogId: string
 }
 
