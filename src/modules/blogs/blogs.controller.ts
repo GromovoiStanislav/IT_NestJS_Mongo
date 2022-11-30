@@ -45,7 +45,6 @@ export class BlogsController {
   async updateBlog(@Param("id") blogId: string, @Body() inputBlog: InputBlogDto): Promise<void> {
     const result = await this.commandBus.execute(new UpdateBlogCommand(blogId, inputBlog))
     if (!result) {
-      //throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
       throw new NotFoundException();
     }
     return;
@@ -91,7 +90,6 @@ export class BlogsController {
   async createPostByBlogId(
     @Param("blogId") blogId: string,
     @Body() inputPost: InputBlogPostDto): Promise<ViewPostDto> {
-    //const result = await this.postsService.createPostByBlogId(blogId, inputPost);
     const result = await this.commandBus.execute(new CreatePostByBlogIdCommand(blogId, inputPost));
 
     if (!result) {

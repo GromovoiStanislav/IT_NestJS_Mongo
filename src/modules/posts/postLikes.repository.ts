@@ -30,5 +30,34 @@ export class PostLikesRepository {
       }, { upsert: true });
   }
 
+  //: Promise<ExtendedLikesInfoViewModel>
+  async likesInfoByPostID(postId: string, userId?: string) {
+    const likesCount = await this.postLikeModel.countDocuments({postId, likeStatus: 'Like'})
+    const dislikesCount = await this.postLikeModel.countDocuments({postId, likeStatus: 'Dislike'})
+    let myStatus = 'None'
+    if (userId) {
+      const doc = await this.postLikeModel.findOne({postId, userId})
+      if (doc) {
+        myStatus = doc.likeStatus
+      }
+    }
+    return {
+      likesCount, dislikesCount, myStatus,
+      newestLikes: await this.newestLikes(postId, 3)
+    }
+  }
+
+
+  //: Promise<LikesDetailsViewModel[]>
+  async newestLikes(postId: string, limit: number) {
+    const result = await this.postLikeModel.find({postId, likeStatus: 'Like'}).limit(limit).sort({addedAt: -1})
+    return result.map(el => ({
+      addedAt: el.addedAt,
+      userId: el.userId,
+      login: el.userLogin,
+    }))
+  }
+
+
 
 }

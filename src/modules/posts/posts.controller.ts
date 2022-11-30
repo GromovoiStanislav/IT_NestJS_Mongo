@@ -19,9 +19,9 @@ import { ViewPostDto } from "./dto/view-post.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
-import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { InputLikeDto } from "./dto/input-like.dto";
-import { CurrentUserId } from "../../decorators/current-user-id.decorator";
+import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 
 @Controller("posts")
 export class PostsController {
@@ -58,7 +58,10 @@ export class PostsController {
 
 
   @Get(":id")
-  async getOnePost(@Param("id") postId: string): Promise<ViewPostDto> {
+  @UseGuards(AuthUserIdGuard)
+  async getOnePost(
+    @Param("id") postId: string,
+    @CurrentUserId() userId: string): Promise<ViewPostDto> {
     const result = await this.commandBus.execute(new GetOnePostCommand(postId));
     if (!result) {
       throw new NotFoundException();
@@ -75,7 +78,7 @@ export class PostsController {
 
   @Put(":postId/like-status")
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(BearerAuthGuard)
+  @UseGuards(AuthUserIdGuard)
   async updateLikeByID(
     @Param("postId") postId: string,
     @Body() inputLike: InputLikeDto,
@@ -84,9 +87,8 @@ export class PostsController {
     if (!result) {
       throw new NotFoundException();
     }
-    return this.commandBus.execute(new PostsUpdateLikeByIDCommand(postId, userId, inputLike.likeStatus))
+    return this.commandBus.execute(new PostsUpdateLikeByIDCommand(postId, userId, inputLike.likeStatus));
   }
-
 
 
 }

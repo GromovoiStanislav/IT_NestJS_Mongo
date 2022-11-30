@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { PostsController } from "./posts.controller";
 import {
@@ -17,6 +17,7 @@ import { Settings } from "../../settings";
 import { JwtService } from "@nestjs/jwt";
 import { PostLike, PostLikeSchema } from "./schemas/post-likes.schema";
 import { PostLikesRepository } from "./postLikes.repository";
+import { UserIdMiddleware } from "../../middlewares/userId.middleware";
 
 const useCases = [
   ClearAllPostsUseCase,
@@ -40,5 +41,10 @@ const useCases = [
   providers: [...useCases, PostsRepository,PostLikesRepository, JWT_Service, JwtService, Settings]
 
 })
-export class PostsModule {
+export class PostsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserIdMiddleware)
+      .forRoutes('posts');
+  }
 }

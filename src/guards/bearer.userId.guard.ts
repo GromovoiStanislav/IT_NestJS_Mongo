@@ -1,13 +1,13 @@
 import {
   CanActivate,
   ExecutionContext,
-  Injectable, UnauthorizedException
+  Injectable
 } from "@nestjs/common";
 //import { Observable } from "rxjs";
 import { JWT_Service } from "../utils/jwtService";
 
 @Injectable()
-export class BearerAuthGuard implements CanActivate {
+export class BearerUserIdGuard implements CanActivate {
 
   constructor(
     private jwtService: JWT_Service) {
@@ -20,17 +20,12 @@ export class BearerAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     let token = request.header("Authorization");
-    if (!token) {
-      throw new UnauthorizedException();
+    if (token) {
+      token = token.split(" ")[1];
+      request.userId = await this.jwtService.getUserIdByToken(token);
+    } else {
+      request.userId = null;
     }
-
-    token = token.split(" ")[1];
-    const userId = await this.jwtService.getUserIdByToken(token);
-
-    if (!userId) {
-      throw new UnauthorizedException();
-    }
-    request.userId = userId;
 
     return true;
   }
