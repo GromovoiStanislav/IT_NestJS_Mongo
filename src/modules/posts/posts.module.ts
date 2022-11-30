@@ -1,4 +1,4 @@
-import { forwardRef, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { PostsController } from "./posts.controller";
 import {
@@ -16,6 +16,7 @@ import { JWT_Service } from "../../utils/jwtService";
 import { Settings } from "../../settings";
 import { JwtService } from "@nestjs/jwt";
 import { PostLike, PostLikeSchema } from "./schemas/post-likes.schema";
+import { PostLikesRepository } from "./postLikes.repository";
 
 const useCases = [
   ClearAllPostsUseCase,
@@ -36,7 +37,7 @@ const useCases = [
       { name: PostLike.name, schema: PostLikeSchema }
     ])],
   controllers: [PostsController],
-  providers: [...useCases, PostsRepository, JWT_Service, JwtService, Settings]
+  providers: [...useCases, PostsRepository,PostLikesRepository, JWT_Service, JwtService, Settings]
 
 })
 export class PostsModule {
