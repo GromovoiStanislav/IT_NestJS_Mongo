@@ -82,8 +82,8 @@ export class PostsController {
 
   @Put(":postId/like-status")
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(BearerAuthGuard)
-  //@UseGuards(AuthUserIdGuard)
+  //@UseGuards(BearerAuthGuard)
+  @UseGuards(AuthUserIdGuard)
   async updateLikeByID(
     @Param("postId") postId: string,
     @Body() inputLike: InputLikeDto,
