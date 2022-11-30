@@ -4,7 +4,7 @@ import {
   Delete, Get,
   HttpCode,
   HttpStatus, NotFoundException,
-  Param, Post, Put,
+  Param, Post, Put, UseGuards
 } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import {
@@ -19,6 +19,9 @@ import { ViewPostDto } from "./dto/view-post.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
+import { BearerAuthGuard } from "../../guards/bearer .auth.guard";
+import { InputLikeDto } from "./dto/input-like.dto";
+import { CurrentUserId } from "../../decorators/current-user-id.decorator";
 
 @Controller("posts")
 export class PostsController {
@@ -65,8 +68,23 @@ export class PostsController {
 
 
   @Get()
-  getAllPosts(@Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
+  async getAllPosts(@Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
     return this.commandBus.execute(new GetAllPostsCommand(paginationParams));
+  }
+
+
+  @Put(":postId/like-status")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(BearerAuthGuard)
+  async updateLikeByID(
+    @Param("postId") postId: string,
+    @Body() inputLike: InputLikeDto,
+    @CurrentUserId() userId: string) {
+    const result = await this.commandBus.execute(new GetOnePostCommand(postId));
+    if (!result) {
+      throw new NotFoundException();
+    }
+    //return this.commandBus.execute(new PostsUpdateLikeByID(postId,userId,inputLike.likeStatus))
   }
 
 

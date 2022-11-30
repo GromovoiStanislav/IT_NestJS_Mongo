@@ -25,7 +25,7 @@ const useCases = [
 @Module({
   imports: [CqrsModule],
   controllers: [AuthController],
-  providers: [...useCases, EmailAdapter, JwtService, JWT_Service, Settings]
+  providers: [...useCases, EmailAdapter, JWT_Service, JwtService, Settings]
 })
 export class AuthModule {
 }
