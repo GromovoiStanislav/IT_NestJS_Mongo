@@ -5,7 +5,7 @@ import {
   HttpCode,
   HttpStatus, NotFoundException,
   Param,
-  Post, Put, Query,
+  Post, Put, Query, UseGuards
 } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import {
@@ -22,6 +22,7 @@ import { ViewPostDto } from "../posts/dto/view-post.dto";
 import { CreatePostByBlogIdCommand, GetAllPostsByBlogIdCommand } from "../posts/posts.service";
 import { InputBlogPostDto } from "../posts/dto/input-blog-post.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
+import { BaseAuthGuard } from "../../guards/base.auth.guard";
 
 @Controller("blogs")
 export class BlogsController {
@@ -31,6 +32,7 @@ export class BlogsController {
 
 
   @Post()
+  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createBlog(@Body() inputBlog: InputBlogDto): Promise<ViewBlogDto> {
     return this.commandBus.execute(new CreateBlogCommand(inputBlog))
@@ -38,6 +40,7 @@ export class BlogsController {
 
 
   @Put(":id")
+  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param("id") blogId: string, @Body() inputBlog: InputBlogDto): Promise<void> {
     const result = await this.commandBus.execute(new UpdateBlogCommand(blogId, inputBlog))
@@ -50,6 +53,7 @@ export class BlogsController {
 
 
   @Delete(":id")
+  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param("id") blogId: string): Promise<void> {
     const result = await this.commandBus.execute(new DeleteBlogCommand(blogId))
@@ -82,6 +86,7 @@ export class BlogsController {
 
 
   @Post(":blogId/posts")
+  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createPostByBlogId(
     @Param("blogId") blogId: string,
