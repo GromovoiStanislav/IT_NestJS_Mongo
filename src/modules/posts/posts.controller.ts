@@ -11,7 +11,7 @@ import {
   CreatePostCommand,
   DeletePostCommand,
   GetAllPostsCommand,
-  GetOnePostCommand,
+  GetOnePostCommand, PostsUpdateLikeByIDCommand,
   UpdatePostCommand
 } from "./posts.service";
 import { InputPostDto } from "./dto/input-post.dto";
@@ -84,7 +84,7 @@ export class PostsController {
     if (!result) {
       throw new NotFoundException();
     }
-    //return this.commandBus.execute(new PostsUpdateLikeByID(postId,userId,inputLike.likeStatus))
+    return this.commandBus.execute(new PostsUpdateLikeByIDCommand(postId, userId, inputLike.likeStatus))
   }
 
 

@@ -65,4 +65,9 @@ export class UsersRepository {
     await this.userModel.findOneAndUpdate({ id: userId }, { "emailConfirmation.isConfirmed": true });
   }
 
+  async findUserById(id: string): Promise<User | null> {
+    return this.userModel.findOne({id });
+  }
+
+
 }

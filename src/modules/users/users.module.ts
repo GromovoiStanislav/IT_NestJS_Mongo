@@ -5,7 +5,7 @@ import {
   ClearAllUsersUseCase, ConfirmUserUseCase,
   CreateUserUseCase,
   DeleteUserUseCase,
-  FindAllUsersUseCase, GetUserByConfirmationCodeUseCase,
+  FindAllUsersUseCase, GetUserByConfirmationCodeUseCase, GetUserByIdUseCase,
   GetUserByLoginOrEmailUseCase,
   UpdateConfirmCodeUseCase
 } from "./users.service";
@@ -21,7 +21,8 @@ const useCases = [
   GetUserByLoginOrEmailUseCase,
   UpdateConfirmCodeUseCase,
   GetUserByConfirmationCodeUseCase,
-  ConfirmUserUseCase
+  ConfirmUserUseCase,
+  GetUserByIdUseCase
 ];
 
 @Module({

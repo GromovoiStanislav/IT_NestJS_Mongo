@@ -8,6 +8,8 @@ import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { InputBlogPostDto } from "./dto/input-blog-post.dto";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { PostLikesRepository } from "./postLikes.repository";
+import { GetUserByIdCommand } from "../users/users.service";
 
 
 //////////////////////////////////////////////////////////////
@@ -16,11 +18,18 @@ export class ClearAllPostsCommand {
 
 @CommandHandler(ClearAllPostsCommand)
 export class ClearAllPostsUseCase implements ICommandHandler<ClearAllPostsCommand> {
-  constructor(protected postsRepository: PostsRepository) {
+  constructor(
+    protected postsRepository: PostsRepository,
+    protected postLikesRepository: PostLikesRepository
+  ) {
   }
 
   async execute(command: ClearAllPostsCommand) {
-    await this.postsRepository.clearAll();
+    await Promise.all([
+      await this.postsRepository.clearAll(),
+      await this.postLikesRepository.clearAll()
+    ]).catch(() => {
+    });
   }
 }
 
@@ -170,4 +179,27 @@ export class CreatePostByBlogIdUseCase implements ICommandHandler<CreatePostByBl
   }
 }
 
+//////////////////////////////////////////////////////////////
+export class PostsUpdateLikeByIDCommand {
+  constructor(public postId: string, public userId: string, public likeStatus: string) {
+  }
+}
 
+@CommandHandler(PostsUpdateLikeByIDCommand)
+export class PostsUpdateLikeByIDUseCase implements ICommandHandler<PostsUpdateLikeByIDCommand> {
+  constructor(
+    private commandBus: CommandBus,
+    protected postLikesRepository: PostLikesRepository
+  ) {
+  }
+
+  async execute(command: PostsUpdateLikeByIDCommand) {
+    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
+
+    if (command.likeStatus === "None") {
+      await this.postLikesRepository.deleteByPostIDUserID(command.postId, command.userId);
+    } else {
+      await this.postLikesRepository.updateLikeByID(command.postId, command.userId, user.userLogin, command.likeStatus);
+    }
+  }
+}

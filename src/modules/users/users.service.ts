@@ -122,6 +122,23 @@ export class GetUserByLoginOrEmailUseCase implements ICommandHandler<GetUserByLo
 
 
 ////////////////////////////////////////////////////////////
+export class GetUserByIdCommand {
+  constructor(public userId: string) {
+  }
+}
+
+@CommandHandler(GetUserByIdCommand)
+export class GetUserByIdUseCase implements ICommandHandler<GetUserByIdCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: GetUserByIdCommand) {
+    return await this.usersRepository.findUserById(command.userId);
+  }
+}
+
+
+////////////////////////////////////////////////////////////
 export class UpdateConfirmCodeCommand {
   constructor(public userId: string, public confirmationCode: string) {
   }

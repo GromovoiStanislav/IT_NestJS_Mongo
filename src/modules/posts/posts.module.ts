@@ -6,16 +6,16 @@ import {
   CreatePostUseCase,
   DeletePostUseCase, GetAllPostsByBlogIdUseCase,
   GetAllPostsUseCase,
-  GetOnePostUseCase,
+  GetOnePostUseCase, PostsUpdateLikeByIDUseCase,
   UpdatePostUseCase
 } from "./posts.service";
 import { PostsRepository } from "./posts.repository";
 import { Post, PostSchema } from "./schemas/posts.schema";
-import { BlogsModule } from "../blogs/blogs.module";
 import { CqrsModule } from "@nestjs/cqrs";
 import { JWT_Service } from "../../utils/jwtService";
 import { Settings } from "../../settings";
 import { JwtService } from "@nestjs/jwt";
+import { PostLike, PostLikeSchema } from "./schemas/post-likes.schema";
 
 const useCases = [
   ClearAllPostsUseCase,
@@ -25,17 +25,19 @@ const useCases = [
   GetOnePostUseCase,
   GetAllPostsUseCase,
   GetAllPostsByBlogIdUseCase,
-  CreatePostByBlogIdUseCase
+  CreatePostByBlogIdUseCase,
+  PostsUpdateLikeByIDUseCase
 ];
 
 @Module({
-  imports: [CqrsModule, MongooseModule.forFeature([{
-    name: Post.name,
-    schema: PostSchema
-  }])],//, forwardRef(() => BlogsModule)
+  imports: [CqrsModule,
+    MongooseModule.forFeature([
+      { name: Post.name, schema: PostSchema },
+      { name: PostLike.name, schema: PostLikeSchema }
+    ])],
   controllers: [PostsController],
-  providers: [...useCases, PostsRepository,JWT_Service, JwtService, Settings],
-  //exports: [PostsRepository]
+  providers: [...useCases, PostsRepository, JWT_Service, JwtService, Settings]
+
 })
 export class PostsModule {
 }
