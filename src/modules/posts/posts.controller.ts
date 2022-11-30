@@ -23,6 +23,7 @@ import { InputLikeDto } from "./dto/input-like.dto";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
+import { BearerUserIdGuard } from "../../guards/bearer.userId.guard";
 
 @Controller("posts")
 export class PostsController {
@@ -59,7 +60,7 @@ export class PostsController {
 
 
   @Get(":id")
-  //@UseGuards(AuthUserIdGuard)
+  @UseGuards(BearerUserIdGuard)
   async getOnePost(
     @Param("id") postId: string,
     @CurrentUserId() userId: string): Promise<ViewPostDto> {
