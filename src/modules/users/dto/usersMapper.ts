@@ -33,7 +33,7 @@ export default class UsersMapper {
     viewUser.login = user.login;
     viewUser.email = user.email;
     viewUser.createdAt = user.createdAt;
-    viewUser.banInfo = new ViewBanUsersInfo();
+    //viewUser.banInfo = new ViewBanUsersInfo();
     return viewUser;
   }
 

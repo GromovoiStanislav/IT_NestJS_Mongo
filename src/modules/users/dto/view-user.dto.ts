@@ -3,7 +3,7 @@ export class ViewUserDto {
   login: string;
   email: string;
   createdAt: string;
-  banInfo: ViewBanUsersInfo;
+  //banInfo: ViewBanUsersInfo;
 }
 
 export class ViewBanUsersInfo {
