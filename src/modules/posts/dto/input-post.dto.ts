@@ -24,7 +24,7 @@ class BlogIsExist implements ValidatorConstraintInterface {
   }
 
   defaultMessage() {
-    return `blog isn't exist`;
+    return `blog doesn't exist`;
   }
 }
 
