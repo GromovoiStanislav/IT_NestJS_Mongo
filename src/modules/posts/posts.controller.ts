@@ -19,7 +19,7 @@ import { ViewPostDto } from "./dto/view-post.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
-import { BearerAuthGuard } from "../../guards/bearer .auth.guard";
+import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { InputLikeDto } from "./dto/input-like.dto";
 import { CurrentUserId } from "../../decorators/current-user-id.decorator";
 
