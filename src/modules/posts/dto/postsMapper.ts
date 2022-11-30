@@ -11,7 +11,7 @@ import { UpdatePostDto } from "./update-post.dto";
 
 export default class PostMapper {
 
-  static fromInputToCreate(inputPost: InputPostDto, blogName:string): CreatePostDto {
+  static fromInputToCreate(inputPost: InputPostDto, blogName: string): CreatePostDto {
     const createPost =  new CreatePostDto();
     createPost.id = uid();
     createPost.title = inputPost.title;

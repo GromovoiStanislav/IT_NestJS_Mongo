@@ -22,10 +22,10 @@ const useCases = [
 ];
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), CqrsModule, forwardRef(() => PostsModule)],
+  imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), CqrsModule],//, forwardRef(() => PostsModule)
   controllers: [BlogsController],
   providers: [...useCases, BlogsRepository],
-  exports: [...useCases, BlogsRepository]
+  //exports: [BlogsRepository]
 })
 export class BlogsModule {
 }

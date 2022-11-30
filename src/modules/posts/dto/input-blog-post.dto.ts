@@ -19,5 +19,4 @@ export class InputBlogPostDto {
   @IsNotEmpty()
   @MaxLength(1000)
   content: string
-
 }

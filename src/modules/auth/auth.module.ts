@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
+import { Module } from "@nestjs/common";
+import { AuthController } from "./auth.controller";
 import { CqrsModule } from "@nestjs/cqrs";
 import { JwtService } from "@nestjs/jwt";
 import {
@@ -8,24 +8,24 @@ import {
   RegisterUserUseCase,
   ResendConfirmationCodeUseCase
 } from "./auth.service";
-import { UsersModule } from "../users/users.module";
+
 import { EmailAdapter } from "../../utils/email-adapter";
 import { Settings } from "../../settings";
 import { JWT_Service } from "../../utils/jwtService";
 
 
-const useCases= [
+const useCases = [
   RegisterUserUseCase,
   ResendConfirmationCodeUseCase,
   ConfirmEmailUseCase,
   LoginUserUseCase
-]
-
+];
 
 
 @Module({
-  imports:[CqrsModule,UsersModule],
+  imports: [CqrsModule],
   controllers: [AuthController],
-  providers: [...useCases,EmailAdapter,JwtService,JWT_Service,Settings],
+  providers: [...useCases, EmailAdapter, JwtService, JWT_Service, Settings]
 })
-export class AuthModule {}
+export class AuthModule {
+}

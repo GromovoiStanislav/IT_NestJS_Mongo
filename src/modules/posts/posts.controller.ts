@@ -3,14 +3,17 @@ import {
   Controller,
   Delete, Get,
   HttpCode,
-  HttpException,
-  HttpStatus,
+  HttpStatus, NotFoundException,
   Param, Post, Put,
-  UsePipes,
-  ValidationPipe
 } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
-import { PostsService } from "./posts.service";
+import {
+  CreatePostCommand,
+  DeletePostCommand,
+  GetAllPostsCommand,
+  GetOnePostCommand,
+  UpdatePostCommand
+} from "./posts.service";
 import { InputPostDto } from "./dto/input-post.dto";
 import { ViewPostDto } from "./dto/view-post.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
@@ -20,47 +23,42 @@ import { Pagination } from "../../decorators/paginationDecorator";
 @Controller("posts")
 export class PostsController {
   constructor(
-    private commandBus: CommandBus,
-    protected postsService: PostsService) {
+    private commandBus: CommandBus) {
   }
 
 
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(@Param("id") postId: string): Promise<void> {
-    const result = await this.postsService.deletePost(postId);
+    const result = this.commandBus.execute(new DeletePostCommand(postId));
     if (!result) {
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
-    return;
   }
 
 
-  @UsePipes(new ValidationPipe())
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createPost(@Body() inputPost: InputPostDto): Promise<ViewPostDto> {
-    return await this.postsService.createPost(inputPost);
+    return this.commandBus.execute(new CreatePostCommand(inputPost));
   }
 
 
-  @UsePipes(new ValidationPipe())
   @Put(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePost(@Param("id") postId: string, @Body() inputPost: InputPostDto): Promise<void> {
-    const result = await this.postsService.updatePost(postId, inputPost);
+    const result = await this.commandBus.execute(new UpdatePostCommand(postId, inputPost));
     if (!result) {
-      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
-    return;
   }
 
 
   @Get(":id")
   async getOnePost(@Param("id") postId: string): Promise<ViewPostDto> {
-    const result = await this.postsService.getOnePost(postId);
+    const result = await this.commandBus.execute(new GetOnePostCommand(postId));
     if (!result) {
-      throw new HttpException("Not Found Get", HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     return result;
   }
@@ -68,7 +66,7 @@ export class PostsController {
 
   @Get()
   getAllPosts(@Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
-    return this.postsService.getAllPosts(paginationParams);
+    return this.commandBus.execute(new GetAllPostsCommand(paginationParams));
   }
 
 

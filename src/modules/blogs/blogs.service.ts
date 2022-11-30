@@ -112,37 +112,3 @@ export class GetAllBlogsUseCase implements ICommandHandler<GetAllBlogsCommand> {
   }
 }
 
-
-
-
-//////////////////////////////////////////////////////////////
-// @Injectable()
-// export class BlogsService {
-//
-//   constructor(protected blogsRepository: BlogsRepository) {
-//   }
-//
-//   // async updateBlog(blogId: string, inputBlog: InputBlogDto): Promise<Blog | null> {
-//   //   return this.blogsRepository.updateBlog(blogId, BlogMapper.fromInputToUpdate(inputBlog));
-//   // }
-//
-//   // async deleteBlog(blogId: string): Promise<Blog | null> {
-//   //   return this.blogsRepository.deleteBlog(blogId);
-//   // }
-//
-//
-//   // async getOneBlog(blogId: string): Promise<ViewBlogDto | null> {
-//   //   const blog = await this.blogsRepository.getOneBlog(blogId);
-//   //   if (blog) {
-//   //     return BlogMapper.fromModelToView(blog);
-//   //   }
-//   //   return null;
-//   // }
-//
-//
-//   // async getAllBlogs(searchName: string, paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
-//   //   const result = await this.blogsRepository.getAllBlogs(searchName, paginationParams);
-//   //   return BlogMapper.fromModelsToPaginator(result);
-//   // }
-//
-// }

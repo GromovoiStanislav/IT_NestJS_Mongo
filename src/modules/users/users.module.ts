@@ -28,7 +28,7 @@ const useCases = [
   imports: [CqrsModule, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
   controllers: [UsersController],
   providers: [...useCases, UsersRepository],
-  exports: [...useCases, UsersRepository]
+  //exports: [ UsersRepository]
 })
 export class UsersModule {
 }
