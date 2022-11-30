@@ -59,11 +59,12 @@ export class PostsController {
   }
 
 
+  //@CurrentUserId() userId: string
   @Get(":id")
   @UseGuards(BearerUserIdGuard)
   async getOnePost(
     @Param("id") postId: string,
-    @CurrentUserId() userId: string): Promise<ViewPostDto> {
+    ): Promise<ViewPostDto> {
     const result = await this.commandBus.execute(new GetOnePostCommand(postId));
     if (!result) {
       throw new NotFoundException();
