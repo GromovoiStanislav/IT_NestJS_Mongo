@@ -9,10 +9,12 @@ import {
 import { Transform, TransformFnParams } from "class-transformer";
 import { CommandBus } from "@nestjs/cqrs";
 import { GetOneBlogCommand } from "../../blogs/blogs.service";
+import { Injectable } from "@nestjs/common";
 
 
 
 @ValidatorConstraint({ name: 'BlogIsExist', async: false })
+@Injectable()
 class BlogIsExist implements ValidatorConstraintInterface {
   constructor(private commandBus: CommandBus) {}
 
@@ -49,7 +51,7 @@ export class InputPostDto {
   @Transform(({value}:TransformFnParams)=>value?.trim())
   @IsString()
   @IsNotEmpty()
-  //@Validate(BlogIsExist)
+  @Validate(BlogIsExist)
   blogId: string
 }
 
