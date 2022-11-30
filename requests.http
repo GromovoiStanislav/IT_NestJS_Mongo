@@ -29,3 +29,8 @@ content-type: application/json
   "name": "John",
   "childrenCount": 2
 }
+
+
+###
+GET http://localhost:3000/posts/8
+Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNjY5ODI5OTIxNjg0IiwiaWF0IjoxNjY5ODI5OTIyLCJleHAiOjE2Njk4MzAyMjJ9.GAs2ZfSOMiFNVbvmX8lK45qz54Ewu6T-q0mUUQlAX4w"

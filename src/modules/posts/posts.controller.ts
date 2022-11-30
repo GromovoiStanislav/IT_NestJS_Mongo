@@ -59,7 +59,6 @@ export class PostsController {
   }
 
 
-
   @Get(":id")
   //@UseGuards(BearerUserIdGuard)
   async getOnePost(
