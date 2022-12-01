@@ -224,7 +224,7 @@ export class PostsUpdateLikeByIDUseCase implements ICommandHandler<PostsUpdateLi
     if (command.likeStatus === "None") {
       await this.postLikesRepository.deleteByPostIDUserID(command.postId, command.userId);
     } else {
-      await this.postLikesRepository.updateLikeByID(command.postId, command.userId, user.userLogin, command.likeStatus);
+      await this.postLikesRepository.updateLikeByID(command.postId, command.userId, user.login, command.likeStatus);
     }
   }
 }

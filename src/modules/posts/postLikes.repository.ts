@@ -12,7 +12,7 @@ export class PostLikesRepository {
 
 
   async clearAll(): Promise<void> {
-    await this.postLikeModel.deleteMany({});
+    //await this.postLikeModel.deleteMany({});
   }
 
   async deleteByPostIDUserID(postId: string, userId: string): Promise<void> {
