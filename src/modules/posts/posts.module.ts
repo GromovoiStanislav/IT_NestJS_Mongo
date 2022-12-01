@@ -16,6 +16,8 @@ import { PostLike, PostLikeSchema } from "./schemas/post-likes.schema";
 import { PostLikesRepository } from "./postLikes.repository";
 import { UserIdMiddleware } from "../../middlewares/userId.middleware";
 import { JWT_Module } from "../jwt/jwt.module";
+import { BlogIdValidator } from "./dto/blogId.validator";
+
 
 const useCases = [
   ClearAllPostsUseCase,
@@ -37,7 +39,8 @@ const useCases = [
     ]),
     JWT_Module],
   controllers: [PostsController],
-  providers: [...useCases, PostsRepository, PostLikesRepository]
+  providers: [...useCases, PostsRepository, PostLikesRepository, BlogIdValidator],
+  exports:[]
 })
 
 export class PostsModule implements NestModule {

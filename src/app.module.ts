@@ -9,10 +9,11 @@ import { TestingModule } from "./modules/testing/testing.module";
 import { BlogsModule } from "./modules/blogs/blogs.module";
 import { PostsModule } from "./modules/posts/posts.module";
 import { AuthModule } from "./modules/auth/auth.module";
+import { CqrsModule } from "@nestjs/cqrs";
 
 
 @Module({
-  imports: [configModule, DatabaseModule, UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule],
+  imports: [CqrsModule, configModule, DatabaseModule, UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule],
   controllers: [AppController],
   providers: [AppService]
 })

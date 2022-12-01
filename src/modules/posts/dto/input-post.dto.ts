@@ -3,30 +3,9 @@ import {
   IsNotEmpty,
   MaxLength,
   Validate,
-  ValidatorConstraintInterface,
-  ValidatorConstraint
 } from "class-validator";
 import { Transform, TransformFnParams } from "class-transformer";
-import { CommandBus } from "@nestjs/cqrs";
-import { GetOneBlogCommand } from "../../blogs/blogs.service";
-import { Injectable } from "@nestjs/common";
-
-
-@ValidatorConstraint({ name: "BlogIsExist", async: false })
-@Injectable()
-class BlogIsExist implements ValidatorConstraintInterface {
-  constructor(private commandBus: CommandBus) {
-  }
-
-  async validate(value: string) {
-    return !!(await this.commandBus.execute(new GetOneBlogCommand(value)));
-  }
-
-  defaultMessage() {
-    return `blog doesn't exist`;
-  }
-}
-
+import { BlogIdValidator } from "./blogId.validator";
 
 export class InputPostDto {
   @Transform(({ value }: TransformFnParams) => value?.trim())
@@ -50,7 +29,7 @@ export class InputPostDto {
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsString()
   @IsNotEmpty()
-    //@Validate(BlogIsExist)
+  @Validate(BlogIdValidator)
   blogId: string;
 }
 

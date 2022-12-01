@@ -24,6 +24,7 @@ const useCases = [
   imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), CqrsModule],
   controllers: [BlogsController],
   providers: [...useCases, BlogsRepository],
+  exports:[]
 })
 export class BlogsModule {
 }
