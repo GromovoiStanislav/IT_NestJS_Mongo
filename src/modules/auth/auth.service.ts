@@ -4,7 +4,7 @@ import { BadRequestException, UnauthorizedException } from "@nestjs/common";
 import { v4 as uuidv4 } from "uuid";
 
 import { InputUserDto } from "./dto/input-user.dto";
-import { EmailAdapter } from "../../utils/email-adapter";
+
 import {
   ConfirmUserCommand,
   CreateUserCommand, GetUserByConfirmationCodeCommand,
@@ -12,7 +12,8 @@ import {
   UpdateConfirmCodeCommand
 } from "../users/users.service";
 import { comparePassword } from "../../utils/bcryptUtils";
-import { JWT_Service } from "../jwt/jwtService";
+import { JWT_Service } from "../jwt/jwt.service";
+import { EmailService } from "../email/email.service";
 
 
 ////////////////////////////////////////////////////////////////////
@@ -24,7 +25,7 @@ export class RegisterUserCommand {
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand> {
   constructor(private commandBus: CommandBus,
-              private emailAdapter: EmailAdapter) {
+              private emailAdapter: EmailService) {
   }
 
   async execute(command: RegisterUserCommand) {
@@ -63,7 +64,7 @@ export class ResendConfirmationCodeCommand {
 @CommandHandler(ResendConfirmationCodeCommand)
 export class ResendConfirmationCodeUseCase implements ICommandHandler<ResendConfirmationCodeCommand> {
   constructor(private commandBus: CommandBus,
-              private emailAdapter: EmailAdapter) {
+              private emailAdapter: EmailService) {
   }
 
   async execute(command: ResendConfirmationCodeCommand) {

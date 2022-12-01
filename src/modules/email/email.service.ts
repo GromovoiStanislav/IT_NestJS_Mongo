@@ -1,9 +1,9 @@
 import * as nodemailer from "nodemailer";
-import { Settings } from "../settings";
+import { Settings } from "../../settings";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
-export class EmailAdapter {
+export class EmailService {
   constructor(private settings: Settings) {
   }
 

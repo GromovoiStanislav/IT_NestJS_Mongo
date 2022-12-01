@@ -9,9 +9,10 @@ import {
   ResendConfirmationCodeUseCase
 } from "./auth.service";
 
-import { EmailAdapter } from "../../utils/email-adapter";
+
 import { Settings } from "../../settings";
 import { JWT_Module } from "../jwt/jwt.module";
+import { EmailModule } from "../email/email.module";
 
 
 const useCases = [
@@ -23,9 +24,9 @@ const useCases = [
 
 
 @Module({
-  imports: [CqrsModule,JWT_Module],
+  imports: [CqrsModule, JWT_Module, EmailModule],
   controllers: [AuthController],
-  providers: [...useCases, EmailAdapter, Settings]
+  providers: [...useCases, Settings]
 })
 export class AuthModule {
 }
