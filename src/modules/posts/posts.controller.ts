@@ -23,6 +23,7 @@ import { InputLikeDto } from "./dto/input-like.dto";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
+import { BaseAuthGuard } from "../../guards/base.auth.guard";
 
 
 @Controller("posts")
@@ -33,9 +34,10 @@ export class PostsController {
 
 
   @Delete(":id")
+  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(@Param("id") postId: string): Promise<void> {
-    const result = this.commandBus.execute(new DeletePostCommand(postId));
+    const result = await this.commandBus.execute(new DeletePostCommand(postId));
     if (!result) {
       throw new NotFoundException();
     }
@@ -50,6 +52,7 @@ export class PostsController {
 
 
   @Put(":id")
+  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePost(@Param("id") postId: string, @Body() inputPost: InputPostDto): Promise<void> {
     const result = await this.commandBus.execute(new UpdatePostCommand(postId, inputPost));
