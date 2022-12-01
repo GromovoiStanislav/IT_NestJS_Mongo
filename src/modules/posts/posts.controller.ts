@@ -78,8 +78,11 @@ export class PostsController {
 
 
   @Get()
-  async getAllPosts(@Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
-    return this.commandBus.execute(new GetAllPostsCommand(paginationParams));
+  async getAllPosts(
+    @Pagination() paginationParams: PaginationParams,
+    @CurrentUserId() userId: string
+  ): Promise<PaginatorDto<ViewPostDto[]>> {
+    return this.commandBus.execute(new GetAllPostsCommand(paginationParams, userId));
   }
 
 

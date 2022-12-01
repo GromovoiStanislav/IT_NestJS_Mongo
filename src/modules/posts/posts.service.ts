@@ -144,18 +144,43 @@ export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWit
 
 //////////////////////////////////////////////////////////////
 export class GetAllPostsCommand {
-  constructor(public paginationParams: PaginationParams) {
+  constructor(public paginationParams: PaginationParams, public userId: string) {
   }
 }
 
 @CommandHandler(GetAllPostsCommand)
 export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsCommand> {
-  constructor(protected postsRepository: PostsRepository) {
+  constructor(
+    protected postsRepository: PostsRepository,
+    protected postLikesRepository: PostLikesRepository
+    ) {
   }
-
-  async execute(command: GetAllPostsCommand): Promise<PaginatorDto<ViewPostDto[]>> {
+  //: Promise<PaginatorDto<ViewPostDto[]>>
+  async execute(command: GetAllPostsCommand) {
     const result = await this.postsRepository.getAllPosts(command.paginationParams);
-    return PostMapper.fromModelsToPaginator(result);
+    //return PostMapper.fromModelsToPaginator(result);
+
+    // const likes = await this.postLikesRepository.likesInfoByPostID(command.postId, command.userId);
+    // return PostMapper.fromModelToView(post,likes);
+
+
+    result.items = await Promise.all(result.items.map(async post => {
+
+      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId);
+      return PostMapper.fromModelToView(post,likes);
+
+      // id: el.id,
+      // title: el.title,
+      // shortDescription: el.shortDescription,
+      // content: el.content,
+      // blogId: el.blogId,
+      // blogName: el.blogName,
+      // createdAt: el.createdAt,
+      // extendedLikesInfo: await PostLikes.likesInfoByPostID(el.id, userId)
+    }))
+
+    return result
+
   }
 }
 
