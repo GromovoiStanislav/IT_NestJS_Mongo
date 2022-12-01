@@ -45,6 +45,7 @@ export class PostsController {
 
 
   @Post()
+  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createPost(@Body() inputPost: InputPostDto): Promise<ViewPostDto> {
     return this.commandBus.execute(new CreatePostCommand(inputPost));
