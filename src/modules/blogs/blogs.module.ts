@@ -10,6 +10,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Blog, BlogSchema } from "./schemas/blogs.schema";
 import { BlogsRepository } from "./blogs.repository";
 import { CqrsModule } from "@nestjs/cqrs";
+import { JWT_Module } from "../jwt/jwt.module";
 
 const useCases = [
   ClearAllBlogsUseCase,
@@ -21,7 +22,7 @@ const useCases = [
 ];
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), CqrsModule],
+  imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), CqrsModule,JWT_Module],
   controllers: [BlogsController],
   providers: [...useCases, BlogsRepository],
   exports:[]

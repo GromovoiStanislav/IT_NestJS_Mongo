@@ -23,6 +23,8 @@ import { CreatePostByBlogIdCommand, GetAllPostsByBlogIdCommand } from "../posts/
 import { InputBlogPostDto } from "../posts/dto/input-blog-post.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
+import { BearerUserIdGuard } from "../../guards/bearer.userId.guard";
+import { CurrentUserId } from "../../decorators/current-userId.decorator";
 
 @Controller("blogs")
 export class BlogsController {
@@ -100,11 +102,15 @@ export class BlogsController {
 
 
   @Get(":blogId/posts")
-  async getOnePost(@Param("blogId") blogId: string, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
+  @UseGuards(BearerUserIdGuard)
+  async getOnePost(
+    @Param("blogId") blogId: string,
+    @CurrentUserId() userId: string,
+    @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
     if (!await this.commandBus.execute(new GetOneBlogCommand(blogId))) {
       throw new NotFoundException();
     }
-    return this.commandBus.execute(new GetAllPostsByBlogIdCommand(blogId, paginationParams))
+    return this.commandBus.execute(new GetAllPostsByBlogIdCommand(blogId, userId, paginationParams))
   }
 
 }
