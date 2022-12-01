@@ -35,7 +35,21 @@ export default class PostMapper {
   }
 
 
-  static fromModelToView(post: Post): ViewPostDto {
+  static fromModelToView(post: Post, likes: ExtendedLikesInfoDto): ViewPostDto {
+    const viewPost = new ViewPostDto();
+    viewPost.id = post.id;
+    viewPost.title = post.title;
+    viewPost.shortDescription = post.shortDescription;
+    viewPost.content = post.content;
+    viewPost.blogId = post.blogId;
+    viewPost.blogName = post.blogName;
+    viewPost.createdAt = post.createdAt;
+    viewPost.extendedLikesInfo = likes;
+    return viewPost;
+  }
+
+
+  static _fromModelToView(post: Post): ViewPostDto {
     const viewPost = new ViewPostDto();
     viewPost.id = post.id;
     viewPost.title = post.title;
@@ -48,14 +62,13 @@ export default class PostMapper {
     return viewPost;
   }
 
-
   static fromModelsToPaginator(posts: PaginatorDto<Post[]>): PaginatorDto<ViewPostDto[]> {
     return {
       pagesCount: posts.pagesCount,
       page: posts.page,
       pageSize: posts.pageSize,
       totalCount: posts.totalCount,
-      items: posts.items.map(post => PostMapper.fromModelToView(post))
+      items: posts.items.map(post => PostMapper._fromModelToView(post))
     }
   }
 

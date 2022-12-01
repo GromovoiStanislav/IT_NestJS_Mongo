@@ -6,7 +6,7 @@ import {
   CreatePostUseCase,
   DeletePostUseCase, GetAllPostsByBlogIdUseCase,
   GetAllPostsUseCase,
-  GetOnePostUseCase, PostsUpdateLikeByIDUseCase,
+  GetOnePostUseCase, GetOnePostWithLikesUseCase, PostsUpdateLikeByIDUseCase,
   UpdatePostUseCase
 } from "./posts.service";
 import { PostsRepository } from "./posts.repository";
@@ -25,6 +25,7 @@ const useCases = [
   CreatePostUseCase,
   UpdatePostUseCase,
   GetOnePostUseCase,
+  GetOnePostWithLikesUseCase,
   GetAllPostsUseCase,
   GetAllPostsByBlogIdUseCase,
   CreatePostByBlogIdUseCase,

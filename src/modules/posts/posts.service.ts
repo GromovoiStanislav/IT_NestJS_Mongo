@@ -70,7 +70,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     }
 
     const post = await this.postsRepository.createPost(PostMapper.fromInputToCreate(command.inputPost, blogName));
-    return PostMapper.fromModelToView(post);
+    return PostMapper._fromModelToView(post);
   }
 }
 
@@ -99,7 +99,7 @@ export class UpdatePostUseCase implements ICommandHandler<UpdatePostCommand> {
 
 //////////////////////////////////////////////////////////////
 export class GetOnePostCommand {
-  constructor(public postId: string) {
+  constructor(public postId: string, public userId?: string) {
   }
 }
 
@@ -111,11 +111,36 @@ export class GetOnePostUseCase implements ICommandHandler<GetOnePostCommand> {
   async execute(command: GetOnePostCommand): Promise<Post | null> {
     const post = await this.postsRepository.getOnePost(command.postId);
     if (post) {
-      return PostMapper.fromModelToView(post);
+      return PostMapper._fromModelToView(post);
     }
     return null;
   }
 }
+
+//////////////////////////////////////////////////////////////
+export class GetOnePostWithLikesCommand {
+  constructor(public postId: string, public userId: string) {
+  }
+}
+
+@CommandHandler(GetOnePostWithLikesCommand)
+export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWithLikesCommand> {
+  constructor(
+    protected postsRepository: PostsRepository,
+    protected postLikesRepository: PostLikesRepository
+  ) {
+  }
+
+  async execute(command: GetOnePostWithLikesCommand): Promise<Post | null> {
+    const post = await this.postsRepository.getOnePost(command.postId);
+    if (post) {
+      const likes = await this.postLikesRepository.likesInfoByPostID(command.postId, command.userId);
+      return PostMapper.fromModelToView(post,likes);
+    }
+    return null;
+  }
+}
+
 
 //////////////////////////////////////////////////////////////
 export class GetAllPostsCommand {
@@ -175,7 +200,7 @@ export class CreatePostByBlogIdUseCase implements ICommandHandler<CreatePostByBl
       ...command.inputPost,
       blogId: command.blogId
     }, blog.name));
-    return PostMapper.fromModelToView(post);
+    return PostMapper._fromModelToView(post);
   }
 }
 

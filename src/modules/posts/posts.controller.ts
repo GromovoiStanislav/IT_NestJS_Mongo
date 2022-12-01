@@ -11,7 +11,7 @@ import {
   CreatePostCommand,
   DeletePostCommand,
   GetAllPostsCommand,
-  GetOnePostCommand, PostsUpdateLikeByIDCommand,
+  GetOnePostCommand, GetOnePostWithLikesCommand, PostsUpdateLikeByIDCommand,
   UpdatePostCommand
 } from "./posts.service";
 import { InputPostDto } from "./dto/input-post.dto";
@@ -68,8 +68,8 @@ export class PostsController {
   async getOnePost(
     @Param("id") postId: string,
     @CurrentUserId() userId: string
-    ): Promise<ViewPostDto> {
-    const result = await this.commandBus.execute(new GetOnePostCommand(postId));
+  ): Promise<ViewPostDto> {
+    const result = await this.commandBus.execute(new GetOnePostWithLikesCommand(postId, userId));
     if (!result) {
       throw new NotFoundException();
     }
