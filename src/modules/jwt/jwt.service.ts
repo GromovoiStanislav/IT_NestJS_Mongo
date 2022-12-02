@@ -11,11 +11,11 @@ export class JWT_Service {
   ) {}
 
   async createAuthJWT(userId: string): Promise<string> {
-    return this.jwtService.signAsync({ userId },{ secret: this.settings.SECRET, expiresIn: '1h' });
+    return this.jwtService.signAsync({ userId },{ secret: this.settings.SECRET, expiresIn: '10s' });
   };
 
   async createRefreshJWT(userId: string): Promise<string> {
-    return this.jwtService.signAsync({ userId },{ secret: this.settings.SECRET, expiresIn: '2h' });
+    return this.jwtService.signAsync({ userId },{ secret: this.settings.SECRET, expiresIn: '20s' });
   };
 
   async getUserIdByToken(token: string): Promise<string | null> {
