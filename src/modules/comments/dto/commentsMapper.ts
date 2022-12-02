@@ -19,7 +19,7 @@ export default class CommentsMapper {
     const createdComment = new CreateCommentDto();
     createdComment.id = uid();
     createdComment.postId = postId;
-    createdComment.content = content;
+    createdComment.content = data.content;
     createdComment.userId = userId;
     createdComment.userLogin = userLogin;
     createdComment.createdAt = dateAt();
