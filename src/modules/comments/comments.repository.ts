@@ -2,7 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Comment, CommentDocument } from "./schemas/comments.schema";
-import { UpdatePostDto } from "../posts/dto/update-post.dto";
+import { UpdateCommentDto } from "./dto/update-comment.dto";
+
 
 
 @Injectable()
@@ -23,8 +24,8 @@ export class CommentsRepository {
     return this.commentsModel.findOne({ id: commentId });
   }
 
-  async updatePost(commentId: string, updatePostDto: UpdatePostDto): Promise<Comment | null> {
-    return this.commentsModel.findOneAndUpdate({ id: commentId }, updatePostDto);
+  async updateComment(commentId: string, updateCommentDto: UpdateCommentDto): Promise<Comment | null> {
+    return this.commentsModel.findOneAndUpdate({ id: commentId }, updateCommentDto);
   }
 
 }

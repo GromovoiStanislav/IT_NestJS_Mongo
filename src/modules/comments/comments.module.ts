@@ -1,12 +1,28 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { CqrsModule } from "@nestjs/cqrs";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Comment, CommentSchema } from "./schemas/comments.schema";
 import { CommentLike, CommentLikeSchema } from "./schemas/comment-likes.schema";
 import { CommentsRepository } from "./comments.repository";
 import { CommentLikesRepository } from "./commentLikes.repository";
+import {
+  ClearAllCommentsUseCase,
+  DeleteCommentUseCase,
+  GetCommentUseCase,
+  UpdateCommentLikeUseCase,
+  UpdateCommentUseCase
+} from "./comments.service";
+import { UserIdMiddleware } from "../../middlewares/userId.middleware";
+import { CommentsController } from "./comments.controller";
+import { JWT_Module } from "../jwt/jwt.module";
 
-const useCases = [];
+const useCases = [
+  ClearAllCommentsUseCase,
+  DeleteCommentUseCase,
+  UpdateCommentUseCase,
+  UpdateCommentLikeUseCase,
+  GetCommentUseCase
+];
 
 @Module({
   imports: [
@@ -14,11 +30,17 @@ const useCases = [];
     MongooseModule.forFeature([
       { name: Comment.name, schema: CommentSchema },
       { name: CommentLike.name, schema: CommentLikeSchema }
-    ])
+    ]),
+    JWT_Module
   ],
-  controllers: [],
+  controllers: [CommentsController],
   providers: [...useCases, CommentsRepository, CommentLikesRepository]
 })
 
-export class CommentsModule {
+export class CommentsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserIdMiddleware)
+      .forRoutes("posts");
+  }
 }
