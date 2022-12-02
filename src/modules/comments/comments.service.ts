@@ -171,6 +171,7 @@ export class GetAllCommentsByPostIDCommand {
 @CommandHandler(GetAllCommentsByPostIDCommand)
 export class GetAllCommentsByPostIDUseCase implements ICommandHandler<GetAllCommentsByPostIDCommand> {
   constructor(
+    private commandBus: CommandBus,
     protected commentsRepository: CommentsRepository,
     protected commentLikesRepository: CommentLikesRepository
   ) {
@@ -178,13 +179,17 @@ export class GetAllCommentsByPostIDUseCase implements ICommandHandler<GetAllComm
 
   async execute(command: GetAllCommentsByPostIDCommand) {
 
+    const post = await this.commandBus.execute(new GetOnePostCommand(command.postId));
+    if (!post) {
+      throw new NotFoundException();
+    }
+
     const result = await this.commentsRepository.getAllComments(command.paginationParams, command.postId);
 
     const items = await Promise.all(result.items.map(async comment => {
       const likes = await this.commentLikesRepository.likesByCommentID(comment.id, command.userId);
       return CommentsMapper.fromModelToView(comment, likes);
     }));
-   // result.items = items;
 
     return {...result,items};
   }
