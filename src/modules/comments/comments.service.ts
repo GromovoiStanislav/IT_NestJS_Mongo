@@ -1,9 +1,11 @@
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { CommentsRepository } from "./comments.repository";
 import { CommentLikesRepository } from "./commentLikes.repository";
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { InputCommentDto } from "./dto/input-comment.dto";
 import CommentsMapper from "./dto/commentsMapper";
+import { GetOnePostCommand } from "../posts/posts.service";
+import { GetUserByIdCommand, GetUserByIdUseCase } from "../users/users.service";
 
 
 //////////////////////////////////////////////////
@@ -122,7 +124,37 @@ export class GetCommentUseCase implements ICommandHandler<GetCommentCommand> {
     if (!comment) {
       throw new NotFoundException();
     }
-    const likes = await this.commentLikesRepository.likesByCommentID(command.commentId, command.userId)
-    return CommentsMapper.fromModelToView(comment, likes)
+    const likes = await this.commentLikesRepository.likesByCommentID(command.commentId, command.userId);
+    return CommentsMapper.fromModelToView(comment, likes);
+  }
+}
+
+
+//////////////////////////////////////////////////////////////
+export class CreateCommentByPostIDCommand {
+  constructor(public postId: string, public userId: string, public inputComment: InputCommentDto) {
+  }
+}
+
+@CommandHandler(CreateCommentByPostIDCommand)
+export class CreateCommentByPostIDUseCase implements ICommandHandler<CreateCommentByPostIDCommand> {
+  constructor(
+    private commandBus: CommandBus,
+    protected commentsRepository: CommentsRepository
+  ) {
+  }
+
+  async execute(command: CreateCommentByPostIDCommand) {
+    const post = await this.commandBus.execute(new GetOnePostCommand(command.postId));
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
+
+    const createCommentDto = CommentsMapper.fromInputToCreate(command.postId, command.inputComment, command.userId, user.login);
+    const comment = await this.commentsRepository.createComment(createCommentDto);
+
+    return CommentsMapper._fromModelToView(comment);
   }
 }

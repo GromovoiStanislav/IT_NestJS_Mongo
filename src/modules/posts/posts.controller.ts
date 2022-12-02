@@ -24,6 +24,8 @@ import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
+import { InputCommentDto } from "./dto/input-comment.dto";
+import { CreateCommentByPostIDCommand } from "../comments/comments.service";
 
 
 @Controller("posts")
@@ -101,5 +103,17 @@ export class PostsController {
     return this.commandBus.execute(new PostsUpdateLikeByIDCommand(postId, userId, inputLike.likeStatus));
   }
 
+
+  @Post(":postId/comments")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  //@UseGuards(BearerAuthGuard)
+  @UseGuards(AuthUserIdGuard)
+  async createCommentByPostID(
+    @Param("postId") postId: string,
+    @Body() inputComment: InputCommentDto,
+    @CurrentUserId() userId: string) {
+
+    return this.commandBus.execute(new CreateCommentByPostIDCommand(postId, userId, inputComment));
+  }
 
 }
