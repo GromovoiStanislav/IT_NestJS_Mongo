@@ -18,6 +18,7 @@ import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { InputCommentDto } from "./dto/input-comment.dto";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { InputLikeDto } from "./dto/input-like.dto";
+import { BearerUserIdGuard } from "../../guards/bearer.userId.guard";
 
 
 @Controller("comments")
@@ -45,6 +46,7 @@ export class CommentsController {
 
   @Put(":id/like-status")
   //@UseGuards(AuthUserIdGuard)
+  @UseGuards(BearerUserIdGuard)
   //@HttpCode(HttpStatus.NO_CONTENT)
   async updateCommentLikeStatus(@Param("id") commentId: string,
                                 @CurrentUserId() userId: string,
