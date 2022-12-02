@@ -42,6 +42,6 @@ export class CommentsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(UserIdMiddleware)
-      .forRoutes("posts");
+      .forRoutes("comments");
   }
 }
