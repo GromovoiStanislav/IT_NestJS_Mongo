@@ -105,7 +105,6 @@ export class PostsController {
 
 
   @Post(":postId/comments")
-  @HttpCode(HttpStatus.NO_CONTENT)
   //@UseGuards(BearerAuthGuard)
   @UseGuards(AuthUserIdGuard)
   async createCommentByPostID(
