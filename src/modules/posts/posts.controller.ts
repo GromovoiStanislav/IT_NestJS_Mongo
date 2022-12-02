@@ -112,7 +112,6 @@ export class PostsController {
     @Param("postId") postId: string,
     @Body() inputComment: InputCommentDto,
     @CurrentUserId() userId: string) {
-
     return this.commandBus.execute(new CreateCommentByPostIDCommand(postId, userId, inputComment));
   }
 

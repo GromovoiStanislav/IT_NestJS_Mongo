@@ -43,15 +43,25 @@ export class CommentsController {
     await this.commandBus.execute(new UpdateCommentCommand(commentId, userId, inputComment));
   }
 
-
   @Put(":id/like-status")
-  @UseGuards(AuthUserIdGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  //@UseGuards(AuthUserIdGuard)
+  //@HttpCode(HttpStatus.NO_CONTENT)
   async updateCommentLikeStatus(@Param("id") commentId: string,
-                      @CurrentUserId() userId: string,
-                      @Body() inputLike: InputLikeDto): Promise<void> {
-    await this.commandBus.execute(new UpdateCommentLikeCommand(commentId, userId, inputLike.likeStatus));
+                                @CurrentUserId() userId: string,
+                                @Body() inputLike: InputLikeDto) {
+    return userId
+    //await this.commandBus.execute(new UpdateCommentLikeCommand(commentId, userId, inputLike.likeStatus));
   }
+
+
+  // @Put(":id/like-status")
+  // @UseGuards(AuthUserIdGuard)
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // async updateCommentLikeStatus(@Param("id") commentId: string,
+  //                     @CurrentUserId() userId: string,
+  //                     @Body() inputLike: InputLikeDto): Promise<void> {
+  //   await this.commandBus.execute(new UpdateCommentLikeCommand(commentId, userId, inputLike.likeStatus));
+  // }
 
   @Get(":id")
   async getComment(@Param("id") commentId: string, @CurrentUserId() userId: string) {
