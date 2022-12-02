@@ -53,9 +53,9 @@ export class CommentsController {
     await this.commandBus.execute(new UpdateCommentLikeCommand(commentId, userId, inputLike.likeStatus));
   }
 
-  @Get(":id/like-status")
+  @Get(":id")
   async getComment(@Param("id") commentId: string, @CurrentUserId() userId: string) {
-    await this.commandBus.execute(new GetCommentCommand(commentId, userId));
+    return this.commandBus.execute(new GetCommentCommand(commentId, userId));
   }
 
 
