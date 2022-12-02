@@ -158,11 +158,14 @@ export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsCommand> {
 
   //: Promise<PaginatorDto<ViewPostDto[]>>
   async execute(command: GetAllPostsCommand) {
+
     const result = await this.postsRepository.getAllPosts(command.paginationParams);
+
     result.items = await Promise.all(result.items.map(async post => {
       const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId);
       return PostMapper.fromModelToView(post, likes);
     }));
+
     return result;
   }
 }

@@ -22,10 +22,9 @@ import { Pagination } from "../../decorators/paginationDecorator";
 import { InputLikeDto } from "./dto/input-like.dto";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
-import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { InputCommentDto } from "./dto/input-comment.dto";
-import { CreateCommentByPostIDCommand } from "../comments/comments.service";
+import { CreateCommentByPostIDCommand, GetAllCommentsByPostIDCommand } from "../comments/comments.service";
 
 
 @Controller("posts")
@@ -66,7 +65,6 @@ export class PostsController {
 
 
   @Get(":id")
-  //@UseGuards(BearerUserIdGuard)
   async getOnePost(
     @Param("id") postId: string,
     @CurrentUserId() userId: string
@@ -90,7 +88,6 @@ export class PostsController {
 
   @Put(":postId/like-status")
   @HttpCode(HttpStatus.NO_CONTENT)
-  //@UseGuards(BearerAuthGuard)
   @UseGuards(AuthUserIdGuard)
   async updateLikeByID(
     @Param("postId") postId: string,
@@ -105,13 +102,21 @@ export class PostsController {
 
 
   @Post(":postId/comments")
-  //@UseGuards(BearerAuthGuard)
   @UseGuards(AuthUserIdGuard)
   async createCommentByPostID(
     @Param("postId") postId: string,
     @Body() inputComment: InputCommentDto,
     @CurrentUserId() userId: string) {
     return this.commandBus.execute(new CreateCommentByPostIDCommand(postId, userId, inputComment));
+  }
+
+
+  @Get(":postId/comments")
+  async getAllCommentsByPostID(
+    @Param("postId") postId: string,
+    @Pagination() paginationParams: PaginationParams,
+    @CurrentUserId() userId: string) {
+    return this.commandBus.execute(new GetAllCommentsByPostIDCommand(paginationParams, postId, userId ));
   }
 
 }

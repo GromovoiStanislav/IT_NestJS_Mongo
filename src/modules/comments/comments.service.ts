@@ -5,7 +5,9 @@ import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { InputCommentDto } from "./dto/input-comment.dto";
 import CommentsMapper from "./dto/commentsMapper";
 import { GetOnePostCommand } from "../posts/posts.service";
-import { GetUserByIdCommand, GetUserByIdUseCase } from "../users/users.service";
+import { GetUserByIdCommand } from "../users/users.service";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import PostMapper from "../posts/dto/postsMapper";
 
 
 //////////////////////////////////////////////////
@@ -158,3 +160,43 @@ export class CreateCommentByPostIDUseCase implements ICommandHandler<CreateComme
     return CommentsMapper._fromModelToView(comment);
   }
 }
+
+
+/////////////////////////////////////////////
+export class GetAllCommentsByPostIDCommand {
+  constructor(public paginationParams: PaginationParams, public postId: string, public userId: string) {
+  }
+}
+
+@CommandHandler(GetAllCommentsByPostIDCommand)
+export class GetAllCommentsByPostIDUseCase implements ICommandHandler<GetAllCommentsByPostIDCommand> {
+  constructor(
+    protected commentsRepository: CommentsRepository,
+    protected commentLikesRepository: CommentLikesRepository
+  ) {
+  }
+
+  async execute(command: GetAllCommentsByPostIDCommand) {
+
+    const result = await this.commentsRepository.getAllComments(command.paginationParams, command.postId);
+
+    const items = await Promise.all(result.items.map(async comment => {
+      const likes = await this.commentLikesRepository.likesByCommentID(comment.id, command.userId);
+      return CommentsMapper.fromModelToView(comment, likes);
+    }));
+   // result.items = items;
+
+    return {...result,items};
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

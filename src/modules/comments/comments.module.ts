@@ -7,10 +7,10 @@ import { CommentsRepository } from "./comments.repository";
 import { CommentLikesRepository } from "./commentLikes.repository";
 import {
   ClearAllCommentsUseCase, CreateCommentByPostIDUseCase,
-  DeleteCommentUseCase,
+  DeleteCommentUseCase, GetAllCommentsByPostIDUseCase,
   GetCommentUseCase,
   UpdateCommentLikeUseCase,
-  UpdateCommentUseCase,
+  UpdateCommentUseCase
 } from "./comments.service";
 import { UserIdMiddleware } from "../../middlewares/userId.middleware";
 import { CommentsController } from "./comments.controller";
@@ -22,7 +22,8 @@ const useCases = [
   UpdateCommentUseCase,
   UpdateCommentLikeUseCase,
   GetCommentUseCase,
-  CreateCommentByPostIDUseCase
+  CreateCommentByPostIDUseCase,
+  GetAllCommentsByPostIDUseCase
 ];
 
 @Module({

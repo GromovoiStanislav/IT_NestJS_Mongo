@@ -4,6 +4,8 @@ import { Model } from "mongoose";
 import { Comment, CommentDocument } from "./schemas/comments.schema";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
 
 
 @Injectable()
@@ -32,5 +34,32 @@ export class CommentsRepository {
     const createdComment = new this.commentsModel(createCommentDto);
     return await createdComment.save();
   }
+
+
+  async getAllComments({
+                      pageNumber,
+                      pageSize,
+                      sortBy,
+                      sortDirection
+                    }: PaginationParams, postId: string): Promise<PaginatorDto<Comment[]>> {
+
+    type FilterType = {
+      [key: string]: unknown
+    }
+    const filter: FilterType = {};
+    if (postId) {
+      filter.postId = postId;
+    }
+
+    const items = await this.commentsModel.find(filter).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
+      .limit(pageSize).skip((pageNumber - 1) * pageSize);
+
+    const totalCount = await this.commentsModel.count(filter);
+    const pagesCount = Math.ceil(totalCount / pageSize);
+    const page = pageNumber;
+
+    return { pagesCount, page, pageSize, totalCount, items };
+  }
+
 
 }
