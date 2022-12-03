@@ -1,6 +1,7 @@
-import { Module } from "@nestjs/common";
-import { AuthController } from "./auth.controller";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { CqrsModule } from "@nestjs/cqrs";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import * as cookieParser from 'cookie-parser';
 
 import {
   ConfirmEmailUseCase, GetMeInfoUseCase,
@@ -9,12 +10,13 @@ import {
   ResendConfirmationCodeUseCase
 } from "./auth.service";
 
-
+import { AuthController } from "./auth.controller";
 import { Settings } from "../../settings";
 import { JWT_Module } from "../jwt/jwt.module";
 import { EmailModule } from "../email/email.module";
 import { APP_GUARD } from "@nestjs/core";
-import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+
+
 
 
 const useCases = [
@@ -43,5 +45,10 @@ const useCases = [
     },
     ...useCases, Settings]
 })
-export class AuthModule {
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(cookieParser)
+      .forRoutes('auth');
+  }
 }
