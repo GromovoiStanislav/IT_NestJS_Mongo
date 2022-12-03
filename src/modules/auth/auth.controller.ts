@@ -14,6 +14,7 @@ import { InputCodeDto } from "./dto/input-code.dto";
 import { InputLoginDto } from "./dto/input-login.dto";
 import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { SkipThrottle } from "@nestjs/throttler";
 
 
 
@@ -54,9 +55,13 @@ export class AuthController {
   }
 
   @Get("me")
+  @SkipThrottle()
   @UseGuards(BearerAuthGuard)
   async getMe(@CurrentUserId() userId: string){
     return this.commandBus.execute(new GetMeInfoCommand(userId));
   }
+
+
+
 
 }

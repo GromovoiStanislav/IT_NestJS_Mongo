@@ -13,6 +13,8 @@ import {
 import { Settings } from "../../settings";
 import { JWT_Module } from "../jwt/jwt.module";
 import { EmailModule } from "../email/email.module";
+import { APP_GUARD } from "@nestjs/core";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
 
 const useCases = [
@@ -25,9 +27,19 @@ const useCases = [
 
 
 @Module({
-  imports: [CqrsModule, JWT_Module, EmailModule],
+  imports: [
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 1
+    }),
+    CqrsModule, JWT_Module, EmailModule],
   controllers: [AuthController],
-  providers: [...useCases, Settings]
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    },
+    ...useCases, Settings]
 })
 export class AuthModule {
 }
