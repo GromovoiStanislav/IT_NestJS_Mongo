@@ -1,13 +1,13 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
-import { Response } from 'express';
+import { Request, Response } from "express";
 
 import { InputUserDto } from "./dto/input-user.dto";
 import {
   RegisterUserCommand,
   ResendConfirmationCodeCommand,
   ConfirmEmailCommand,
-  LoginUserCommand, GetMeInfoCommand
+  LoginUserCommand, GetMeInfoCommand, RefreshTokenCommand
 } from "./auth.service";
 import { InputEmailDto } from "./dto/input-email.dto";
 import { InputCodeDto } from "./dto/input-code.dto";
@@ -15,7 +15,6 @@ import { InputLoginDto } from "./dto/input-login.dto";
 import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { SkipThrottle } from "@nestjs/throttler";
-
 
 
 @Controller("auth")
@@ -44,24 +43,38 @@ export class AuthController {
 
   @Post("login")
   @HttpCode(HttpStatus.OK)
-  async login(@Body() inputLogin: InputLoginDto,@Res({ passthrough: true }) res: Response) {
+  async login(@Body() inputLogin: InputLoginDto, @Res({ passthrough: true }) res: Response) {
     const JWT_Tokens = await this.commandBus.execute(new LoginUserCommand(inputLogin.loginOrEmail, inputLogin.password));
-    res.cookie('refreshToken', JWT_Tokens.refreshToken, {
+    res.cookie("refreshToken", JWT_Tokens.refreshToken, {
       maxAge: 1000 * 20,
       httpOnly: true,
-      secure: true,
-    })
-    return {accessToken: JWT_Tokens.accessToken}
+      secure: true
+    });
+    return { accessToken: JWT_Tokens.accessToken };
   }
+
+
+  @Post("refresh-token")
+  @SkipThrottle()
+  @HttpCode(HttpStatus.OK)
+  async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const JWT_Tokens = await this.commandBus.execute(new RefreshTokenCommand(req.cookies.refreshToken));
+    res.cookie("refreshToken", JWT_Tokens.refreshToken, {
+      maxAge: 1000 * 20,
+      httpOnly: true,
+      secure: true
+    });
+    return { accessToken: JWT_Tokens.accessToken };
+
+  }
+
 
   @Get("me")
   @SkipThrottle()
   @UseGuards(BearerAuthGuard)
-  async getMe(@CurrentUserId() userId: string){
+  async getMe(@CurrentUserId() userId: string) {
     return this.commandBus.execute(new GetMeInfoCommand(userId));
   }
-
-
 
 
 }

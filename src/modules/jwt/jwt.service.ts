@@ -26,4 +26,16 @@ export class JWT_Service {
       return null;
     }
   }
+
+//: Promise<string | null>
+  async getInfoByToken(token: string) {
+    try {
+      const data = await this.jwtService.verifyAsync(token, { secret: this.settings.SECRET});
+      return data
+    } catch (e) {
+      return null;
+    }
+  }
+
+
 }

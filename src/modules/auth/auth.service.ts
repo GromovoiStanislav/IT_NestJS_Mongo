@@ -166,3 +166,40 @@ export class GetMeInfoUseCase implements ICommandHandler<GetMeInfoCommand> {
 
   }
 }
+
+
+/////////////////////////////////////////////////////////////////
+export class RefreshTokenCommand {
+  constructor(public refreshToken: string) {
+  }
+}
+
+@CommandHandler(RefreshTokenCommand)
+export class RefreshTokenUseCase implements ICommandHandler<RefreshTokenCommand> {
+  constructor(
+    private commandBus: CommandBus,
+    private jwtService: JWT_Service,
+  ) {
+  }
+
+  async execute(command: RefreshTokenCommand) {
+    if (!command.refreshToken) {
+      throw new UnauthorizedException();
+    }
+    const data = await this.jwtService.getInfoByToken(command.refreshToken)//пока только userId
+    if (!data) {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.commandBus.execute(new GetUserByIdCommand(data.userId));
+    if (user) {
+        return {
+          accessToken: await this.jwtService.createAuthJWT(user.id),
+          refreshToken: await this.jwtService.createRefreshJWT(user.id)
+          //refreshToken: await this.jwtService.createRefreshJWT(user.id, deviceId, ip, title)
+        }
+    }
+
+    throw new UnauthorizedException();
+  }
+}
