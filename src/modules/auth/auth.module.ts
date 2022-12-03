@@ -30,7 +30,7 @@ const useCases = [
   imports: [
     ThrottlerModule.forRoot({
       ttl: 10,
-      limit: 1
+      limit: 5
     }),
     CqrsModule, JWT_Module, EmailModule],
   controllers: [AuthController],
