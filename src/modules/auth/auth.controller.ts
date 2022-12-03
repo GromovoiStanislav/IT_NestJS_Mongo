@@ -7,7 +7,7 @@ import {
   RegisterUserCommand,
   ResendConfirmationCodeCommand,
   ConfirmEmailCommand,
-  LoginUserCommand, GetMeInfoCommand, RefreshTokenCommand
+  LoginUserCommand, GetMeInfoCommand, RefreshTokenCommand, LogoutUserCommand
 } from "./auth.service";
 import { InputEmailDto } from "./dto/input-email.dto";
 import { InputCodeDto } from "./dto/input-code.dto";
@@ -52,6 +52,14 @@ export class AuthController {
     });
     return { accessToken: JWT_Tokens.accessToken };
   }
+
+  @Post("logout")
+  @SkipThrottle()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logout(@Req() req: Request) {
+    return this.commandBus.execute(new LogoutUserCommand(req.cookies.refreshToken));
+  }
+
 
 
   @Post("refresh-token")
