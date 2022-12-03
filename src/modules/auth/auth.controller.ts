@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Res} from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { Response } from 'express';
 
@@ -7,11 +7,14 @@ import {
   RegisterUserCommand,
   ResendConfirmationCodeCommand,
   ConfirmEmailCommand,
-  LoginUserCommand
+  LoginUserCommand, GetMeInfoCommand
 } from "./auth.service";
 import { InputEmailDto } from "./dto/input-email.dto";
 import { InputCodeDto } from "./dto/input-code.dto";
 import { InputLoginDto } from "./dto/input-login.dto";
+import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
+import { CurrentUserId } from "../../decorators/current-userId.decorator";
+
 
 
 @Controller("auth")
@@ -48,6 +51,12 @@ export class AuthController {
       secure: true,
     })
     return {accessToken: JWT_Tokens.accessToken}
+  }
+
+  @Get("me")
+  @UseGuards(BearerAuthGuard)
+  async getMe(@CurrentUserId() userId: string){
+    return this.commandBus.execute(new GetMeInfoCommand(userId));
   }
 
 }

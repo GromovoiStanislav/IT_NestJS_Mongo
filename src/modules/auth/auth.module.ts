@@ -3,7 +3,7 @@ import { AuthController } from "./auth.controller";
 import { CqrsModule } from "@nestjs/cqrs";
 
 import {
-  ConfirmEmailUseCase,
+  ConfirmEmailUseCase, GetMeInfoUseCase,
   LoginUserUseCase,
   RegisterUserUseCase,
   ResendConfirmationCodeUseCase
@@ -19,7 +19,8 @@ const useCases = [
   RegisterUserUseCase,
   ResendConfirmationCodeUseCase,
   ConfirmEmailUseCase,
-  LoginUserUseCase
+  LoginUserUseCase,
+  GetMeInfoUseCase
 ];
 
 

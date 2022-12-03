@@ -7,7 +7,7 @@ import { InputUserDto } from "./dto/input-user.dto";
 
 import {
   ConfirmUserCommand,
-  CreateUserCommand, GetUserByConfirmationCodeCommand,
+  CreateUserCommand, GetUserByConfirmationCodeCommand, GetUserByIdCommand,
   GetUserByLoginOrEmailCommand,
   UpdateConfirmCodeCommand
 } from "../users/users.service";
@@ -142,5 +142,27 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     }
 
     throw new UnauthorizedException();
+  }
+}
+
+/////////////////////////////////////////////////////////////////
+export class GetMeInfoCommand {
+  constructor(public userId: string) {
+  }
+}
+
+@CommandHandler(GetMeInfoCommand)
+export class GetMeInfoUseCase implements ICommandHandler<GetMeInfoCommand> {
+  constructor(private commandBus: CommandBus) {
+  }
+
+  async execute(command: GetMeInfoCommand) {
+    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId))
+    return {
+      email: user.email,
+      login: user.login,
+      userId: user.id
+    }
+
   }
 }
