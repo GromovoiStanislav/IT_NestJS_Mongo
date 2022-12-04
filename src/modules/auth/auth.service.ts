@@ -14,6 +14,7 @@ import {
 import { comparePassword } from "../../utils/bcryptUtils";
 import { JWT_Service } from "../jwt/jwt.service";
 import { EmailService } from "../email/email.service";
+import { AddOrUpdateDeviceSessionCommand, KillSessionByDeviceIdCommand } from "../security/security.service";
 
 
 ////////////////////////////////////////////////////////////////////
@@ -115,7 +116,7 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
 
 /////////////////////////////////////////////////////////////////
 export class LoginUserCommand {
-  constructor(public loginOrEmail: string, public password: string) {
+  constructor(public loginOrEmail: string, public password: string, public ip: string, public title: string) {
   }
 }
 
@@ -132,15 +133,15 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     if (user) {
       const compareOK = await comparePassword(command.password, user.password);
       if (compareOK) {
-        //const deviceId = uuidv4() // т.е. это Сессия
-        return {
-          accessToken: await this.jwtService.createAuthJWT(user.id),
-          refreshToken: await this.jwtService.createRefreshJWT(user.id)
-          //refreshToken: await this.jwtService.createRefreshJWT(user.id, deviceId, ip, title)
-        };
+        const deviceId = uuidv4(); // т.е. это Сессия
+        const issuedAt = Date.now();
+        const accessToken = await this.jwtService.createAuthJWT(user.id);
+        const refreshToken = await this.jwtService.createRefreshJWT(user.id, deviceId, new Date(issuedAt).toISOString());
+
+        await this.commandBus.execute(new AddOrUpdateDeviceSessionCommand(user.userId, deviceId, command.ip, command.title, issuedAt));
+        return { accessToken, refreshToken };
       }
     }
-
     throw new UnauthorizedException();
   }
 }
@@ -170,7 +171,7 @@ export class GetMeInfoUseCase implements ICommandHandler<GetMeInfoCommand> {
 
 /////////////////////////////////////////////////////////////////
 export class RefreshTokenCommand {
-  constructor(public refreshToken: string) {
+  constructor(public refreshToken: string, public ip: string, public title: string) {
   }
 }
 
@@ -186,21 +187,17 @@ export class RefreshTokenUseCase implements ICommandHandler<RefreshTokenCommand>
     if (!command.refreshToken) {
       throw new UnauthorizedException();
     }
-    const data = await this.jwtService.getInfoByToken(command.refreshToken);//пока только userId
+    const data = await this.jwtService.getInfoByRefreshToken(command.refreshToken);//пока только userId
     if (!data) {
       throw new UnauthorizedException();
     }
 
-    const user = await this.commandBus.execute(new GetUserByIdCommand(data.userId));
-    if (user) {
-      return {
-        accessToken: await this.jwtService.createAuthJWT(user.id),
-        refreshToken: await this.jwtService.createRefreshJWT(user.id)
-        //refreshToken: await this.jwtService.createRefreshJWT(user.id, deviceId, ip, title)
-      };
-    }
+    const issuedAt = Date.now();
+    const accessToken = await this.jwtService.createAuthJWT(data.userId);
+    const refreshToken = await this.jwtService.createRefreshJWT(data.userId, data.deviceId, new Date(issuedAt).toISOString());
 
-    throw new UnauthorizedException();
+    await this.commandBus.execute(new AddOrUpdateDeviceSessionCommand(data.userId, data.deviceId, command.ip, command.title, issuedAt));
+    return { accessToken, refreshToken };
   }
 }
 
@@ -222,10 +219,10 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
     if (!command.refreshToken) {
       throw new UnauthorizedException();
     }
-    const data = await this.jwtService.getInfoByToken(command.refreshToken);//пока только userId
+    const data = await this.jwtService.getInfoByRefreshToken(command.refreshToken);
     if (!data) {
       throw new UnauthorizedException();
     }
-    //return jwtService.killSessionByToken(refreshToken)
+    await this.commandBus.execute(new KillSessionByDeviceIdCommand(data.deviceId))
   }
 }

@@ -15,6 +15,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     whitelist: true,
+    //forbidNonWhitelisted: true,
     stopAtFirstError: true,
     exceptionFactory: (errors) => {
       const errorsForResponse = [];
@@ -29,7 +30,6 @@ async function bootstrap() {
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter());
   const configService = app.get(ConfigService);
   await app.listen(configService.get("PORT"));
-  //await app.listen(3000);
 }
 
 bootstrap();

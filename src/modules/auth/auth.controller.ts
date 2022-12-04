@@ -23,28 +23,35 @@ export class AuthController {
   constructor(private commandBus: CommandBus) {
   }
 
+
   @Post("registration")
   @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() inputUser: InputUserDto) {
-    return this.commandBus.execute(new RegisterUserCommand(inputUser));
+    await this.commandBus.execute(new RegisterUserCommand(inputUser));
   }
+
 
   @Post("registration-confirmation")
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationConfirmation(@Body() inputCode: InputCodeDto) {
-    return this.commandBus.execute(new ConfirmEmailCommand(inputCode.code));
+    await this.commandBus.execute(new ConfirmEmailCommand(inputCode.code));
   }
+
 
   @Post("registration-email-resending")
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationCode(@Body() inputEmail: InputEmailDto) {
-    return this.commandBus.execute(new ResendConfirmationCodeCommand(inputEmail.email));
+    await this.commandBus.execute(new ResendConfirmationCodeCommand(inputEmail.email));
   }
+
 
   @Post("login")
   @HttpCode(HttpStatus.OK)
-  async login(@Body() inputLogin: InputLoginDto, @Res({ passthrough: true }) res: Response) {
-    const JWT_Tokens = await this.commandBus.execute(new LoginUserCommand(inputLogin.loginOrEmail, inputLogin.password));
+  async login(@Body() inputLogin: InputLoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    let title = req.header("user-agent")?.split(" ")[0] ?? "";
+    //title = title.split(" ")[0];
+
+    const JWT_Tokens = await this.commandBus.execute(new LoginUserCommand(inputLogin.loginOrEmail, inputLogin.password, req.ip, title));
     res.cookie("refreshToken", JWT_Tokens.refreshToken, {
       maxAge: 1000 * 20,
       httpOnly: true,
@@ -53,27 +60,29 @@ export class AuthController {
     return { accessToken: JWT_Tokens.accessToken };
   }
 
+
   @Post("logout")
   @SkipThrottle()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async logout(@Req() req: Request) {
-    return this.commandBus.execute(new LogoutUserCommand(req.cookies.refreshToken));
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    await this.commandBus.execute(new LogoutUserCommand(req.cookies.refreshToken));
+    res.clearCookie('refreshToken');
   }
-
 
 
   @Post("refresh-token")
   @SkipThrottle()
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const JWT_Tokens = await this.commandBus.execute(new RefreshTokenCommand(req.cookies.refreshToken));
+    let title = req.header("user-agent")?.split(" ")[0] ?? "";
+
+    const JWT_Tokens = await this.commandBus.execute(new RefreshTokenCommand(req.cookies.refreshToken, req.ip, title));
     res.cookie("refreshToken", JWT_Tokens.refreshToken, {
       maxAge: 1000 * 20,
       httpOnly: true,
       secure: true
     });
     return { accessToken: JWT_Tokens.accessToken };
-
   }
 
 
