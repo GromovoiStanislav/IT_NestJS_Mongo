@@ -15,7 +15,7 @@ export class UserIdMiddleware implements NestMiddleware {
     let token = req.header("Authorization");
     if (token) {
       token = token.split(' ')[1];
-      userId = await this.jwtService.getUserIdByToken(token);
+      userId = await this.jwtService.getUserIdByAccessToken(token);
     }
     // @ts-ignore`
     req.userId = userId;

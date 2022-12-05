@@ -5,7 +5,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Security, SecuritySchema } from "./schemas/security.schema";
 import {
   AddOrUpdateDeviceSessionUseCase,
-  ClearAllDevicesUseCase, KillSessionByDeviceIdUseCase,
+  ClearAllDevicesUseCase, FindSessionByTokenIdUseCase, KillSessionByDeviceIdUseCase, KillSessionByTokenIdUseCase,
   ReturnAllDeviceSessionsByCurrentUserUseCase,
   TerminateAllOtherDeviceSessionsExcludeCurrentUserUseCase, TerminateDeviceSessionUseCase
 } from "./security.service";
@@ -20,7 +20,9 @@ const useCases = [
   TerminateAllOtherDeviceSessionsExcludeCurrentUserUseCase,
   TerminateDeviceSessionUseCase,
   AddOrUpdateDeviceSessionUseCase,
-  KillSessionByDeviceIdUseCase
+  KillSessionByDeviceIdUseCase,
+  FindSessionByTokenIdUseCase,
+  KillSessionByTokenIdUseCase
 ];
 
 @Module({

@@ -17,15 +17,15 @@ export class JWT_Service {
   };
 
 
-  async createRefreshJWT(userId: string, deviceId: string, issuedAt: string): Promise<string> {
+  async createRefreshJWT(tokenId: string, userId: string, deviceId: string, issuedAt: string): Promise<string> {
     return this.jwtService.signAsync(
-      { userId, deviceId, issuedAt },
+      {tokenId, userId, deviceId, issuedAt },
       { secret: this.settings.SECRET, expiresIn: "20s" }
     );
   };
 
 
-  async getUserIdByToken(token: string): Promise<string | null> {
+  async getUserIdByAccessToken(token: string): Promise<string | null> {
     try {
       const data = await this.jwtService.verifyAsync(token, { secret: this.settings.SECRET });
       return data.userId;
@@ -40,7 +40,8 @@ export class JWT_Service {
       const data = await this.jwtService.verifyAsync(token, { secret: this.settings.SECRET });
       return {
         userId: data.userId,
-        deviceId: data.deviceId
+        deviceId: data.deviceId,
+        tokenId: data.tokenId,
       };
     } catch (e) {
       return null;

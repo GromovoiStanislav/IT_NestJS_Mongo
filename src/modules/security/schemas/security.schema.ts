@@ -5,6 +5,10 @@ export type SecurityDocument = HydratedDocument<Security>;
 
 @Schema()
 export class Security {
+
+  @Prop()
+  tokenId: string;
+
   @Prop()
   deviceId: string;
 

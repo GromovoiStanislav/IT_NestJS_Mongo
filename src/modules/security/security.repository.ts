@@ -20,12 +20,20 @@ export class SecurityRepository {
     return this.securityModel.findOneAndDelete({deviceId})
   }
 
+  async deleteByTokenId(tokenId: string): Promise<Security> {
+    return this.securityModel.findOneAndDelete({tokenId})
+  }
+
   async deleteAllOtherExcludeDeviceId(deviceId: string, userId: string): Promise<void> {
     await this.securityModel.deleteMany({userId: userId, deviceId: {$ne: deviceId}})
   }
 
   async findByDeviceId(deviceId: string): Promise<Security | null> {
     return this.securityModel.findOne({deviceId})
+  }
+
+  async findByTokenId(tokenId: string): Promise<Security | null> {
+    return this.securityModel.findOne({tokenId})
   }
 
   async addOrUpdateToken(data: Security): Promise<void> {

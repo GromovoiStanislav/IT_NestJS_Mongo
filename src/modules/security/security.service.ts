@@ -110,7 +110,7 @@ export class TerminateDeviceSessionUseCase implements ICommandHandler<TerminateD
 
 //////////////////////////////////////////////////////////////
 export class AddOrUpdateDeviceSessionCommand {
-  constructor(public userId: string, public deviceId: string, public ip: string, public title: string, public issuedAt: number) {
+  constructor(public tokenId: string, public userId: string, public deviceId: string, public ip: string, public title: string, public issuedAt: number) {
   }
 }
 
@@ -121,6 +121,7 @@ export class AddOrUpdateDeviceSessionUseCase implements ICommandHandler<AddOrUpd
 
   async execute(command: AddOrUpdateDeviceSessionCommand) {
     const dataRefreshToken = {
+      tokenId: command.tokenId,
       userId: command.userId,
       deviceId: command.deviceId,
       ip: command.ip,
@@ -146,5 +147,37 @@ export class KillSessionByDeviceIdUseCase implements ICommandHandler<KillSession
 
   async execute(command: KillSessionByDeviceIdCommand) {
     await this.securityRepository.deleteByDeviceId(command.deviceId);
+  }
+}
+
+//////////////////////////////////////////////////////////////
+export class FindSessionByTokenIdCommand {
+  constructor(public tokenId: string) {
+  }
+}
+
+@CommandHandler(FindSessionByTokenIdCommand)
+export class FindSessionByTokenIdUseCase implements ICommandHandler<FindSessionByTokenIdCommand> {
+  constructor(private securityRepository: SecurityRepository) {
+  }
+
+  async execute(command: FindSessionByTokenIdCommand) {
+    await this.securityRepository.findByTokenId(command.tokenId);
+  }
+}
+
+//////////////////////////////////////////////////////////////
+export class KillSessionByTokenIdCommand {
+  constructor(public tokenId: string) {
+  }
+}
+
+@CommandHandler(KillSessionByTokenIdCommand)
+export class KillSessionByTokenIdUseCase implements ICommandHandler<KillSessionByTokenIdCommand> {
+  constructor(private securityRepository: SecurityRepository) {
+  }
+
+  async execute(command: KillSessionByTokenIdCommand) {
+    await this.securityRepository.deleteByTokenId(command.tokenId);
   }
 }
