@@ -9,7 +9,7 @@ export class SecurityRepository {
   }
 
   async clearAll(): Promise<void> {
-    //await this.securityModel.deleteMany({});
+    await this.securityModel.deleteMany({});
   }
 
   async findAllByUserId(userId: string): Promise<Security[]> {
