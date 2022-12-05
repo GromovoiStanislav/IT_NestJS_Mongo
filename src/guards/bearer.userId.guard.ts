@@ -22,7 +22,7 @@ export class BearerUserIdGuard implements CanActivate {
     let token = request.header("Authorization");
     if (token) {
       token = token.split(" ")[1];
-      request.userId = await this.jwtService.getUserIdByToken(token);
+      request.userId = await this.jwtService.getUserIdByAccessToken(token);
     } else {
       request.userId = null;
     }

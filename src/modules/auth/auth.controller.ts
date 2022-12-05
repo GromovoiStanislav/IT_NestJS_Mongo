@@ -50,7 +50,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() inputLogin: InputLoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
     let title = req.header("user-agent")?.split(" ")[0] ?? "";
-    //title = title.split(" ")[0];
 
     const JWT_Tokens = await this.commandBus.execute(new LoginUserCommand(inputLogin.loginOrEmail, inputLogin.password, req.ip, title));
     res.cookie("refreshToken", JWT_Tokens.refreshToken, {
