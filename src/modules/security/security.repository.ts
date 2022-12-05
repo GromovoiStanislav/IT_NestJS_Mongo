@@ -17,7 +17,7 @@ export class SecurityRepository {
   }
 
   async deleteByDeviceId(deviceId: string): Promise<Security> {
-    return this.securityModel.findByIdAndDelete({deviceId})
+    return this.securityModel.findOneAndDelete({deviceId})
   }
 
   async deleteAllOtherExcludeDeviceId(deviceId: string, userId: string): Promise<void> {
