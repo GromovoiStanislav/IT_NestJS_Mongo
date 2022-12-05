@@ -12,10 +12,16 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { CqrsModule } from "@nestjs/cqrs";
 import { CommentsModule } from "./modules/comments/comments.module";
 import { SecurityModule } from "./modules/security/security.module";
+import { ThrottlerModule } from "@nestjs/throttler";
 
 
 @Module({
-  imports: [CqrsModule, configModule, DatabaseModule, UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule,CommentsModule,SecurityModule],
+  imports: [CqrsModule, configModule, DatabaseModule, UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule,CommentsModule,SecurityModule,
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 5
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService]
 })

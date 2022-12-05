@@ -6,10 +6,9 @@ import {
   TerminateAllOtherDeviceSessionsExcludeCurrentCommand,
   TerminateDeviceSessionCommand
 } from "./security.service";
-import { SkipThrottle } from "@nestjs/throttler";
 
 
-@SkipThrottle()
+
 @Controller("security")
 export class SecurityController {
 

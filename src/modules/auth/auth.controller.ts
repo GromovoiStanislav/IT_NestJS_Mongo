@@ -14,9 +14,10 @@ import { InputCodeDto } from "./dto/input-code.dto";
 import { InputLoginDto } from "./dto/input-login.dto";
 import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
-import { SkipThrottle } from "@nestjs/throttler";
+import { SkipThrottle, ThrottlerGuard } from "@nestjs/throttler";
 
 
+@UseGuards(ThrottlerGuard)
 @Controller("auth")
 export class AuthController {
 
