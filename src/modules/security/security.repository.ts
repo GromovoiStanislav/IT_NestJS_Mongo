@@ -29,7 +29,7 @@ export class SecurityRepository {
   }
 
   async addOrUpdateToken(data: Security): Promise<void> {
-    await this.securityModel.findOneAndReplace({deviceId: data.deviceId}, data, {upsert: true})
+    await this.securityModel.findOneAndUpdate({deviceId: data.deviceId}, data, {upsert: true})
   }
 
 
