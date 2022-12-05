@@ -103,7 +103,7 @@ export class TerminateDeviceSessionUseCase implements ICommandHandler<TerminateD
     if (dataFromToken.userId !== dataFromDeviceId.userId) {
       throw new ForbiddenException();
     }
-    await this.securityRepository.deleteByDeviceId(dataFromToken.deviceId);
+    await this.securityRepository.deleteByDeviceId(command.deviceId);
   }
 }
 
