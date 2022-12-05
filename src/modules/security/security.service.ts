@@ -96,7 +96,7 @@ export class TerminateDeviceSessionUseCase implements ICommandHandler<TerminateD
     if (!dataFromToken) {
       throw new UnauthorizedException();
     }
-    const dataFromDeviceId = await this.securityRepository.findByDeviceId(dataFromToken.deviceId);
+    const dataFromDeviceId = await this.securityRepository.findByDeviceId(command.deviceId);
     if (!dataFromDeviceId) {
       throw new NotFoundException();
     }
