@@ -162,7 +162,7 @@ export class FindSessionByTokenIdUseCase implements ICommandHandler<FindSessionB
   }
 
   async execute(command: FindSessionByTokenIdCommand) {
-    await this.securityRepository.findByTokenId(command.tokenId);
+    return await this.securityRepository.findByTokenId(command.tokenId);
   }
 }
 

@@ -193,16 +193,16 @@ export class RefreshTokenUseCase implements ICommandHandler<RefreshTokenCommand>
     if (!command.refreshToken) {
       throw new UnauthorizedException();
     }
-    const data = await this.jwtService.getInfoByRefreshToken(command.refreshToken);//пока только userId
+    const data = await this.jwtService.getInfoByRefreshToken(command.refreshToken);
     if (!data) {
       throw new UnauthorizedException();
     }
-    const session = await this.commandBus.execute(new FindSessionByTokenIdCommand(data.tokenId))
+    const session = await this.commandBus.execute(new FindSessionByTokenIdCommand(data.tokenId));
     if (!session) {
       throw new UnauthorizedException();
     }
 
-    await this.commandBus.execute(new KillSessionByTokenIdCommand(data.tokenId))
+    await this.commandBus.execute(new KillSessionByTokenIdCommand(data.tokenId));
 
     const tokenId = uuidv4();
     const issuedAt = Date.now();
@@ -236,7 +236,7 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
     if (!data) {
       throw new UnauthorizedException();
     }
-    const session = await this.commandBus.execute(new FindSessionByTokenIdCommand(data.tokenId))
+    const session = await this.commandBus.execute(new FindSessionByTokenIdCommand(data.tokenId));
     if (!session) {
       throw new UnauthorizedException();
     }
