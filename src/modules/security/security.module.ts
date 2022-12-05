@@ -10,8 +10,8 @@ import {
   TerminateAllOtherDeviceSessionsExcludeCurrentUserUseCase, TerminateDeviceSessionUseCase
 } from "./security.service";
 import { JWT_Module } from "../jwt/jwt.module";
+import { SecurityRepository } from "./security.repository";
 //import * as cookieParser from 'cookie-parser';
-
 
 
 const useCases = [
@@ -29,9 +29,11 @@ const useCases = [
     MongooseModule.forFeature([{ name: Security.name, schema: SecuritySchema }])
   ],
   controllers: [SecurityController],
-  providers: [...useCases]
+  providers: [...useCases, SecurityRepository]
 })
-export class SecurityModule {}
+export class SecurityModule {
+}
+
 // export class SecurityModule implements NestModule {
 //   configure(consumer: MiddlewareConsumer) {
 //     consumer

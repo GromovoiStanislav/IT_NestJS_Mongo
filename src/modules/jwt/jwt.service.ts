@@ -1,13 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Settings } from "../../settings";
-import { CommandBus } from "@nestjs/cqrs";
 
 
 @Injectable()
 export class JWT_Service {
   constructor(
-    private commandBus: CommandBus,
     private jwtService: JwtService,
     private settings: Settings
   ) {
