@@ -15,6 +15,7 @@ import { comparePassword } from "../../utils/bcryptUtils";
 import { JWT_Service } from "../jwt/jwt.service";
 import { EmailService } from "../email/email.service";
 import { AddOrUpdateDeviceSessionCommand, KillSessionByDeviceIdCommand } from "../security/security.service";
+import uid from "../../utils/IdGenerator";
 
 
 ////////////////////////////////////////////////////////////////////
@@ -133,7 +134,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     if (user) {
       const compareOK = await comparePassword(command.password, user.password);
       if (compareOK) {
-        const deviceId = uuidv4(); // т.е. это Сессия
+        const deviceId = uid();//uuidv4(); // т.е. это Сессия
         const issuedAt = Date.now();
         const accessToken = await this.jwtService.createAuthJWT(user.id);
         const refreshToken = await this.jwtService.createRefreshJWT(user.id, deviceId, new Date(issuedAt).toISOString());
@@ -223,6 +224,6 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
     if (!data) {
       throw new UnauthorizedException();
     }
-    await this.commandBus.execute(new KillSessionByDeviceIdCommand(data.deviceId))
+    await this.commandBus.execute(new KillSessionByDeviceIdCommand(data.deviceId));
   }
 }

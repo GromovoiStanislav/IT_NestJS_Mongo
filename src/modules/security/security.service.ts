@@ -44,7 +44,8 @@ export class ReturnAllDeviceSessionsByCurrentUserUseCase implements ICommandHand
       throw new UnauthorizedException();
     }
     const data = await this.securityRepository.findAllByUserId(dataFromToken.userId);
-    return data.map(el => SecurityMapper.fromModelToView(el));
+    return data
+    //return data.map(el => SecurityMapper.fromModelToView(el));
   }
 }
 
