@@ -17,7 +17,7 @@ import { Pagination } from "../../decorators/paginationDecorator";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 
 @UseGuards(BaseAuthGuard)
-@Controller("users")
+@Controller("sa/users")
 export class UsersController {
 
   constructor(
