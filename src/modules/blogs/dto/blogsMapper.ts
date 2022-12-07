@@ -39,7 +39,7 @@ export default class BlogMapper {
     return viewBlog;
   }
 
-  static fromModelsToPaginator(blogs: PaginatorDto<Blog[]>): PaginatorDto<ViewBlogDto[]> {
+  static fromModelsToPaginator(blogs: PaginatorDto<Blog[]>,withBlogOwner:boolean): PaginatorDto<ViewBlogDto[]> {
     return {
       pagesCount: blogs.pagesCount,
       page: blogs.page,

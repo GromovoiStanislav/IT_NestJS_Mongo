@@ -41,11 +41,11 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
   async execute(command: CreateBlogCommand): Promise<ViewBlogDto> {
 
     const blogOwner: BlogOwnerDto = {
-      userId: 'userId_TO_DO',
-      userLogin: 'userLogin_TO_DO'
+      userId: "userId_TO_DO",
+      userLogin: "userLogin_TO_DO"
     };
 
-    const blog = await this.blogsRepository.createBlog(BlogMapper.fromInputToCreate(command.inputBlog,blogOwner));
+    const blog = await this.blogsRepository.createBlog(BlogMapper.fromInputToCreate(command.inputBlog, blogOwner));
     return BlogMapper.fromModelToView(blog);
   }
 }
@@ -106,7 +106,7 @@ export class GetOneBlogUseCase implements ICommandHandler<GetOneBlogCommand> {
 
 //////////////////////////////////////////////////////////////
 export class GetAllBlogsCommand {
-  constructor(public searchName: string, public paginationParams: PaginationParams) {
+  constructor(public searchName: string, public paginationParams: PaginationParams, public withBlogOwner: boolean = false) {
   }
 }
 
@@ -117,7 +117,7 @@ export class GetAllBlogsUseCase implements ICommandHandler<GetAllBlogsCommand> {
 
   async execute(command: GetAllBlogsCommand): Promise<PaginatorDto<ViewBlogDto[]>> {
     const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams);
-    return BlogMapper.fromModelsToPaginator(result);
+    return BlogMapper.fromModelsToPaginator(result, command.withBlogOwner);
   }
 }
 
@@ -137,15 +137,15 @@ export class BindBlogWithUserUseCase implements ICommandHandler<BindBlogWithUser
   async execute(command: BindBlogWithUserCommand): Promise<void> {
     const blog = await this.blogsRepository.getOneBlog(command.blogId);
     if (!blog) {
-      throw new BadRequestException('blog not found');
+      throw new BadRequestException("blog not found");
     }
     if (blog.blogOwnerInfo.userId) {
-      throw new BadRequestException('blogId has user already');
+      throw new BadRequestException("blogId has user already");
     }
 
-    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId))
+    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
     if (!user) {
-      throw new BadRequestException('user not found');
+      throw new BadRequestException("user not found");
     }
 
     const blogOwner: BlogOwnerDto = {

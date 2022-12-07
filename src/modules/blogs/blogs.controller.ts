@@ -121,6 +121,13 @@ export class SaBlogsController {
     private commandBus: CommandBus) {
   }
 
+  @Get()
+  getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
+    const searchNameTerm = query.searchNameTerm as string || "";
+    return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams,true));
+  }
+
+
   @Put(":blogId/bind-with-user/:userId")
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
