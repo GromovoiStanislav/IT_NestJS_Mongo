@@ -5,7 +5,10 @@ import BlogMapper from "./dto/blogsMapper";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { Blog } from "./schemas/blogs.schema";
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { BadRequestException } from "@nestjs/common";
+import { BlogOwnerDto } from "./dto/blog-owner.dto";
+import { GetUserByIdCommand } from "../users/users.service";
 
 
 //////////////////////////////////////////////////////////////
@@ -36,7 +39,13 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
   }
 
   async execute(command: CreateBlogCommand): Promise<ViewBlogDto> {
-    const blog = await this.blogsRepository.createBlog(BlogMapper.fromInputToCreate(command.inputBlog));
+
+    const blogOwner: BlogOwnerDto = {
+      userId: 'userId_TO_DO',
+      userLogin: 'userLogin_TO_DO'
+    };
+
+    const blog = await this.blogsRepository.createBlog(BlogMapper.fromInputToCreate(command.inputBlog,blogOwner));
     return BlogMapper.fromModelToView(blog);
   }
 }
@@ -112,3 +121,38 @@ export class GetAllBlogsUseCase implements ICommandHandler<GetAllBlogsCommand> {
   }
 }
 
+//////////////////////////////////////////////////////////////
+export class BindBlogWithUserCommand {
+  constructor(public blogId: string, public userId: string) {
+  }
+}
+
+@CommandHandler(BindBlogWithUserCommand)
+export class BindBlogWithUserUseCase implements ICommandHandler<BindBlogWithUserCommand> {
+  constructor(
+    private commandBus: CommandBus,
+    private blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: BindBlogWithUserCommand): Promise<void> {
+    const blog = await this.blogsRepository.getOneBlog(command.blogId);
+    if (!blog) {
+      throw new BadRequestException('blog not found');
+    }
+    if (blog.blogOwnerInfo.userId) {
+      throw new BadRequestException('blogId has user already');
+    }
+
+    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId))
+    if (!user) {
+      throw new BadRequestException('user not found');
+    }
+
+    const blogOwner: BlogOwnerDto = {
+      userId: user.id,
+      userLogin: user.login
+    };
+
+    await this.blogsRepository.bindBlogWithUser(command.blogId, blogOwner);
+  }
+}

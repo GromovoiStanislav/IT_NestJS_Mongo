@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
-import { BlogsController } from "./blogs.controller";
+import { BlogsController, SaBlogsController } from "./blogs.controller";
 import {
+  BindBlogWithUserUseCase,
   ClearAllBlogsUseCase,
   CreateBlogUseCase,
   DeleteBlogUseCase, GetAllBlogsUseCase, GetOneBlogUseCase,
@@ -18,12 +19,13 @@ const useCases = [
   UpdateBlogUseCase,
   DeleteBlogUseCase,
   GetOneBlogUseCase,
-  GetAllBlogsUseCase
+  GetAllBlogsUseCase,
+  BindBlogWithUserUseCase
 ];
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), CqrsModule,JWT_Module],
-  controllers: [BlogsController],
+  controllers: [BlogsController,SaBlogsController],
   providers: [...useCases, BlogsRepository],
   exports:[]
 })

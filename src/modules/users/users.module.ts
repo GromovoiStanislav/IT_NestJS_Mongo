@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { UsersController } from "./users.controller";
+import { SaUsersController } from "./users.controller";
 import {
   BanUserUserUseCase,
   ClearAllUsersUseCase, ConfirmUserUseCase,
@@ -29,7 +29,7 @@ const useCases = [
 
 @Module({
   imports: [CqrsModule, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
-  controllers: [UsersController],
+  controllers: [SaUsersController],
   providers: [...useCases, UsersRepository],
   //exports: [ UsersRepository]
 })

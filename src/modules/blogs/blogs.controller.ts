@@ -9,6 +9,7 @@ import {
 } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import {
+  BindBlogWithUserCommand,
   CreateBlogCommand,
   DeleteBlogCommand, GetAllBlogsCommand,
   GetOneBlogCommand,
@@ -29,7 +30,7 @@ import { CurrentUserId } from "../../decorators/current-userId.decorator";
 @Controller("blogs")
 export class BlogsController {
   constructor(
-    private commandBus: CommandBus){
+    private commandBus: CommandBus) {
   }
 
 
@@ -37,7 +38,7 @@ export class BlogsController {
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createBlog(@Body() inputBlog: InputBlogDto): Promise<ViewBlogDto> {
-    return this.commandBus.execute(new CreateBlogCommand(inputBlog))
+    return this.commandBus.execute(new CreateBlogCommand(inputBlog));
   }
 
 
@@ -45,7 +46,7 @@ export class BlogsController {
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param("id") blogId: string, @Body() inputBlog: InputBlogDto): Promise<void> {
-    const result = await this.commandBus.execute(new UpdateBlogCommand(blogId, inputBlog))
+    const result = await this.commandBus.execute(new UpdateBlogCommand(blogId, inputBlog));
     if (!result) {
       throw new NotFoundException();
     }
@@ -57,7 +58,7 @@ export class BlogsController {
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param("id") blogId: string): Promise<void> {
-    const result = await this.commandBus.execute(new DeleteBlogCommand(blogId))
+    const result = await this.commandBus.execute(new DeleteBlogCommand(blogId));
     if (!result) {
       throw new NotFoundException();
     }
@@ -67,7 +68,7 @@ export class BlogsController {
 
   @Get(":id")
   async getOneBlog(@Param("id") blogId: string): Promise<ViewBlogDto> {
-    const result = await this.commandBus.execute(new GetOneBlogCommand(blogId))
+    const result = await this.commandBus.execute(new GetOneBlogCommand(blogId));
     if (!result) {
       throw new NotFoundException();
     }
@@ -78,9 +79,8 @@ export class BlogsController {
   @Get()
   getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
     const searchNameTerm = query.searchNameTerm as string || "";
-    return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams))
+    return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams));
   }
-
 
 
 //////////////////////////////////////////////////////////////////////
@@ -110,7 +110,23 @@ export class BlogsController {
     if (!await this.commandBus.execute(new GetOneBlogCommand(blogId))) {
       throw new NotFoundException();
     }
-    return this.commandBus.execute(new GetAllPostsByBlogIdCommand(blogId, userId, paginationParams))
+    return this.commandBus.execute(new GetAllPostsByBlogIdCommand(blogId, userId, paginationParams));
   }
+
+}
+
+@Controller("sa/blogs")
+export class SaBlogsController {
+  constructor(
+    private commandBus: CommandBus) {
+  }
+
+  @Put(":blogId/bind-with-user/:userId")
+  @UseGuards(BaseAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateBlog(@Param("blogId") blogId: string, @Param("userId") userId: string): Promise<void> {
+    await this.commandBus.execute(new BindBlogWithUserCommand(blogId, userId));
+  }
+
 
 }

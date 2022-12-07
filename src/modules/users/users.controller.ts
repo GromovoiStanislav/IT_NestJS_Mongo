@@ -19,7 +19,7 @@ import { InputBanUserDto } from "./dto/input-ban-user.dto";
 
 @UseGuards(BaseAuthGuard)
 @Controller("sa/users")
-export class UsersController {
+export class SaUsersController {
 
   constructor(
     private commandBus: CommandBus

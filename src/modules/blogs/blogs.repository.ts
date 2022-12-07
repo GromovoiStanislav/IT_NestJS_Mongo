@@ -6,6 +6,7 @@ import { CreateBlogDto } from "./dto/create-blog.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { UpdateBlogDto } from "./dto/update-blog.dto";
+import { BlogOwnerDto } from "./dto/blog-owner.dto";
 
 
 @Injectable()
@@ -33,6 +34,10 @@ export class BlogsRepository {
 
   async updateBlog(blogId: string, updateBlogDto: UpdateBlogDto): Promise<Blog | null> {
     return this.blogModel.findOneAndUpdate({ id: blogId }, updateBlogDto);
+  }
+
+  async bindBlogWithUser(blogId: string, blogOwner: BlogOwnerDto): Promise<Blog | null> {
+    return this.blogModel.findOneAndUpdate({ id: blogId }, { blogOwnerInfo: blogOwner });
   }
 
 

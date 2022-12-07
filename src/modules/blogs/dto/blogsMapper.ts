@@ -6,25 +6,27 @@ import uid from "../../../utils/IdGenerator";
 import { PaginatorDto } from "../../../commonDto/paginator.dto";
 import { UpdateBlogDto } from "./update-blog.dto";
 import dateAt from "../../../utils/DateGenerator";
+import { BlogOwnerDto } from "./blog-owner.dto";
 
 export default class BlogMapper {
 
-  static fromInputToCreate(inputBlog: InputBlogDto): CreateBlogDto {
-    const createdBlog =  new CreateBlogDto();
+  static fromInputToCreate(inputBlog: InputBlogDto, blogOwnerInfo: BlogOwnerDto): CreateBlogDto {
+    const createdBlog = new CreateBlogDto();
     createdBlog.id = uid();
     createdBlog.name = inputBlog.name;
     createdBlog.websiteUrl = inputBlog.websiteUrl;
     createdBlog.description = inputBlog.description;
     createdBlog.createdAt = dateAt();
-    return createdBlog
+    createdBlog.blogOwnerInfo = blogOwnerInfo;
+    return createdBlog;
   }
 
   static fromInputToUpdate(inputBlog: InputBlogDto): UpdateBlogDto {
-    const updatedBlog =  new UpdateBlogDto();
+    const updatedBlog = new UpdateBlogDto();
     updatedBlog.name = inputBlog.name;
     updatedBlog.websiteUrl = inputBlog.websiteUrl;
     updatedBlog.description = inputBlog.description;
-    return updatedBlog
+    return updatedBlog;
   }
 
   static fromModelToView(blog: Blog): ViewBlogDto {
@@ -44,7 +46,7 @@ export default class BlogMapper {
       pageSize: blogs.pageSize,
       totalCount: blogs.totalCount,
       items: blogs.items.map(blog => BlogMapper.fromModelToView(blog))
-    }
+    };
   }
 
 }

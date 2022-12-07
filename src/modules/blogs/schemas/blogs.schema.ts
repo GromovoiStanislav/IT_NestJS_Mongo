@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, raw, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 
 export type BlogDocument = HydratedDocument<Blog>;
@@ -19,6 +19,12 @@ export class Blog {
 
   @Prop()
   createdAt: string;
+
+  @Prop(raw({
+    userId: { type: String },
+    userLogin: { type: String }
+  }))
+  blogOwnerInfo: Record<string, any>;
 
 }
 
