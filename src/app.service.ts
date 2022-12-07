@@ -16,6 +16,7 @@ export class AppService {
     //const MONGO_URI = this.configService.get("MONGO_URI");
 
     //return "PORT: " + this.configService.get("PORT");
-    return "HELP!!!";
+    return process.env.PORT;
+    //return "HELP!!!";
   }
 }
