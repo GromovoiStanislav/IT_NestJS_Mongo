@@ -1,3 +1,5 @@
+import { BanUsersInfo } from "./user-banInfo.dto";
+
 export class CreateUserDto {
   id: string;
   login: string;
@@ -12,4 +14,5 @@ export class CreateUserDto {
     recoveryCode: string,
     isConfirmed: boolean
   };
+  banInfo: BanUsersInfo;
 }

@@ -9,6 +9,9 @@ import UsersMapper from "./dto/usersMapper";
 
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { User } from "./schemas/users.schema";
+import { InputBanUserDto } from "./dto/input-ban-user.dto";
+import { BanUsersInfo } from "./dto/user-banInfo.dto";
+import dateAt from "../../utils/DateGenerator";
 
 //////////////////////////////////////////////////////////////
 export class ClearAllUsersCommand {
@@ -184,5 +187,30 @@ export class ConfirmUserUseCase implements ICommandHandler<ConfirmUserCommand> {
 
   async execute(command: ConfirmUserCommand) {
     return await this.usersRepository.confirmUser(command.userId);
+  }
+}
+
+
+////////////////////////////////////////////////////////////
+export class BanUserCommand {
+  constructor(public userId: string, public inputBanUser: InputBanUserDto) {
+  }
+}
+
+@CommandHandler(BanUserCommand)
+export class BanUserUserUseCase implements ICommandHandler<BanUserCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: BanUserCommand) {
+
+    const banInfo = new BanUsersInfo();
+    if(command.inputBanUser.isBanned) {
+      banInfo.isBanned = true;
+      banInfo.banDate = dateAt();
+      banInfo.banReason = command.inputBanUser.banReason;
+    }
+
+    await this.usersRepository.banUser(command.userId, banInfo);
   }
 }

@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersController } from "./users.controller";
 import {
+  BanUserUserUseCase,
   ClearAllUsersUseCase, ConfirmUserUseCase,
   CreateUserUseCase,
   DeleteUserUseCase,
@@ -22,7 +23,8 @@ const useCases = [
   UpdateConfirmCodeUseCase,
   GetUserByConfirmationCodeUseCase,
   ConfirmUserUseCase,
-  GetUserByIdUseCase
+  GetUserByIdUseCase,
+  BanUserUserUseCase
 ];
 
 @Module({

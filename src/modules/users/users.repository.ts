@@ -4,6 +4,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./schemas/users.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { BanUsersInfo } from "./dto/user-banInfo.dto";
 
 
 @Injectable()
@@ -66,8 +67,11 @@ export class UsersRepository {
   }
 
   async findUserById(id: string): Promise<User | null> {
-    return this.userModel.findOne({id });
+    return this.userModel.findOne({ id });
   }
 
+  async banUser(userId: string, banInfo: BanUsersInfo): Promise<void> {
+    await this.userModel.findOneAndUpdate({ id: userId }, { banInfo });
+  }
 
 }

@@ -32,7 +32,12 @@ export class User {
   }))
   recoveryPassword: Record<string, any>;
 
-
+  @Prop(raw({
+    isBanned: { type: String },
+    banDate: { type: String },
+    banReason: { type: String }
+  }))
+  banInfo: Record<string, any>;
 }
 
 
