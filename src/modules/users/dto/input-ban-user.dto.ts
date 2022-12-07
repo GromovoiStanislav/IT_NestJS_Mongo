@@ -1,5 +1,5 @@
 import { Transform, TransformFnParams } from "class-transformer";
-import { IsBoolean, IsNotEmpty, IsString, MaxLength } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsString, MinLength } from "class-validator";
 
 
 export class InputBanUserDto {
@@ -10,6 +10,6 @@ export class InputBanUserDto {
   @Transform(({value}:TransformFnParams)=>value?.trim())
   @IsString()
   @IsNotEmpty()
-  @MaxLength(20)
+  @MinLength(20)
   banReason: string;
 }
