@@ -66,6 +66,7 @@ export class BlogsController {
 
 }
 
+//////////////////////////////////////////////////////////////
 
 @UseGuards(AuthUserIdGuard)
 @Controller("blogger/blogs")
@@ -114,16 +115,13 @@ export class BloggerBlogsController {
   async createPostByBlogId(@Param("blogId") blogId: string,
                            @Body() inputPost: InputBlogPostDto,
                            @CurrentUserId() userId: string): Promise<ViewPostDto> {
-    const result = await this.commandBus.execute(new CreatePostByBlogIdCommand(blogId, inputPost));
-
-    if (!result) {
-      throw new NotFoundException();
-    }
-    return result;
+    return await this.commandBus.execute(new CreatePostByBlogIdCommand(blogId, userId, inputPost));
   }
 
 
 }
+
+////////////////////////////////////////////
 
 @UseGuards(BaseAuthGuard)
 @Controller("sa/blogs")

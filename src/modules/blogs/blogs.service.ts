@@ -98,16 +98,10 @@ export class DeleteBlogCommand {
 @CommandHandler(DeleteBlogCommand)
 export class DeleteBlogUseCase implements ICommandHandler<DeleteBlogCommand> {
   constructor(
-    private commandBus: CommandBus,
     protected blogsRepository: BlogsRepository) {
   }
 
   async execute(command: DeleteBlogCommand): Promise<void> {
-
-    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
-    if (!user) {
-      throw  new UnauthorizedException();
-    }
 
     const blog = await this.blogsRepository.getOneBlog(command.blogId);
     if (!blog) {

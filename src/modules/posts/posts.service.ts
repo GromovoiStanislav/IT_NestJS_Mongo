@@ -10,6 +10,7 @@ import { InputBlogPostDto } from "./dto/input-blog-post.dto";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { PostLikesRepository } from "./postLikes.repository";
 import { GetUserByIdCommand } from "../users/users.service";
+import { ForbiddenException, NotFoundException } from "@nestjs/common";
 
 
 //////////////////////////////////////////////////////////////
@@ -200,20 +201,26 @@ export class GetAllPostsByBlogIdUseCase implements ICommandHandler<GetAllPostsBy
 
 //////////////////////////////////////////////////////////////
 export class CreatePostByBlogIdCommand {
-  constructor(public blogId: string, public inputPost: InputBlogPostDto) {
+  constructor(public blogId: string, public userId: string, public inputPost: InputBlogPostDto) {
   }
 }
 
 @CommandHandler(CreatePostByBlogIdCommand)
 export class CreatePostByBlogIdUseCase implements ICommandHandler<CreatePostByBlogIdCommand> {
-  constructor(protected postsRepository: PostsRepository,
-              private commandBus: CommandBus) {
+  constructor(
+    private commandBus: CommandBus,
+    private postsRepository: PostsRepository) {
   }
 
   async execute(command: CreatePostByBlogIdCommand): Promise<ViewPostDto | null> {
+
+
     const blog = await this.commandBus.execute(new GetOneBlogCommand(command.blogId));
     if (!blog) {
-      return null;
+      throw new NotFoundException();
+    }
+    if (command.userId !== blog.blogOwnerInfo.userId) {
+      throw new ForbiddenException();
     }
 
     const post = await this.postsRepository.createPost(PostMapper.fromInputToCreate({
