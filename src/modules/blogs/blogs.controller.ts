@@ -26,6 +26,7 @@ import { Pagination } from "../../decorators/paginationDecorator";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { BearerUserIdGuard } from "../../guards/bearer.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 
 @Controller("blogs")
 export class BlogsController {
@@ -66,8 +67,10 @@ export class BlogsController {
 }
 
 
+@UseGuards(AuthUserIdGuard)
 @Controller("blogger/blogs")
 export class BloggerBlogsController {
+
   constructor(
     private commandBus: CommandBus) {
   }
@@ -75,15 +78,18 @@ export class BloggerBlogsController {
   @Post()
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  async createBlog(@Body() inputBlog: InputBlogDto): Promise<ViewBlogDto> {
-    return this.commandBus.execute(new CreateBlogCommand(inputBlog));
+  async createBlog(@Body() inputBlog: InputBlogDto,
+                   @CurrentUserId() userId: string): Promise<ViewBlogDto> {
+    return this.commandBus.execute(new CreateBlogCommand(inputBlog, userId));
   }
 
 
   @Put(":id")
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async updateBlog(@Param("id") blogId: string, @Body() inputBlog: InputBlogDto): Promise<void> {
+  async updateBlog(@Param("id") blogId: string,
+                   @Body() inputBlog: InputBlogDto,
+                   @CurrentUserId() userId: string): Promise<void> {
     const result = await this.commandBus.execute(new UpdateBlogCommand(blogId, inputBlog));
     if (!result) {
       throw new NotFoundException();
@@ -95,7 +101,8 @@ export class BloggerBlogsController {
   @Delete(":id")
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteBlog(@Param("id") blogId: string): Promise<void> {
+  async deleteBlog(@Param("id") blogId: string,
+                   @CurrentUserId() userId: string): Promise<void> {
     const result = await this.commandBus.execute(new DeleteBlogCommand(blogId));
     if (!result) {
       throw new NotFoundException();
@@ -107,9 +114,9 @@ export class BloggerBlogsController {
   @Post(":blogId/posts")
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  async createPostByBlogId(
-    @Param("blogId") blogId: string,
-    @Body() inputPost: InputBlogPostDto): Promise<ViewPostDto> {
+  async createPostByBlogId(@Param("blogId") blogId: string,
+                           @Body() inputPost: InputBlogPostDto,
+                           @CurrentUserId() userId: string): Promise<ViewPostDto> {
     const result = await this.commandBus.execute(new CreatePostByBlogIdCommand(blogId, inputPost));
 
     if (!result) {
@@ -130,7 +137,7 @@ export class SaBlogsController {
   @Get()
   getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
     const searchNameTerm = query.searchNameTerm as string || "";
-    return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams,true));
+    return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams, true));
   }
 
 

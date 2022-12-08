@@ -6,7 +6,7 @@ import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { Blog } from "./schemas/blogs.schema";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { BlogOwnerDto } from "./dto/blog-owner.dto";
 import { GetUserByIdCommand } from "../users/users.service";
 
@@ -29,20 +29,27 @@ export class ClearAllBlogsUseCase implements ICommandHandler<ClearAllBlogsComman
 
 //////////////////////////////////////////////////////////////
 export class CreateBlogCommand {
-  constructor(public inputBlog: InputBlogDto) {
+  constructor(public inputBlog: InputBlogDto, public userId: string) {
   }
 }
 
 @CommandHandler(CreateBlogCommand)
 export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
-  constructor(protected blogsRepository: BlogsRepository) {
+  constructor(
+    private commandBus: CommandBus,
+    protected blogsRepository: BlogsRepository) {
   }
 
   async execute(command: CreateBlogCommand): Promise<ViewBlogDto> {
 
+    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
+    if(!user){
+      throw  new NotFoundException()
+    }
+
     const blogOwner: BlogOwnerDto = {
-      userId: "userId_TO_DO",
-      userLogin: "userLogin_TO_DO"
+      userId: user.id,
+      userLogin: user.login
     };
 
     const blog = await this.blogsRepository.createBlog(BlogMapper.fromInputToCreate(command.inputBlog, blogOwner));
