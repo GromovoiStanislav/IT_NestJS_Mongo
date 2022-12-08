@@ -43,24 +43,14 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
   async execute(command: CreateBlogCommand): Promise<ViewBlogDto> {
 
     const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
-    let blogOwner
     if (!user) {
-      //throw  new UnauthorizedException();
-      blogOwner = {
-        userId: command.userId,
-        userLogin: command.userId
-      };
-    } else {
-      blogOwner = {
-        userId: user.id,
-        userLogin: user.login
-      };
+      throw  new UnauthorizedException();
     }
 
-    // const blogOwner:BlogOwnerDto = {
-    //   userId: user.id,
-    //   userLogin: user.login
-    // };
+    const blogOwner:BlogOwnerDto = {
+      userId: user.id,
+      userLogin: user.login
+    };
 
     const blog = await this.blogsRepository.createBlog(BlogMapper.fromInputToCreate(command.inputBlog, blogOwner));
     return BlogMapper.fromModelToView(blog);

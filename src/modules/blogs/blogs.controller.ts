@@ -76,7 +76,6 @@ export class BloggerBlogsController {
   }
 
   @Post()
-  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createBlog(@Body() inputBlog: InputBlogDto,
                    @CurrentUserId() userId: string): Promise<ViewBlogDto> {
@@ -85,7 +84,6 @@ export class BloggerBlogsController {
 
 
   @Put(":id")
-  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param("id") blogId: string,
                    @Body() inputBlog: InputBlogDto,
@@ -99,7 +97,6 @@ export class BloggerBlogsController {
 
 
   @Delete(":id")
-  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param("id") blogId: string,
                    @CurrentUserId() userId: string): Promise<void> {
@@ -108,7 +105,6 @@ export class BloggerBlogsController {
 
 
   @Post(":blogId/posts")
-  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createPostByBlogId(@Param("blogId") blogId: string,
                            @Body() inputPost: InputBlogPostDto,
@@ -124,6 +120,7 @@ export class BloggerBlogsController {
 
 }
 
+@UseGuards(BaseAuthGuard)
 @Controller("sa/blogs")
 export class SaBlogsController {
   constructor(
@@ -138,7 +135,6 @@ export class SaBlogsController {
 
 
   @Put(":blogId/bind-with-user/:userId")
-  @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param("blogId") blogId: string, @Param("userId") userId: string): Promise<void> {
     await this.commandBus.execute(new BindBlogWithUserCommand(blogId, userId));
