@@ -218,9 +218,9 @@ export class CreatePostByBlogIdUseCase implements ICommandHandler<CreatePostByBl
     if (!blog) {
       throw new NotFoundException();
     }
-    if (command.userId !== blog.blogOwnerInfo.userId) {
-      throw new ForbiddenException();
-    }
+    // if (command.userId !== blog.blogOwnerInfo.userId) {
+    //   throw new ForbiddenException();
+    // }
 
     const post = await this.postsRepository.createPost(PostMapper.fromInputToCreate({
       ...command.inputPost,
