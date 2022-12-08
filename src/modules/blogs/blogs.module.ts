@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { BlogsController, SaBlogsController } from "./blogs.controller";
+import { BloggerBlogsController, BlogsController, SaBlogsController } from "./blogs.controller";
 import {
   BindBlogWithUserUseCase,
   ClearAllBlogsUseCase,
@@ -24,10 +24,10 @@ const useCases = [
 ];
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), CqrsModule,JWT_Module],
-  controllers: [BlogsController,SaBlogsController],
+  imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), CqrsModule, JWT_Module],
+  controllers: [BlogsController, BloggerBlogsController, SaBlogsController],
   providers: [...useCases, BlogsRepository],
-  exports:[]
+  exports: []
 })
 export class BlogsModule {
 }

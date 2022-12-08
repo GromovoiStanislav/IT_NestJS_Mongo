@@ -29,10 +29,48 @@ import { CurrentUserId } from "../../decorators/current-userId.decorator";
 
 @Controller("blogs")
 export class BlogsController {
+
   constructor(
     private commandBus: CommandBus) {
   }
 
+  @Get()
+  getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
+    const searchNameTerm = query.searchNameTerm as string || "";
+    return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams));
+  }
+
+
+  @Get(":id")
+  async getOneBlog(@Param("id") blogId: string): Promise<ViewBlogDto> {
+    const result = await this.commandBus.execute(new GetOneBlogCommand(blogId));
+    if (!result) {
+      throw new NotFoundException();
+    }
+    return result;
+  }
+
+
+  @Get(":blogId/posts")
+  @UseGuards(BearerUserIdGuard)
+  async getOnePost(
+    @Param("blogId") blogId: string,
+    @CurrentUserId() userId: string,
+    @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
+    if (!await this.commandBus.execute(new GetOneBlogCommand(blogId))) {
+      throw new NotFoundException();
+    }
+    return this.commandBus.execute(new GetAllPostsByBlogIdCommand(blogId, userId, paginationParams));
+  }
+
+}
+
+
+@Controller("blogger/blogs")
+export class BloggerBlogsController {
+  constructor(
+    private commandBus: CommandBus) {
+  }
 
   @Post()
   @UseGuards(BaseAuthGuard)
@@ -66,26 +104,6 @@ export class BlogsController {
   }
 
 
-  @Get(":id")
-  async getOneBlog(@Param("id") blogId: string): Promise<ViewBlogDto> {
-    const result = await this.commandBus.execute(new GetOneBlogCommand(blogId));
-    if (!result) {
-      throw new NotFoundException();
-    }
-    return result;
-  }
-
-
-  @Get()
-  getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
-    const searchNameTerm = query.searchNameTerm as string || "";
-    return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams));
-  }
-
-
-//////////////////////////////////////////////////////////////////////
-
-
   @Post(":blogId/posts")
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
@@ -100,18 +118,6 @@ export class BlogsController {
     return result;
   }
 
-
-  @Get(":blogId/posts")
-  @UseGuards(BearerUserIdGuard)
-  async getOnePost(
-    @Param("blogId") blogId: string,
-    @CurrentUserId() userId: string,
-    @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewPostDto[]>> {
-    if (!await this.commandBus.execute(new GetOneBlogCommand(blogId))) {
-      throw new NotFoundException();
-    }
-    return this.commandBus.execute(new GetAllPostsByBlogIdCommand(blogId, userId, paginationParams));
-  }
 
 }
 
@@ -134,6 +140,5 @@ export class SaBlogsController {
   async updateBlog(@Param("blogId") blogId: string, @Param("userId") userId: string): Promise<void> {
     await this.commandBus.execute(new BindBlogWithUserCommand(blogId, userId));
   }
-
 
 }
