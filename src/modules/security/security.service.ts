@@ -181,3 +181,21 @@ export class KillSessionByTokenIdUseCase implements ICommandHandler<KillSessionB
     await this.securityRepository.deleteByTokenId(command.tokenId);
   }
 }
+
+
+
+//////////////////////////////////////////////////////////////
+export class KillAllSessionsByUserIdCommand {
+  constructor(public userId: string) {
+  }
+}
+
+@CommandHandler(KillAllSessionsByUserIdCommand)
+export class KillAllSessionsByUserIdUseCase implements ICommandHandler<KillAllSessionsByUserIdCommand> {
+  constructor(private securityRepository: SecurityRepository) {
+  }
+
+  async execute(command: KillAllSessionsByUserIdCommand) {
+    await this.securityRepository.deleteAllByUserId(command.userId);
+  }
+}

@@ -19,7 +19,7 @@ import { ThrottlerModule } from "@nestjs/throttler";
   imports: [CqrsModule, configModule, DatabaseModule, UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule,CommentsModule,SecurityModule,
     ThrottlerModule.forRoot({
       ttl: 10,
-      limit: 5
+      limit: 500
     }),
   ],
   controllers: [AppController],

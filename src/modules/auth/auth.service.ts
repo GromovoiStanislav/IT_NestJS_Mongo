@@ -137,7 +137,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     const user = await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.loginOrEmail));
     if (user) {
       const compareOK = await comparePassword(command.password, user.password);
-      if (compareOK) {
+      if (compareOK && !user.banInfo.isBanned) {
         const deviceId = uuidv4(); // т.е. это Сессия
         const tokenId = uuidv4();
         const issuedAt = Date.now();

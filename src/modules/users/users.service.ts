@@ -7,11 +7,12 @@ import { generateHash } from "../../utils/bcryptUtils";
 import UsersMapper from "./dto/usersMapper";
 
 
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { User } from "./schemas/users.schema";
 import { InputBanUserDto } from "./dto/input-ban-user.dto";
 import { BanUsersInfo } from "./dto/user-banInfo.dto";
 import dateAt from "../../utils/DateGenerator";
+import { KillAllSessionsByUserIdCommand } from "../security/security.service";
 
 //////////////////////////////////////////////////////////////
 export class ClearAllUsersCommand {
@@ -199,7 +200,9 @@ export class BanUserCommand {
 
 @CommandHandler(BanUserCommand)
 export class BanUserUserUseCase implements ICommandHandler<BanUserCommand> {
-  constructor(protected usersRepository: UsersRepository) {
+  constructor(
+    private commandBus: CommandBus,
+    private usersRepository: UsersRepository) {
   }
 
   async execute(command: BanUserCommand) {
@@ -212,5 +215,7 @@ export class BanUserUserUseCase implements ICommandHandler<BanUserCommand> {
     }
 
     await this.usersRepository.banUser(command.userId, banInfo);
+    await this.commandBus.execute(new KillAllSessionsByUserIdCommand(command.userId))
+
   }
 }

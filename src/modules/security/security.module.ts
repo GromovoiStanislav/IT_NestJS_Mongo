@@ -5,9 +5,14 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Security, SecuritySchema } from "./schemas/security.schema";
 import {
   AddOrUpdateDeviceSessionUseCase,
-  ClearAllDevicesUseCase, FindSessionByTokenIdUseCase, KillSessionByDeviceIdUseCase, KillSessionByTokenIdUseCase,
+  ClearAllDevicesUseCase,
+  FindSessionByTokenIdUseCase,
+  KillAllSessionsByUserIdUseCase,
+  KillSessionByDeviceIdUseCase,
+  KillSessionByTokenIdUseCase,
   ReturnAllDeviceSessionsByCurrentUserUseCase,
-  TerminateAllOtherDeviceSessionsExcludeCurrentUserUseCase, TerminateDeviceSessionUseCase
+  TerminateAllOtherDeviceSessionsExcludeCurrentUserUseCase,
+  TerminateDeviceSessionUseCase
 } from "./security.service";
 import { JWT_Module } from "../jwt/jwt.module";
 import { SecurityRepository } from "./security.repository";
@@ -22,7 +27,8 @@ const useCases = [
   AddOrUpdateDeviceSessionUseCase,
   KillSessionByDeviceIdUseCase,
   FindSessionByTokenIdUseCase,
-  KillSessionByTokenIdUseCase
+  KillSessionByTokenIdUseCase,
+  KillAllSessionsByUserIdUseCase
 ];
 
 @Module({
