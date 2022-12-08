@@ -4,7 +4,7 @@ import {
   BindBlogWithUserUseCase,
   ClearAllBlogsUseCase,
   CreateBlogUseCase,
-  DeleteBlogUseCase, GetAllBlogsUseCase, GetOneBlogUseCase,
+  DeleteBlogUseCase, GetAllBlogsByUserIdUseCase, GetAllBlogsUseCase, GetOneBlogUseCase,
   UpdateBlogUseCase
 } from "./blogs.service";
 import { MongooseModule } from "@nestjs/mongoose";
@@ -22,7 +22,8 @@ const useCases = [
   DeleteBlogUseCase,
   GetOneBlogUseCase,
   GetAllBlogsUseCase,
-  BindBlogWithUserUseCase
+  BindBlogWithUserUseCase,
+  GetAllBlogsByUserIdUseCase
 ];
 
 @Module({

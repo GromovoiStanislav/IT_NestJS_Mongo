@@ -11,7 +11,7 @@ import { CommandBus } from "@nestjs/cqrs";
 import {
   BindBlogWithUserCommand,
   CreateBlogCommand,
-  DeleteBlogCommand, GetAllBlogsCommand,
+  DeleteBlogCommand, GetAllBlogsByUserIdCommand, GetAllBlogsCommand,
   GetOneBlogCommand,
   UpdateBlogCommand
 } from "./blogs.service";
@@ -97,6 +97,15 @@ export class BloggerBlogsController {
   async deleteBlog(@Param("id") blogId: string,
                    @CurrentUserId() userId: string): Promise<void> {
     await this.commandBus.execute(new DeleteBlogCommand(blogId, userId));
+  }
+
+
+  @Get()
+  getAllBlogs(@Query() query,
+              @Pagination() paginationParams: PaginationParams,
+              @CurrentUserId() userId: string): Promise<PaginatorDto<ViewBlogDto[]>> {
+    const searchNameTerm = query.searchNameTerm as string || "";
+    return this.commandBus.execute(new GetAllBlogsByUserIdCommand(searchNameTerm.trim(), paginationParams, userId));
   }
 
 

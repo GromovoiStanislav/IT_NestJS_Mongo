@@ -47,11 +47,12 @@ export class BlogsRepository {
 
 
   async getAllBlogs(searchName: string, {
-    pageNumber,
-    pageSize,
-    sortBy,
-    sortDirection
-  }: PaginationParams): Promise<PaginatorDto<Blog[]>> {
+                      pageNumber,
+                      pageSize,
+                      sortBy,
+                      sortDirection
+                    }: PaginationParams,
+                    userId?: string): Promise<PaginatorDto<Blog[]>> {
 
     type FilterType = {
       [key: string]: unknown
@@ -59,6 +60,9 @@ export class BlogsRepository {
     const filter: FilterType = {};
     if (searchName) {
       filter.name = RegExp(`${searchName}`, "i");
+    }
+    if (userId) {
+      filter['blogOwnerInfo.userId']=userId
     }
 
     const items = await this.blogModel.find(filter).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })

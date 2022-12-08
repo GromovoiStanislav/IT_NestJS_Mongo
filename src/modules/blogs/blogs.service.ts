@@ -196,3 +196,21 @@ export class BindBlogWithUserUseCase implements ICommandHandler<BindBlogWithUser
     await this.blogsRepository.bindBlogWithUser(command.blogId, blogOwner);
   }
 }
+
+
+//////////////////////////////////////////////////////////////
+export class GetAllBlogsByUserIdCommand {
+  constructor(public searchName: string, public paginationParams: PaginationParams, public userId: string) {
+  }
+}
+
+@CommandHandler(GetAllBlogsByUserIdCommand)
+export class GetAllBlogsByUserIdUseCase implements ICommandHandler<GetAllBlogsByUserIdCommand> {
+  constructor(protected blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: GetAllBlogsByUserIdCommand): Promise<PaginatorDto<ViewBlogDto[]>> {
+    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams, command.userId);
+    return BlogMapper.fromModelsToPaginator(result, false);
+  }
+}
