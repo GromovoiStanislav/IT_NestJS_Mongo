@@ -17,7 +17,7 @@ export class BlogsRepository {
 
 
   async clearAll(): Promise<void> {
-    await this.blogModel.deleteMany({});
+    //await this.blogModel.deleteMany({});
   }
 
 
