@@ -6,7 +6,7 @@ import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { Blog } from "./schemas/blogs.schema";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { BlogOwnerDto } from "./dto/blog-owner.dto";
 import { GetUserByIdCommand } from "../users/users.service";
 
@@ -43,8 +43,8 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
   async execute(command: CreateBlogCommand): Promise<ViewBlogDto> {
 
     const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
-    if(!user){
-      throw  new NotFoundException()
+    if (!user) {
+      throw  new UnauthorizedException();
     }
 
     const blogOwner: BlogOwnerDto = {
@@ -75,17 +75,34 @@ export class UpdateBlogUseCase implements ICommandHandler<UpdateBlogCommand> {
 
 //////////////////////////////////////////////////////////////
 export class DeleteBlogCommand {
-  constructor(public blogId: string) {
+  constructor(public blogId: string, public userId: string) {
   }
 }
 
 @CommandHandler(DeleteBlogCommand)
 export class DeleteBlogUseCase implements ICommandHandler<DeleteBlogCommand> {
-  constructor(protected blogsRepository: BlogsRepository) {
+  constructor(
+    private commandBus: CommandBus,
+    protected blogsRepository: BlogsRepository) {
   }
 
-  async execute(command: DeleteBlogCommand): Promise<Blog | null> {
-    return this.blogsRepository.deleteBlog(command.blogId);
+  async execute(command: DeleteBlogCommand): Promise<void> {
+
+    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
+    if (!user) {
+      throw  new UnauthorizedException();
+    }
+
+    const blog = await this.blogsRepository.getOneBlog(command.blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
+
+    if (command.userId!==blog.blogOwnerInfo.userId) {
+      throw new ForbiddenException();
+    }
+
+    await this.blogsRepository.deleteBlog(command.blogId);
   }
 }
 

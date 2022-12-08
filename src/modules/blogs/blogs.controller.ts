@@ -103,11 +103,7 @@ export class BloggerBlogsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param("id") blogId: string,
                    @CurrentUserId() userId: string): Promise<void> {
-    const result = await this.commandBus.execute(new DeleteBlogCommand(blogId));
-    if (!result) {
-      throw new NotFoundException();
-    }
-    return;
+    await this.commandBus.execute(new DeleteBlogCommand(blogId, userId));
   }
 
 
