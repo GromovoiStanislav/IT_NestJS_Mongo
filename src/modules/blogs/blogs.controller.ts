@@ -26,6 +26,7 @@ import { Pagination } from "../../decorators/paginationDecorator";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { BearerUserIdGuard } from "../../guards/bearer.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 
 @Controller("blogs")
 export class BlogsController {
@@ -66,6 +67,7 @@ export class BlogsController {
 }
 
 
+@UseGuards(AuthUserIdGuard)
 @Controller("blogger/blogs")
 export class BloggerBlogsController {
   constructor(
