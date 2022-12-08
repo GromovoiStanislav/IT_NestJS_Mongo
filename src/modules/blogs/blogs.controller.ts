@@ -20,7 +20,11 @@ import { ViewBlogDto } from "./dto/view-blog.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { ViewPostDto } from "../posts/dto/view-post.dto";
-import { CreatePostByBlogIdCommand, GetAllPostsByBlogIdCommand } from "../posts/posts.service";
+import {
+  CreatePostByBlogIdCommand,
+  DeletePostByBlogIdAndPostIdCommand,
+  GetAllPostsByBlogIdCommand
+} from "../posts/posts.service";
 import { InputBlogPostDto } from "../posts/dto/input-blog-post.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
@@ -39,7 +43,7 @@ export class BlogsController {
   }
 
   @Get()
-  getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
+  async getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
     const searchNameTerm = query.searchNameTerm as string || "";
     return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams));
   }
@@ -105,7 +109,7 @@ export class BloggerBlogsController {
 
 
   @Get()
-  getAllBlogs(@Query() query,
+  async getAllBlogs(@Query() query,
               @Pagination() paginationParams: PaginationParams,
               @CurrentUserId() userId: string): Promise<PaginatorDto<ViewBlogDto[]>> {
     const searchNameTerm = query.searchNameTerm as string || "";
@@ -122,6 +126,14 @@ export class BloggerBlogsController {
   }
 
 
+  @Post(":blogId/posts/:postId")
+  @HttpCode(HttpStatus.CREATED)
+  async deletePostByBlogIdAndPostId(@Param("blogId") blogId: string,
+                              @Param("postId") postId: string,
+                              @CurrentUserId() userId: string) {
+    await this.commandBus.execute(new DeletePostByBlogIdAndPostIdCommand(blogId, postId, userId));
+  }
+
 }
 
 ////////////////////////////////////////////
@@ -134,7 +146,7 @@ export class SaBlogsController {
   }
 
   @Get()
-  getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
+  async getAllBlogs(@Query() query, @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewBlogDto[]>> {
     const searchNameTerm = query.searchNameTerm as string || "";
     return this.commandBus.execute(new GetAllBlogsCommand(searchNameTerm.trim(), paginationParams, true));
   }

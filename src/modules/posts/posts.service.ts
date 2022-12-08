@@ -254,3 +254,35 @@ export class PostsUpdateLikeByIDUseCase implements ICommandHandler<PostsUpdateLi
     }
   }
 }
+
+
+//////////////////////////////////////////////////////////////
+export class DeletePostByBlogIdAndPostIdCommand {
+  constructor(public blogId: string, public postId: string, public userId: string) {
+  }
+}
+
+@CommandHandler(DeletePostByBlogIdAndPostIdCommand)
+export class DeletePostByBlogIdAndPostIdUseCase implements ICommandHandler<DeletePostByBlogIdAndPostIdCommand> {
+  constructor(private commandBus: CommandBus,
+              protected postsRepository: PostsRepository) {
+  }
+
+  async execute(command: DeletePostByBlogIdAndPostIdCommand): Promise<void> {
+
+    const blog = await this.commandBus.execute(new GetOneBlogCommand(command.blogId, true));
+    if (!blog) {
+      throw new NotFoundException();
+    }
+    if (command.userId !== blog.blogOwnerInfo.userId) {
+      throw new ForbiddenException();
+    }
+
+    const post = await this.postsRepository.getOnePost(command.postId)
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    await this.postsRepository.deletePost(command.postId);
+  }
+}

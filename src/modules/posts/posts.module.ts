@@ -3,7 +3,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { PostsController } from "./posts.controller";
 import {
   ClearAllPostsUseCase, CreatePostByBlogIdUseCase,
-  CreatePostUseCase,
+  CreatePostUseCase, DeletePostByBlogIdAndPostIdUseCase,
   DeletePostUseCase, GetAllPostsByBlogIdUseCase,
   GetAllPostsUseCase,
   GetOnePostUseCase, GetOnePostWithLikesUseCase, PostsUpdateLikeByIDUseCase,
@@ -29,7 +29,8 @@ const useCases = [
   GetAllPostsUseCase,
   GetAllPostsByBlogIdUseCase,
   CreatePostByBlogIdUseCase,
-  PostsUpdateLikeByIDUseCase
+  PostsUpdateLikeByIDUseCase,
+  DeletePostByBlogIdAndPostIdUseCase
 ];
 
 @Module({
