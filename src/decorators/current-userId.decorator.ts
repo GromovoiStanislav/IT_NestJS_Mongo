@@ -5,7 +5,7 @@ export const CurrentUserId = createParamDecorator(
     const request = context.switchToHttp().getRequest();
     if (!request.userId) {
       //throw Error("UserIdMiddleware must be used");
-      return ''
+      return 'Null'
     }
     return request.userId;
   }
