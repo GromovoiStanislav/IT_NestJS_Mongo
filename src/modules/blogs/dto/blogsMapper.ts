@@ -29,23 +29,26 @@ export default class BlogMapper {
     return updatedBlog;
   }
 
-  static fromModelToView(blog: Blog): ViewBlogDto {
+  static fromModelToView(blog: Blog, withBlogOwner: boolean = false): ViewBlogDto {
     const viewBlog = new ViewBlogDto();
     viewBlog.id = blog.id;
     viewBlog.name = blog.name;
     viewBlog.websiteUrl = blog.websiteUrl;
     viewBlog.description = blog.description;
     viewBlog.createdAt = blog.createdAt;
+    if (withBlogOwner) {
+      viewBlog.blogOwnerInfo = blog.blogOwnerInfo as BlogOwnerDto;
+    }
     return viewBlog;
   }
 
-  static fromModelsToPaginator(blogs: PaginatorDto<Blog[]>,withBlogOwner:boolean): PaginatorDto<ViewBlogDto[]> {
+  static fromModelsToPaginator(blogs: PaginatorDto<Blog[]>, withBlogOwner: boolean): PaginatorDto<ViewBlogDto[]> {
     return {
       pagesCount: blogs.pagesCount,
       page: blogs.page,
       pageSize: blogs.pageSize,
       totalCount: blogs.totalCount,
-      items: blogs.items.map(blog => BlogMapper.fromModelToView(blog))
+      items: blogs.items.map(blog => BlogMapper.fromModelToView(blog, withBlogOwner))
     };
   }
 
