@@ -88,11 +88,7 @@ export class BloggerBlogsController {
   async updateBlog(@Param("id") blogId: string,
                    @Body() inputBlog: InputBlogDto,
                    @CurrentUserId() userId: string): Promise<void> {
-    const result = await this.commandBus.execute(new UpdateBlogCommand(blogId, inputBlog));
-    if (!result) {
-      throw new NotFoundException();
-    }
-    return;
+    await this.commandBus.execute(new UpdateBlogCommand(blogId, inputBlog, userId));
   }
 
 

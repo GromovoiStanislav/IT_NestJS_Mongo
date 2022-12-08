@@ -47,7 +47,7 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
       throw  new UnauthorizedException();
     }
 
-    const blogOwner:BlogOwnerDto = {
+    const blogOwner: BlogOwnerDto = {
       userId: user.id,
       userLogin: user.login
     };
@@ -59,17 +59,33 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
 
 //////////////////////////////////////////////////////////////
 export class UpdateBlogCommand {
-  constructor(public blogId: string, public inputBlog: InputBlogDto) {
+  constructor(public blogId: string, public inputBlog: InputBlogDto, public userId: string) {
   }
 }
 
 @CommandHandler(UpdateBlogCommand)
 export class UpdateBlogUseCase implements ICommandHandler<UpdateBlogCommand> {
-  constructor(protected blogsRepository: BlogsRepository) {
+  constructor(
+    private commandBus: CommandBus,
+    protected blogsRepository: BlogsRepository) {
   }
 
-  async execute(command: UpdateBlogCommand): Promise<Blog | null> {
-    return this.blogsRepository.updateBlog(command.blogId, BlogMapper.fromInputToUpdate(command.inputBlog));
+  async execute(command: UpdateBlogCommand): Promise<void> {
+
+    const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
+    if (!user) {
+      throw  new UnauthorizedException();
+    }
+
+    const blog = await this.blogsRepository.getOneBlog(command.blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
+
+    if (command.userId !== blog.blogOwnerInfo.userId) {
+      throw new ForbiddenException();
+    }
+    await this.blogsRepository.updateBlog(command.blogId, BlogMapper.fromInputToUpdate(command.inputBlog));
   }
 }
 
@@ -98,7 +114,7 @@ export class DeleteBlogUseCase implements ICommandHandler<DeleteBlogCommand> {
       throw new NotFoundException();
     }
 
-    if (command.userId!==blog.blogOwnerInfo.userId) {
+    if (command.userId !== blog.blogOwnerInfo.userId) {
       throw new ForbiddenException();
     }
 
