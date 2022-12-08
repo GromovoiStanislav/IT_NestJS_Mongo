@@ -214,7 +214,6 @@ export class CreatePostByBlogIdUseCase implements ICommandHandler<CreatePostByBl
 
   async execute(command: CreatePostByBlogIdCommand): Promise<ViewPostDto | null> {
 
-
     const blog = await this.commandBus.execute(new GetOneBlogCommand(command.blogId));
     if (!blog) {
       throw new NotFoundException();
