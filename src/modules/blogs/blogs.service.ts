@@ -119,7 +119,7 @@ export class DeleteBlogUseCase implements ICommandHandler<DeleteBlogCommand> {
 
 //////////////////////////////////////////////////////////////
 export class GetOneBlogCommand {
-  constructor(public blogId: string) {
+  constructor(public blogId: string, public withBlogOwner: boolean = false) {
   }
 }
 
@@ -131,7 +131,7 @@ export class GetOneBlogUseCase implements ICommandHandler<GetOneBlogCommand> {
   async execute(command: GetOneBlogCommand): Promise<ViewBlogDto | null> {
     const blog = await this.blogsRepository.getOneBlog(command.blogId);
     if (blog) {
-      return BlogMapper.fromModelToView(blog);
+      return BlogMapper.fromModelToView(blog, command.withBlogOwner);
     }
     return null;
   }
