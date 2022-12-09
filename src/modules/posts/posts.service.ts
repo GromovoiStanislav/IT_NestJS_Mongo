@@ -153,6 +153,7 @@ export class GetAllPostsCommand {
 @CommandHandler(GetAllPostsCommand)
 export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsCommand> {
   constructor(
+    private commandBus: CommandBus,
     protected postsRepository: PostsRepository,
     protected postLikesRepository: PostLikesRepository
   ) {
@@ -162,9 +163,9 @@ export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsCommand> {
   async execute(command: GetAllPostsCommand) {
 
     const result = await this.postsRepository.getAllPosts(command.paginationParams);
-
+    const usersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
     result.items = await Promise.all(result.items.map(async post => {
-      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId,[]);
+      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId, usersId);
       return PostMapper.fromModelToView(post, likes);
     }));
 
@@ -182,6 +183,7 @@ export class GetAllPostsByBlogIdCommand {
 @CommandHandler(GetAllPostsByBlogIdCommand)
 export class GetAllPostsByBlogIdUseCase implements ICommandHandler<GetAllPostsByBlogIdCommand> {
   constructor(
+    private commandBus: CommandBus,
     protected postsRepository: PostsRepository,
     protected postLikesRepository: PostLikesRepository
   ) {
@@ -191,8 +193,9 @@ export class GetAllPostsByBlogIdUseCase implements ICommandHandler<GetAllPostsBy
   async execute(command: GetAllPostsByBlogIdCommand) {
     const result = await this.postsRepository.getAllPosts(command.paginationParams, command.blogId);
     //return PostMapper.fromModelsToPaginator(result);
+    const usersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
     result.items = await Promise.all(result.items.map(async post => {
-      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId,[]);
+      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId,usersId);
       return PostMapper.fromModelToView(post, likes);
     }));
     return result;
