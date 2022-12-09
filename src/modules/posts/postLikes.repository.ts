@@ -56,7 +56,7 @@ export class PostLikesRepository {
       addedAt: el.addedAt,
       userId: el.userId,
       login: el.userLogin,
-      usersId
+      banUsersId:usersId
     }));
   }
 
