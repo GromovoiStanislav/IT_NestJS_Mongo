@@ -65,6 +65,8 @@ export class BlogsRepository {
       filter['blogOwnerInfo.userId']=userId
     }
 
+    filter.isBanned = false
+
     const items = await this.blogModel.find(filter).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
       .limit(pageSize).skip((pageNumber - 1) * pageSize);
 
