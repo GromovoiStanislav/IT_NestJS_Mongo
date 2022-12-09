@@ -11,7 +11,13 @@ import {
 import { CommandBus } from "@nestjs/cqrs";
 
 import { InputUserDto } from "./dto/input-user.dto";
-import { BanUserCommand, CreateUserCommand, DeleteUserCommand, FindAllUsersCommand } from "./users.service";
+import {
+  BanUserCommand,
+  CreateUserCommand,
+  DeleteUserCommand,
+  FindAllUsersCommand,
+  GetIdBannedUsersCommand
+} from "./users.service";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { Pagination } from "../../decorators/paginationDecorator";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
@@ -28,7 +34,7 @@ export class SaUsersController {
 
 
   @Get()
-  getUsers(@Query() query, @Pagination() paginationParams: PaginationParams) {
+  async getUsers(@Query() query, @Pagination() paginationParams: PaginationParams) {
     const searchLogin = query.searchLoginTerm as string || "";
     const searchEmail = query.searchEmailTerm as string || "";
     return this.commandBus.execute(new FindAllUsersCommand(searchLogin.trim(), searchEmail.trim(), paginationParams));
@@ -58,6 +64,11 @@ export class SaUsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async banUser(@Param("id") userId: string, @Body() inputBanUser: InputBanUserDto) {
     await this.commandBus.execute(new BanUserCommand(userId, inputBanUser));
+  }
+
+  @Get('ban')
+  async getBanedUsers(){
+    return this.commandBus.execute(new GetIdBannedUsersCommand())
   }
 
 }
