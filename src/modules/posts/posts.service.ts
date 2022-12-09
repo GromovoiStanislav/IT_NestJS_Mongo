@@ -131,15 +131,18 @@ export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWit
     protected postLikesRepository: PostLikesRepository
   ) {
   }
-
-  async execute(command: GetOnePostWithLikesCommand): Promise<Post> {
+//: Promise<ViewPostDto>
+  async execute(command: GetOnePostWithLikesCommand) {
     const post = await this.postsRepository.getOnePost(command.postId);
     if (!post) {
       throw new NotFoundException();
     }
     const usersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
     const likes = await this.postLikesRepository.likesInfoByPostID(command.postId, command.userId, usersId);
-    return PostMapper.fromModelToView(post, likes);
+    //return PostMapper.fromModelToView(post, likes);
+
+    return {...PostMapper.fromModelToView(post, likes), usersId};
+
   }
 }
 

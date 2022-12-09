@@ -66,6 +66,7 @@ export class SaUsersController {
     await this.commandBus.execute(new BanUserCommand(userId, inputBanUser));
   }
 
+  //Для проверки!!!
   @Get('ban')
   async getBanedUsers(){
     return this.commandBus.execute(new GetIdBannedUsersCommand())
