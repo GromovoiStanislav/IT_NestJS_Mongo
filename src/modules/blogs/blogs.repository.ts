@@ -42,7 +42,7 @@ export class BlogsRepository {
 
 
   async getOneBlog(blogId: string): Promise<Blog | null> {
-    return this.blogModel.findOne({ id: blogId });
+    return this.blogModel.findOne({ id: blogId, isBanned: false });
   }
 
 
