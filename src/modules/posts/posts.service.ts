@@ -8,9 +8,8 @@ import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { InputBlogPostDto } from "./dto/input-blog-post.dto";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { PostLikesRepository } from "./postLikes.repository";
-import { GetUserByIdCommand } from "../users/users.service";
+import { GetIdBannedUsersCommand, GetUserByIdCommand } from "../users/users.service";
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
-
 
 
 //////////////////////////////////////////////////////////////
@@ -127,18 +126,20 @@ export class GetOnePostWithLikesCommand {
 @CommandHandler(GetOnePostWithLikesCommand)
 export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWithLikesCommand> {
   constructor(
+    private commandBus: CommandBus,
     protected postsRepository: PostsRepository,
     protected postLikesRepository: PostLikesRepository
   ) {
   }
 
-  async execute(command: GetOnePostWithLikesCommand): Promise<Post | null> {
+  async execute(command: GetOnePostWithLikesCommand): Promise<Post> {
     const post = await this.postsRepository.getOnePost(command.postId);
-    if (post) {
-      const likes = await this.postLikesRepository.likesInfoByPostID(command.postId, command.userId);
-      return PostMapper.fromModelToView(post, likes);
+    if (!post) {
+      throw new NotFoundException();
     }
-    return null;
+    const usersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
+    const likes = await this.postLikesRepository.likesInfoByPostID(command.postId, command.userId, usersId);
+    return PostMapper.fromModelToView(post, likes);
   }
 }
 
@@ -163,7 +164,7 @@ export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsCommand> {
     const result = await this.postsRepository.getAllPosts(command.paginationParams);
 
     result.items = await Promise.all(result.items.map(async post => {
-      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId);
+      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId,[]);
       return PostMapper.fromModelToView(post, likes);
     }));
 
@@ -191,7 +192,7 @@ export class GetAllPostsByBlogIdUseCase implements ICommandHandler<GetAllPostsBy
     const result = await this.postsRepository.getAllPosts(command.paginationParams, command.blogId);
     //return PostMapper.fromModelsToPaginator(result);
     result.items = await Promise.all(result.items.map(async post => {
-      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId);
+      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId,[]);
       return PostMapper.fromModelToView(post, likes);
     }));
     return result;
@@ -316,6 +317,6 @@ export class UpdatePostByBlogIdAndPostIdUseCase implements ICommandHandler<Updat
       throw new NotFoundException();
     }
 
-    await this.postsRepository.updatePost(command.postId, PostMapper.fromInputBlogPostDtoToUpdateDto(command.inputPost,command.blogId, blog.name));
+    await this.postsRepository.updatePost(command.postId, PostMapper.fromInputBlogPostDtoToUpdateDto(command.inputPost, command.blogId, blog.name));
   }
 }

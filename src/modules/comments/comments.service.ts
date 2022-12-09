@@ -5,7 +5,7 @@ import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { InputCommentDto } from "./dto/input-comment.dto";
 import CommentsMapper from "./dto/commentsMapper";
 import { GetOnePostCommand } from "../posts/posts.service";
-import { GetIdUnbannedUsersCommand, GetUserByIdCommand } from "../users/users.service";
+import { GetIdBannedUsersCommand, GetUserByIdCommand } from "../users/users.service";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 
 
@@ -132,7 +132,7 @@ export class GetCommentUseCase implements ICommandHandler<GetCommentCommand> {
       throw new NotFoundException();
     }
 
-    const usersId = await this.commandBus.execute(new GetIdUnbannedUsersCommand());
+    const usersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
 
     const likes = await this.commentLikesRepository.likesByCommentID(command.commentId, command.userId, usersId);
     return CommentsMapper.fromModelToView(comment, likes);
@@ -193,7 +193,7 @@ export class GetAllCommentsByPostIDUseCase implements ICommandHandler<GetAllComm
     }
 
     const result = await this.commentsRepository.getAllComments(command.paginationParams, command.postId);
-    const usersId = await this.commandBus.execute(new GetIdUnbannedUsersCommand());
+    const usersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
 
 
     const items = await Promise.all(result.items.map(async comment => {

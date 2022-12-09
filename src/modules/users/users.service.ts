@@ -221,18 +221,18 @@ export class BanUserUserUseCase implements ICommandHandler<BanUserCommand> {
 }
 
 ////////////////////////////////////////////////////
-export class GetIdUnbannedUsersCommand {
+export class GetIdBannedUsersCommand {
   constructor() {
   }
 }
 
-@CommandHandler(GetIdUnbannedUsersCommand)
-export class GetIdUnbannedUsersUseCase implements ICommandHandler<GetIdUnbannedUsersCommand> {
+@CommandHandler(GetIdBannedUsersCommand)
+export class GetIdBannedUsersUseCase implements ICommandHandler<GetIdBannedUsersCommand> {
   constructor(protected usersRepository: UsersRepository) {
   }
 
-  async execute(command: GetIdUnbannedUsersCommand): Promise<string[]> {
-    const users = await this.usersRepository.getNoBanedUsers();
+  async execute(command: GetIdBannedUsersCommand): Promise<string[]> {
+    const users = await this.usersRepository.getBanedUsers();
     return users.map(user => user.id)
   }
 }

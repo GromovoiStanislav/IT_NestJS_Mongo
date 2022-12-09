@@ -69,11 +69,7 @@ export class PostsController {
     @Param("id") postId: string,
     @CurrentUserId() userId: string
   ): Promise<ViewPostDto> {
-    const result = await this.commandBus.execute(new GetOnePostWithLikesCommand(postId, userId));
-    if (!result) {
-      throw new NotFoundException();
-    }
-    return result;
+    return await this.commandBus.execute(new GetOnePostWithLikesCommand(postId, userId));
   }
 
 
@@ -116,7 +112,7 @@ export class PostsController {
     @Param("postId") postId: string,
     @Pagination() paginationParams: PaginationParams,
     @CurrentUserId() userId: string) {
-    return this.commandBus.execute(new GetAllCommentsByPostIDCommand(paginationParams, postId, userId ));
+    return this.commandBus.execute(new GetAllCommentsByPostIDCommand(paginationParams, postId, userId));
   }
 
 }

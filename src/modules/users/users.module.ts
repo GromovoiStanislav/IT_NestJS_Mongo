@@ -7,8 +7,7 @@ import {
   ConfirmUserUseCase,
   CreateUserUseCase,
   DeleteUserUseCase,
-  FindAllUsersUseCase,
-  GetIdUnbannedUsersUseCase,
+  FindAllUsersUseCase, GetIdBannedUsersUseCase,
   GetUserByConfirmationCodeUseCase,
   GetUserByIdUseCase,
   GetUserByLoginOrEmailUseCase,
@@ -29,7 +28,7 @@ const useCases = [
   ConfirmUserUseCase,
   GetUserByIdUseCase,
   BanUserUserUseCase,
-  GetIdUnbannedUsersUseCase
+  GetIdBannedUsersUseCase
 ];
 
 @Module({

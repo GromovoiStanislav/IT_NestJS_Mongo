@@ -48,8 +48,8 @@ export class UsersRepository {
   }
 
 
-  async getNoBanedUsers(): Promise<User[]> {
-    return this.userModel.find({ "banInfo.isBanned": false });
+  async getBanedUsers(): Promise<User[]> {
+    return this.userModel.find({ "banInfo.isBanned": true });
   }
 
 
