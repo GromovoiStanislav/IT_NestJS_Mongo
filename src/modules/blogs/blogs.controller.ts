@@ -127,7 +127,7 @@ export class BloggerBlogsController {
 
 
   @Delete(":blogId/posts/:postId")
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deletePostByBlogIdAndPostId(@Param("blogId") blogId: string,
                                     @Param("postId") postId: string,
                                     @CurrentUserId() userId: string): Promise<void> {

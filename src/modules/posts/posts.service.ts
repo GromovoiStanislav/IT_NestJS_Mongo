@@ -311,6 +311,11 @@ export class UpdatePostByBlogIdAndPostIdUseCase implements ICommandHandler<Updat
       throw new ForbiddenException();
     }
 
+    const post = await this.postsRepository.getOnePost(command.postId);
+    if (!post) {
+      throw new NotFoundException();
+    }
+
     await this.postsRepository.updatePost(command.postId, PostMapper.fromInputBlogPostDtoToUpdateDto(command.inputPost,command.blogId, blog.name));
   }
 }
