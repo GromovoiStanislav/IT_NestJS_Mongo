@@ -27,19 +27,22 @@ export class CommentLikesRepository {
 
   }
 
-  async likesByCommentID(commentId: string, userId?: string):Promise<LikesInfoDto> {
-    const likesCount = await this.commentLikesModel.count({commentId, likeStatus: 'Like'})
-    const dislikesCount = await this.commentLikesModel.count({commentId, likeStatus: 'Dislike'})
-    let myStatus = 'None'
+  async likesByCommentID(commentId: string, userId: string, usersId: string[]): Promise<LikesInfoDto> {
+    const likesCount = await this.commentLikesModel.count({ commentId, likeStatus: "Like", userId: { $in: usersId } });
+    const dislikesCount = await this.commentLikesModel.count({
+      commentId,
+      likeStatus: "Dislike",
+      userId: { $in: usersId }
+    });
+    let myStatus = "None";
     if (userId) {
-      const doc = await this.commentLikesModel.findOne({commentId, userId})
+      const doc = await this.commentLikesModel.findOne({ commentId, userId });
       if (doc) {
-        myStatus = doc.likeStatus
+        myStatus = doc.likeStatus;
       }
     }
-    return {likesCount, dislikesCount, myStatus}
+    return { likesCount, dislikesCount, myStatus };
   }
-
 
 
 }

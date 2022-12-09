@@ -219,3 +219,20 @@ export class BanUserUserUseCase implements ICommandHandler<BanUserCommand> {
 
   }
 }
+
+////////////////////////////////////////////////////
+export class GetIdUnbannedUsersCommand {
+  constructor() {
+  }
+}
+
+@CommandHandler(GetIdUnbannedUsersCommand)
+export class GetIdUnbannedUsersUseCase implements ICommandHandler<GetIdUnbannedUsersCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: GetIdUnbannedUsersCommand): Promise<string[]> {
+    const users = await this.usersRepository.getNoBanedUsers();
+    return users.map(user => user.id)
+  }
+}

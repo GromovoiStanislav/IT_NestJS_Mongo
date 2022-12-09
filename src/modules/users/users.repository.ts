@@ -48,6 +48,11 @@ export class UsersRepository {
   }
 
 
+  async getNoBanedUsers(): Promise<User[]> {
+    return this.userModel.find({ "banInfo.isBanned": false });
+  }
+
+
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();

@@ -3,10 +3,14 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { SaUsersController } from "./users.controller";
 import {
   BanUserUserUseCase,
-  ClearAllUsersUseCase, ConfirmUserUseCase,
+  ClearAllUsersUseCase,
+  ConfirmUserUseCase,
   CreateUserUseCase,
   DeleteUserUseCase,
-  FindAllUsersUseCase, GetUserByConfirmationCodeUseCase, GetUserByIdUseCase,
+  FindAllUsersUseCase,
+  GetIdUnbannedUsersUseCase,
+  GetUserByConfirmationCodeUseCase,
+  GetUserByIdUseCase,
   GetUserByLoginOrEmailUseCase,
   UpdateConfirmCodeUseCase
 } from "./users.service";
@@ -24,13 +28,14 @@ const useCases = [
   GetUserByConfirmationCodeUseCase,
   ConfirmUserUseCase,
   GetUserByIdUseCase,
-  BanUserUserUseCase
+  BanUserUserUseCase,
+  GetIdUnbannedUsersUseCase
 ];
 
 @Module({
   imports: [CqrsModule, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
   controllers: [SaUsersController],
-  providers: [...useCases, UsersRepository],
+  providers: [...useCases, UsersRepository]
   //exports: [ UsersRepository]
 })
 export class UsersModule {
