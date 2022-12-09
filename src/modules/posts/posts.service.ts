@@ -140,8 +140,8 @@ export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWit
     const usersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
     const likes = await this.postLikesRepository.likesInfoByPostID(command.postId, command.userId, usersId);
     //return PostMapper.fromModelToView(post, likes);
-
-    return {...PostMapper.fromModelToView(post, likes), usersId};
+    const ob = PostMapper.fromModelToView(post, likes)
+    return {...ob, extendedLikesInfo:{...ob.extendedLikesInfo, newestLikes: { ...ob.extendedLikesInfo.newestLikes,usersId }}};
 
   }
 }
