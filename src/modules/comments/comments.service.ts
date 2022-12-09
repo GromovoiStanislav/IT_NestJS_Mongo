@@ -7,7 +7,6 @@ import CommentsMapper from "./dto/commentsMapper";
 import { GetOnePostCommand } from "../posts/posts.service";
 import { GetUserByIdCommand } from "../users/users.service";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import PostMapper from "../posts/dto/postsMapper";
 
 
 //////////////////////////////////////////////////
@@ -116,6 +115,7 @@ export class GetCommentCommand {
 @CommandHandler(GetCommentCommand)
 export class GetCommentUseCase implements ICommandHandler<GetCommentCommand> {
   constructor(
+    private commandBus: CommandBus,
     protected commentsRepository: CommentsRepository,
     protected commentLikesRepository: CommentLikesRepository
   ) {
@@ -126,6 +126,12 @@ export class GetCommentUseCase implements ICommandHandler<GetCommentCommand> {
     if (!comment) {
       throw new NotFoundException();
     }
+
+    const user = await this.commandBus.execute(new GetUserByIdCommand(comment.userId));
+    if (user.banInfo.isBanned) {
+      throw new NotFoundException();
+    }
+
     const likes = await this.commentLikesRepository.likesByCommentID(command.commentId, command.userId);
     return CommentsMapper.fromModelToView(comment, likes);
   }
@@ -191,7 +197,7 @@ export class GetAllCommentsByPostIDUseCase implements ICommandHandler<GetAllComm
       return CommentsMapper.fromModelToView(comment, likes);
     }));
 
-    return {...result,items};
+    return { ...result, items };
   }
 }
 

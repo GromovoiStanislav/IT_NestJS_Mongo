@@ -18,8 +18,7 @@ import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { InputCommentDto } from "./dto/input-comment.dto";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { InputLikeDto } from "./dto/input-like.dto";
-import { BearerUserIdGuard } from "../../guards/bearer.userId.guard";
-import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
+
 
 
 @Controller("comments")
