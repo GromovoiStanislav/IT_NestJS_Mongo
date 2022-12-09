@@ -7,12 +7,13 @@ import { ViewPostDto } from "./view-post.dto";
 import { Post } from "../schemas/posts.schema";
 import { ExtendedLikesInfoDto } from "../../../commonDto/extendedLikesInfoDto";
 import { UpdatePostDto } from "./update-post.dto";
+import { InputBlogPostDto } from "./input-blog-post.dto";
 
 
 export default class PostMapper {
 
   static fromInputToCreate(inputPost: InputPostDto, blogName: string): CreatePostDto {
-    const createPost =  new CreatePostDto();
+    const createPost = new CreatePostDto();
     createPost.id = uid();
     createPost.title = inputPost.title;
     createPost.shortDescription = inputPost.shortDescription;
@@ -20,18 +21,28 @@ export default class PostMapper {
     createPost.blogId = inputPost.blogId;
     createPost.blogName = blogName;
     createPost.createdAt = dateAt();
-    return createPost
+    return createPost;
   }
 
 
-  static fromUpdateToCreate(inputPost: InputPostDto, blogName:string): UpdatePostDto {
-    const updatePost =  new UpdatePostDto();
+  static fromInputPostDtoToUpdateDto(inputPost: InputPostDto, blogName: string): UpdatePostDto {
+    const updatePost = new UpdatePostDto();
     updatePost.title = inputPost.title;
     updatePost.shortDescription = inputPost.shortDescription;
     updatePost.content = inputPost.content;
     updatePost.blogId = inputPost.blogId;
     updatePost.blogName = blogName;
-    return updatePost
+    return updatePost;
+  }
+
+  static fromInputBlogPostDtoToUpdateDto(inputPost: InputBlogPostDto, blogId: string, blogName: string): UpdatePostDto {
+    const updatePost = new UpdatePostDto();
+    updatePost.title = inputPost.title;
+    updatePost.shortDescription = inputPost.shortDescription;
+    updatePost.content = inputPost.content;
+    updatePost.blogId = blogId;
+    updatePost.blogName = blogName;
+    return updatePost;
   }
 
 
@@ -69,9 +80,8 @@ export default class PostMapper {
       pageSize: posts.pageSize,
       totalCount: posts.totalCount,
       items: posts.items.map(post => PostMapper._fromModelToView(post))
-    }
+    };
   }
-
 
 
 }

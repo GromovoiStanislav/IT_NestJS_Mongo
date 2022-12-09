@@ -5,12 +5,12 @@ import PostMapper from "./dto/postsMapper";
 import { GetOneBlogCommand } from "../blogs/blogs.service";
 import { Post } from "./schemas/posts.schema";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { InputBlogPostDto } from "./dto/input-blog-post.dto";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { PostLikesRepository } from "./postLikes.repository";
 import { GetUserByIdCommand } from "../users/users.service";
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
+
 
 
 //////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ export class UpdatePostUseCase implements ICommandHandler<UpdatePostCommand> {
     if (blog) {
       blogName = blog.name;
     }
-    return this.postsRepository.updatePost(command.postId, PostMapper.fromUpdateToCreate(command.inputPost, blogName));
+    return this.postsRepository.updatePost(command.postId, PostMapper.fromInputPostDtoToUpdateDto(command.inputPost, blogName));
   }
 }
 
@@ -278,11 +278,39 @@ export class DeletePostByBlogIdAndPostIdUseCase implements ICommandHandler<Delet
       throw new ForbiddenException();
     }
 
-    const post = await this.postsRepository.getOnePost(command.postId)
+    const post = await this.postsRepository.getOnePost(command.postId);
     if (!post) {
       throw new NotFoundException();
     }
 
     await this.postsRepository.deletePost(command.postId);
+  }
+}
+
+
+//////////////////////////////////////////////////////////////
+export class UpdatePostByBlogIdAndPostIdCommand {
+  constructor(public blogId: string, public postId: string, public userId: string, public inputPost: InputBlogPostDto) {
+  }
+}
+
+@CommandHandler(UpdatePostByBlogIdAndPostIdCommand)
+export class UpdatePostByBlogIdAndPostIdUseCase implements ICommandHandler<UpdatePostByBlogIdAndPostIdCommand> {
+  constructor(
+    private commandBus: CommandBus,
+    protected postsRepository: PostsRepository) {
+  }
+
+  async execute(command: UpdatePostByBlogIdAndPostIdCommand): Promise<void> {
+
+    const blog = await this.commandBus.execute(new GetOneBlogCommand(command.blogId, true));
+    if (!blog) {
+      throw new NotFoundException();
+    }
+    if (command.userId !== blog.blogOwnerInfo.userId) {
+      throw new ForbiddenException();
+    }
+
+    await this.postsRepository.updatePost(command.postId, PostMapper.fromInputBlogPostDtoToUpdateDto(command.inputPost,command.blogId, blog.name));
   }
 }

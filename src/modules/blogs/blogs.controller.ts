@@ -23,7 +23,7 @@ import { ViewPostDto } from "../posts/dto/view-post.dto";
 import {
   CreatePostByBlogIdCommand,
   DeletePostByBlogIdAndPostIdCommand,
-  GetAllPostsByBlogIdCommand
+  GetAllPostsByBlogIdCommand, UpdatePostByBlogIdAndPostIdCommand
 } from "../posts/posts.service";
 import { InputBlogPostDto } from "../posts/dto/input-blog-post.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
@@ -110,8 +110,8 @@ export class BloggerBlogsController {
 
   @Get()
   async getAllBlogs(@Query() query,
-              @Pagination() paginationParams: PaginationParams,
-              @CurrentUserId() userId: string): Promise<PaginatorDto<ViewBlogDto[]>> {
+                    @Pagination() paginationParams: PaginationParams,
+                    @CurrentUserId() userId: string): Promise<PaginatorDto<ViewBlogDto[]>> {
     const searchNameTerm = query.searchNameTerm as string || "";
     return this.commandBus.execute(new GetAllBlogsByUserIdCommand(searchNameTerm.trim(), paginationParams, userId));
   }
@@ -126,13 +126,24 @@ export class BloggerBlogsController {
   }
 
 
-  @Post(":blogId/posts/:postId")
+  @Delete(":blogId/posts/:postId")
   @HttpCode(HttpStatus.CREATED)
   async deletePostByBlogIdAndPostId(@Param("blogId") blogId: string,
-                              @Param("postId") postId: string,
-                              @CurrentUserId() userId: string) {
+                                    @Param("postId") postId: string,
+                                    @CurrentUserId() userId: string): Promise<void> {
     await this.commandBus.execute(new DeletePostByBlogIdAndPostIdCommand(blogId, postId, userId));
   }
+
+
+  @Put(":blogId/posts/:postId")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updatePostByBlogIdAndPostId(@Param("blogId") blogId: string,
+                                    @Param("postId") postId: string,
+                                    @CurrentUserId() userId: string,
+                                    @Body() inputPost: InputBlogPostDto): Promise<void> {
+    await this.commandBus.execute(new UpdatePostByBlogIdAndPostIdCommand(blogId, postId, userId, inputPost));
+  }
+
 
 }
 
