@@ -44,18 +44,19 @@ export class PostLikesRepository {
     }
     return {
       likesCount, dislikesCount, myStatus,
-      newestLikes: await this.newestLikes(postId, 3)
+      newestLikes: await this.newestLikes(postId, 3,usersId)
     };
   }
 
 
   //: Promise<LikesDetailsViewModel[]>
-  async newestLikes(postId: string, limit: number) {
+  async newestLikes(postId: string, limit: number,usersId) {
     const result = await this.postLikeModel.find({ postId, likeStatus: "Like" }).limit(limit).sort({ addedAt: -1 });
     return result.map(el => ({
       addedAt: el.addedAt,
       userId: el.userId,
-      login: el.userLogin
+      login: el.userLogin,
+      usersId
     }));
   }
 
