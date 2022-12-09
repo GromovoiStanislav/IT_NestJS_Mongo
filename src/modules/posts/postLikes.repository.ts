@@ -31,10 +31,18 @@ export class PostLikesRepository {
   }
 
   //: Promise<ExtendedLikesInfoViewModel>
-  async likesInfoByPostID(postId: string, userId: string, usersId: string[]) {
+  async likesInfoByPostID(postId: string, userId: string, banUsersId: string[]) {
 
-    const likesCount = await this.postLikeModel.countDocuments({ postId, likeStatus: "Like", userId: { $nin: usersId } });
-    const dislikesCount = await this.postLikeModel.countDocuments({ postId, likeStatus: "Dislike", userId: { $nin: usersId } });
+    const likesCount = await this.postLikeModel.countDocuments({
+      postId,
+      likeStatus: "Like",
+      userId: { $nin: banUsersId }
+    });
+    const dislikesCount = await this.postLikeModel.countDocuments({
+      postId,
+      likeStatus: "Dislike",
+      userId: { $nin: banUsersId }
+    });
     let myStatus = "None";
     if (userId) {
       const doc = await this.postLikeModel.findOne({ postId, userId });
@@ -44,19 +52,22 @@ export class PostLikesRepository {
     }
     return {
       likesCount, dislikesCount, myStatus,
-      newestLikes: await this.newestLikes(postId, 3,usersId)
+      newestLikes: await this.newestLikes(postId, 3, banUsersId)
     };
   }
 
 
   //: Promise<LikesDetailsViewModel[]>
-  async newestLikes(postId: string, limit: number,usersId) {
-    const result = await this.postLikeModel.find({ postId, likeStatus: "Like" }).limit(limit).sort({ addedAt: -1 });
+  async newestLikes(postId: string, limit: number, banUsersId) {
+    const result = await this.postLikeModel.find({
+      postId,
+      likeStatus: "Like",
+      userId: { $nin: banUsersId }
+    }).limit(limit).sort({ addedAt: -1 });
     return result.map(el => ({
       addedAt: el.addedAt,
       userId: el.userId,
-      login: el.userLogin,
-      banUsersId:usersId
+      login: el.userLogin
     }));
   }
 
