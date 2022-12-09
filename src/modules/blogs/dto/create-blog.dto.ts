@@ -6,5 +6,6 @@ export class CreateBlogDto {
   websiteUrl: string;
   description: string;
   createdAt: string;
+  isBanned: boolean;
   blogOwnerInfo: BlogOwnerDto;
 }

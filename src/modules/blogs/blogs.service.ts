@@ -9,6 +9,7 @@ import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { BlogOwnerDto } from "./dto/blog-owner.dto";
 import { GetUserByIdCommand } from "../users/users.service";
+import { InputBanBlogDto } from "./dto/input-ban-blog.dto";
 
 
 //////////////////////////////////////////////////////////////
@@ -210,3 +211,18 @@ export class GetAllBlogsByUserIdUseCase implements ICommandHandler<GetAllBlogsBy
 }
 
 
+//////////////////////////////////////////////////////////////
+export class BanBlogCommand {
+  constructor(public blogId: string, public inputBanBlog: InputBanBlogDto) {
+  }
+}
+
+@CommandHandler(BanBlogCommand)
+export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
+  constructor(protected blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: BanBlogCommand): Promise<void> {
+   await this.blogsRepository.banBlog(command.blogId,command.inputBanBlog.isBanned);
+  }
+}

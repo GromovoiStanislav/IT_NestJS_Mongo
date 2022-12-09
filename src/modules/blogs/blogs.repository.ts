@@ -75,5 +75,9 @@ export class BlogsRepository {
     return { pagesCount, page, pageSize, totalCount, items };
   }
 
+  async banBlog(blogId: string, isBanned: boolean): Promise<void> {
+    return this.blogModel.findOneAndUpdate({ id: blogId }, { isBanned });
+  }
+
 
 }

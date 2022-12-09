@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { BloggerBlogsController, BlogsController, SaBlogsController } from "./blogs.controller";
 import {
+  BanBlogUseCase,
   BindBlogWithUserUseCase,
   ClearAllBlogsUseCase,
   CreateBlogUseCase,
@@ -23,7 +24,8 @@ const useCases = [
   GetOneBlogUseCase,
   GetAllBlogsUseCase,
   BindBlogWithUserUseCase,
-  GetAllBlogsByUserIdUseCase
+  GetAllBlogsByUserIdUseCase,
+  BanBlogUseCase
 ];
 
 @Module({

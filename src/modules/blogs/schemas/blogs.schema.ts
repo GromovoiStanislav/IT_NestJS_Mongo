@@ -20,6 +20,9 @@ export class Blog {
   @Prop()
   createdAt: string;
 
+  @Prop()
+  isBanned: boolean;
+
   @Prop(raw({
     userId: { type: String },
     userLogin: { type: String }

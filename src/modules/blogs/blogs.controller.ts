@@ -9,6 +9,7 @@ import {
 } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import {
+  BanBlogCommand,
   BindBlogWithUserCommand,
   CreateBlogCommand,
   DeleteBlogCommand, GetAllBlogsByUserIdCommand, GetAllBlogsCommand,
@@ -31,6 +32,7 @@ import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { BearerUserIdGuard } from "../../guards/bearer.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
+import { InputBanBlogDto } from "./dto/input-ban-blog.dto";
 
 
 //////////////////////////////////////////////////////////////
@@ -167,6 +169,14 @@ export class SaBlogsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param("blogId") blogId: string, @Param("userId") userId: string): Promise<void> {
     await this.commandBus.execute(new BindBlogWithUserCommand(blogId, userId));
+  }
+
+
+  @Put(":blogId/ban")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async banBlog(@Param("blogId") blogId: string,
+                      @Body() inputBanBlogDto: InputBanBlogDto ): Promise<void> {
+    await this.commandBus.execute(new BanBlogCommand(blogId, inputBanBlogDto));
   }
 
 }

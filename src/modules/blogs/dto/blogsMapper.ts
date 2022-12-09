@@ -17,6 +17,7 @@ export default class BlogMapper {
     createdBlog.websiteUrl = inputBlog.websiteUrl;
     createdBlog.description = inputBlog.description;
     createdBlog.createdAt = dateAt();
+    createdBlog.isBanned = false;
     createdBlog.blogOwnerInfo = blogOwnerInfo;
     return createdBlog;
   }
