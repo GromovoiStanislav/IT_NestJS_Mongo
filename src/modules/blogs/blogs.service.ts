@@ -11,7 +11,8 @@ import { GetUserByIdCommand } from "../users/users.service";
 import { InputBanBlogDto } from "./dto/input-ban-blog.dto";
 import { BanBlogInfo } from "./dto/blog-banInfo.dto";
 import dateAt from "../../utils/DateGenerator";
-
+import { InputBanBlogUserDto } from "../users/dto/input-blog-ban-user.dto";
+import { CreateBlogBanUserDto } from "./dto/create-blog-ban-user.dto";
 
 
 //////////////////////////////////////////////////////////////
@@ -257,6 +258,62 @@ export class GetIdBannedBlogsUseCase implements ICommandHandler<GetIdBannedBlogs
 
   async execute(command: GetIdBannedBlogsCommand): Promise<string[]> {
     const users = await this.blogsRepository.getBanedBlogs();
-    return users.map(user => user.id)
+    return users.map(user => user.id);
+  }
+}
+
+
+////////////////////////////////////////////////////
+export class BanUserForBlogCommand {
+  constructor(public userId: string, public inputBanBlogUserDto: InputBanBlogUserDto) {
+  }
+}
+
+@CommandHandler(BanUserForBlogCommand)
+export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogCommand> {
+  constructor(private commandBus: CommandBus,
+              private blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: BanUserForBlogCommand): Promise<void> {
+    const { blogId, banReason, isBanned } = command.inputBanBlogUserDto;
+    if (isBanned) {
+
+      const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId))
+      if(!user){
+        throw new BadRequestException("user not found");
+      }
+
+
+      const createBlogBanUserDto: CreateBlogBanUserDto = {
+        userId: command.userId,
+        userLogin: user.login,
+        blogId,
+        banReason,
+        createdAt: dateAt()
+      };
+      await this.blogsRepository.banUserForBlog(createBlogBanUserDto);
+    } else {
+      await this.blogsRepository.unbanUserForBlog(command.userId, blogId);
+    }
+  }
+}
+
+
+////////////////////////////////////////////////////
+export class ReturnAllBannedUsersForBlogCommand {
+  constructor(public blogId: string, public searchLogin: string, public paginationParams: PaginationParams ) {
+  }
+}
+
+@CommandHandler(ReturnAllBannedUsersForBlogCommand)
+export class ReturnAllBannedUsersForBlogUseCase implements ICommandHandler<ReturnAllBannedUsersForBlogCommand> {
+  constructor(private blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: ReturnAllBannedUsersForBlogCommand) {
+    const result = await this.blogsRepository.getAllBannedUsersForBlog(command.blogId, command.searchLogin, command.paginationParams);
+    //return BlogMapper.fromModelsToPaginator(result);
+    return result
   }
 }

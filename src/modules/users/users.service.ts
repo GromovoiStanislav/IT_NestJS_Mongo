@@ -136,7 +136,7 @@ export class GetUserByIdUseCase implements ICommandHandler<GetUserByIdCommand> {
   constructor(protected usersRepository: UsersRepository) {
   }
 
-  async execute(command: GetUserByIdCommand)  {
+  async execute(command: GetUserByIdCommand): Promise<User | null>  {
     return await this.usersRepository.findUserById(command.userId);
   }
 }

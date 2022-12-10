@@ -2,10 +2,16 @@ import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { BloggerBlogsController, BlogsController, SaBlogsController } from "./blogs.controller";
 import {
   BanBlogUseCase,
+  BanUserForBlogUseCase,
   BindBlogWithUserUseCase,
   ClearAllBlogsUseCase,
   CreateBlogUseCase,
-  DeleteBlogUseCase, GetAllBlogsByUserIdUseCase, GetAllBlogsUseCase, GetIdBannedBlogsUseCase, GetOneBlogUseCase,
+  DeleteBlogUseCase,
+  GetAllBlogsByUserIdUseCase,
+  GetAllBlogsUseCase,
+  GetIdBannedBlogsUseCase,
+  GetOneBlogUseCase,
+  ReturnAllBannedUsersForBlogUseCase,
   UpdateBlogUseCase
 } from "./blogs.service";
 import { MongooseModule } from "@nestjs/mongoose";
@@ -14,6 +20,7 @@ import { BlogsRepository } from "./blogs.repository";
 import { CqrsModule } from "@nestjs/cqrs";
 import { JWT_Module } from "../jwt/jwt.module";
 import { UserIdMiddleware } from "../../middlewares/userId.middleware";
+import { BlogBannedUsersSchema, BlogBanUser } from "./schemas/blogBannedUsers.schema";
 
 
 const useCases = [
@@ -26,11 +33,16 @@ const useCases = [
   BindBlogWithUserUseCase,
   GetAllBlogsByUserIdUseCase,
   BanBlogUseCase,
-  GetIdBannedBlogsUseCase
+  GetIdBannedBlogsUseCase,
+  BanUserForBlogUseCase,
+  ReturnAllBannedUsersForBlogUseCase
 ];
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]), CqrsModule, JWT_Module],
+  imports: [MongooseModule.forFeature([
+    { name: Blog.name, schema: BlogSchema },
+    { name: BlogBanUser.name, schema: BlogBannedUsersSchema },
+  ]), CqrsModule, JWT_Module],
   controllers: [BlogsController, BloggerBlogsController, SaBlogsController],
   providers: [...useCases, BlogsRepository],
   exports: []

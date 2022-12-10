@@ -1,5 +1,3 @@
-
-
 export class BanUsersInfo {
   isBanned: boolean = false;
   banDate: string = null;

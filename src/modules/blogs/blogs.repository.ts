@@ -8,18 +8,22 @@ import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { UpdateBlogDto } from "./dto/update-blog.dto";
 import { BlogOwnerDto } from "./dto/blog-owner.dto";
 import { BanBlogInfo } from "./dto/blog-banInfo.dto";
-
+import { BlogBannedUsersDocument, BlogBanUser } from "./schemas/blogBannedUsers.schema";
+import { CreateBlogBanUserDto } from "./dto/create-blog-ban-user.dto";
 
 
 @Injectable()
 export class BlogsRepository {
 
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {
+  constructor(
+    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+    @InjectModel(BlogBanUser.name) private blogBannedUsersModel: Model<BlogBannedUsersDocument>) {
   }
 
 
   async clearAll(): Promise<void> {
     await this.blogModel.deleteMany({});
+    await this.blogBannedUsersModel.deleteMany({});
   }
 
 
@@ -54,7 +58,7 @@ export class BlogsRepository {
                       sortBy,
                       sortDirection
                     }: PaginationParams,
-                    includBanned: boolean,
+                    includeBanned: boolean,
                     userId?: string): Promise<PaginatorDto<Blog[]>> {
 
     type FilterType = {
@@ -68,7 +72,7 @@ export class BlogsRepository {
       filter["blogOwnerInfo.userId"] = userId;
     }
 
-    if (!includBanned) {
+    if (!includeBanned) {
       filter["banInfo.isBanned"] = false;
     }
 
@@ -84,11 +88,51 @@ export class BlogsRepository {
   }
 
   async banBlog(blogId: string, banInfo: BanBlogInfo): Promise<void> {
-    return this.blogModel.findOneAndUpdate({ id: blogId }, { banInfo });
+    await this.blogModel.findOneAndUpdate({ id: blogId }, { banInfo });
   }
 
   async getBanedBlogs(): Promise<Blog[]> {
     return this.blogModel.find({ "banInfo.isBanned": true });
   }
+
+
+  async banUserForBlog(createBlogBanUserDto: CreateBlogBanUserDto): Promise<void> {
+    const createdBan = new this.blogBannedUsersModel(createBlogBanUserDto);
+    await createdBan.save();
+  }
+
+  async unbanUserForBlog(userId: string, blogId: string): Promise<void> {
+    await this.blogBannedUsersModel.findOneAndDelete({ userId, blogId });
+  }
+
+  async getAllBannedUsersForBlog(
+    blogId: string,
+    searchLogin: string,
+    {
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortDirection
+    }: PaginationParams): Promise<PaginatorDto<BlogBanUser[]>> {
+
+    type FilterType = {
+      [key: string]: unknown
+    }
+    const filter: FilterType = {};
+    filter.blogId = blogId;
+    if (searchLogin) {
+      filter.userLogin = RegExp(`${searchLogin}`, "i");
+    }
+
+    const items = await this.blogBannedUsersModel.find(filter).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
+      .limit(pageSize).skip((pageNumber - 1) * pageSize);
+
+    const totalCount = await this.blogBannedUsersModel.countDocuments(filter);
+    const pagesCount = Math.ceil(totalCount / pageSize);
+    const page = pageNumber;
+
+    return { pagesCount, page, pageSize, totalCount, items };
+  }
+
 
 }

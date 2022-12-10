@@ -16,22 +16,20 @@ import {
   CreateUserCommand,
   DeleteUserCommand,
   FindAllUsersCommand,
-  GetIdBannedUsersCommand
 } from "./users.service";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { Pagination } from "../../decorators/paginationDecorator";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { InputBanUserDto } from "./dto/input-ban-user.dto";
 import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
+import { InputBanBlogUserDto } from "./dto/input-blog-ban-user.dto";
+import { BanUserForBlogCommand, ReturnAllBannedUsersForBlogCommand } from "../blogs/blogs.service";
 
 @UseGuards(BaseAuthGuard)
 @Controller("sa/users")
 export class SaUsersController {
 
-  constructor(
-    private commandBus: CommandBus
-  ) {
-  }
+  constructor(private commandBus: CommandBus) {}
 
 
   @Get()
@@ -71,4 +69,22 @@ export class SaUsersController {
 
 @UseGuards(BearerAuthGuard)
 @Controller("blogger/users")
-export class bloggerUsersController {}
+export class bloggerUsersController {
+
+  constructor(private commandBus: CommandBus) {}
+
+
+  @Put(":userId/ban")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async banUser(@Param("userId") userId: string, @Body() inputBanBlogUserDto: InputBanBlogUserDto) {
+    await this.commandBus.execute(new BanUserForBlogCommand(userId, inputBanBlogUserDto));
+  }
+
+
+  @Get("blog/:blogId")
+  async getUsers(@Param("blogId") blogId: string, @Query() query, @Pagination() paginationParams: PaginationParams) {
+    const searchLogin = query.searchLoginTerm as string || "";
+    return this.commandBus.execute(new ReturnAllBannedUsersForBlogCommand(blogId, searchLogin.trim(), paginationParams));
+  }
+
+}

@@ -9,5 +9,4 @@ export class ViewBlogDto {
   createdAt: string;
   blogOwnerInfo?: BlogOwnerDto;
   banInfo?: BanBlogInfo;
-
 }
