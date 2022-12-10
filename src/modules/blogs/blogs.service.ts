@@ -281,7 +281,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
 
       const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId))
       if(!user){
-        throw new BadRequestException("user not found");
+        throw new NotFoundException("user not found");
       }
 
 
