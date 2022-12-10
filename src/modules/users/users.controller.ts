@@ -24,6 +24,7 @@ import { InputBanUserDto } from "./dto/input-ban-user.dto";
 import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { InputBanBlogUserDto } from "./dto/input-blog-ban-user.dto";
 import { BanUserForBlogCommand, ReturnAllBannedUsersForBlogCommand } from "../blogs/blogs.service";
+import { CurrentUserId } from "../../decorators/current-userId.decorator";
 
 @UseGuards(BaseAuthGuard)
 @Controller("sa/users")
@@ -76,8 +77,10 @@ export class BloggerUsersController {
 
   @Put(":userId/ban")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async banUser(@Param("userId") userId: string, @Body() inputBanBlogUserDto: InputBanBlogUserDto) {
-    await this.commandBus.execute(new BanUserForBlogCommand(userId, inputBanBlogUserDto));
+  async banUser(@Param("userId") userId: string,
+                @Body() inputBanBlogUserDto: InputBanBlogUserDto,
+                @CurrentUserId() ownerId: string) {
+    await this.commandBus.execute(new BanUserForBlogCommand(ownerId, userId, inputBanBlogUserDto));
   }
 
 

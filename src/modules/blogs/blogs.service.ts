@@ -265,7 +265,7 @@ export class GetIdBannedBlogsUseCase implements ICommandHandler<GetIdBannedBlogs
 
 ////////////////////////////////////////////////////
 export class BanUserForBlogCommand {
-  constructor(public userId: string, public inputBanBlogUserDto: InputBanBlogUserDto) {
+  constructor(public ownerId: string, public userId: string, public inputBanBlogUserDto: InputBanBlogUserDto) {
   }
 }
 
@@ -289,7 +289,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         throw new NotFoundException("blog not found");
       }
 
-      if(blog.blogOwnerInfo.userId !== command.userId){
+      if(blog.blogOwnerInfo.userId !== command.ownerId){
         throw new ForbiddenException();
       }
 
