@@ -31,15 +31,16 @@ export default class BlogMapper {
     return updatedBlog;
   }
 
-  static fromModelToView(blog: Blog, withBlogOwner: boolean = false): ViewBlogDto {
+  static fromModelToView(blog: Blog, sa: boolean = false): ViewBlogDto {
     const viewBlog = new ViewBlogDto();
     viewBlog.id = blog.id;
     viewBlog.name = blog.name;
     viewBlog.websiteUrl = blog.websiteUrl;
     viewBlog.description = blog.description;
     viewBlog.createdAt = blog.createdAt;
-    if (withBlogOwner) {
+    if (sa) {
       viewBlog.blogOwnerInfo = blog.blogOwnerInfo as BlogOwnerDto;
+      viewBlog.banInfo = blog.banInfo as BanBlogInfo;
     }
     return viewBlog;
   }

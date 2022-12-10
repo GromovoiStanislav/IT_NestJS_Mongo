@@ -43,7 +43,7 @@ export class BlogsRepository {
 
 
   async getOneBlog(blogId: string): Promise<Blog | null> {
-    return this.blogModel.findOne({ id: blogId, isBanned: false });
+    return this.blogModel.findOne({ id: blogId, "banInfo.isBanned": false });
   }
 
 
@@ -52,7 +52,8 @@ export class BlogsRepository {
                       pageSize,
                       sortBy,
                       sortDirection
-                    }: PaginationParams, includBanned: boolean,
+                    }: PaginationParams,
+                    includBanned: boolean,
                     userId?: string): Promise<PaginatorDto<Blog[]>> {
 
     type FilterType = {

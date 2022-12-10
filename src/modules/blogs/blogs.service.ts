@@ -143,7 +143,7 @@ export class GetOneBlogUseCase implements ICommandHandler<GetOneBlogCommand> {
 
 //////////////////////////////////////////////////////////////
 export class GetAllBlogsCommand {
-  constructor(public searchName: string, public paginationParams: PaginationParams, public withBlogOwner: boolean = false) {
+  constructor(public searchName: string, public paginationParams: PaginationParams, public sa: boolean = false) {
   }
 }
 
@@ -153,8 +153,16 @@ export class GetAllBlogsUseCase implements ICommandHandler<GetAllBlogsCommand> {
   }
 
   async execute(command: GetAllBlogsCommand): Promise<PaginatorDto<ViewBlogDto[]>> {
-    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams,false);
-    return BlogMapper.fromModelsToPaginator(result, command.withBlogOwner);
+    let includBanned = false;
+    //let withBlogOwner = false;
+
+    if (command.sa) {
+      includBanned = true;
+      //withBlogOwner = true;
+    }
+
+    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams, includBanned);
+    return BlogMapper.fromModelsToPaginator(result, command.sa);
   }
 }
 
@@ -207,7 +215,7 @@ export class GetAllBlogsByUserIdUseCase implements ICommandHandler<GetAllBlogsBy
   }
 
   async execute(command: GetAllBlogsByUserIdCommand): Promise<PaginatorDto<ViewBlogDto[]>> {
-    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams,false, command.userId);
+    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams, false, command.userId);
     return BlogMapper.fromModelsToPaginator(result, false);
   }
 }
