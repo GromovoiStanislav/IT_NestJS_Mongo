@@ -131,6 +131,7 @@ export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWit
     protected postLikesRepository: PostLikesRepository
   ) {
   }
+
 //: Promise<ViewPostDto>
   async execute(command: GetOnePostWithLikesCommand) {
     const banBlogsId = await this.commandBus.execute(new GetIdBannedBlogsCommand());
@@ -164,8 +165,9 @@ export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsCommand> {
 
   //: Promise<PaginatorDto<ViewPostDto[]>>
   async execute(command: GetAllPostsCommand) {
+    const blogId = null;
+    const result = await this.postsRepository.getAllPosts(command.paginationParams, blogId);
 
-    const result = await this.postsRepository.getAllPosts(command.paginationParams);
     const banUsersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
     result.items = await Promise.all(result.items.map(async post => {
       const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId, banUsersId);
@@ -198,7 +200,7 @@ export class GetAllPostsByBlogIdUseCase implements ICommandHandler<GetAllPostsBy
     //return PostMapper.fromModelsToPaginator(result);
     const banUsersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
     result.items = await Promise.all(result.items.map(async post => {
-      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId,banUsersId);
+      const likes = await this.postLikesRepository.likesInfoByPostID(post.id, command.userId, banUsersId);
       return PostMapper.fromModelToView(post, likes);
     }));
     return result;

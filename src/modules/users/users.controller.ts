@@ -22,6 +22,7 @@ import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { Pagination } from "../../decorators/paginationDecorator";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { InputBanUserDto } from "./dto/input-ban-user.dto";
+import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 
 @UseGuards(BaseAuthGuard)
 @Controller("sa/users")
@@ -66,11 +67,8 @@ export class SaUsersController {
     await this.commandBus.execute(new BanUserCommand(userId, inputBanUser));
   }
 
-  //Для проверки!!!
-  @Get('ban')
-  async getBanedUsers(){
-    return this.commandBus.execute(new GetIdBannedUsersCommand())
-  }
-
 }
 
+@UseGuards(BearerAuthGuard)
+@Controller("blogger/users")
+export class bloggerUsersController {}

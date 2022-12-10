@@ -36,7 +36,7 @@ export class PostsRepository {
 
 
   async getOnePost(postId: string, banBlogsId: string[] = []): Promise<Post | null> {
-    return this.postModel.findOne({ id: postId,blogId: { $nin: banBlogsId } });
+    return this.postModel.findOne({ id: postId, blogId: { $nin: banBlogsId } });
   }
 
   async getAllPosts({
@@ -44,7 +44,7 @@ export class PostsRepository {
                       pageSize,
                       sortBy,
                       sortDirection
-                    }: PaginationParams, blogId?: string): Promise<PaginatorDto<Post[]>> {
+                    }: PaginationParams, blogId: string): Promise<PaginatorDto<Post[]>> {
 
     type FilterType = {
       [key: string]: unknown
