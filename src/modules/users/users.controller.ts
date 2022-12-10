@@ -85,9 +85,12 @@ export class BloggerUsersController {
 
 
   @Get("blog/:blogId")
-  async getUsers(@Param("blogId") blogId: string, @Query() query, @Pagination() paginationParams: PaginationParams) {
+  async getUsers(@Param("blogId") blogId: string,
+                 @Query() query,
+                 @Pagination() paginationParams: PaginationParams,
+                 @CurrentUserId() ownerId: string) {
     const searchLogin = query.searchLoginTerm as string || "";
-    return this.commandBus.execute(new ReturnAllBannedUsersForBlogCommand(blogId, searchLogin.trim(), paginationParams));
+    return this.commandBus.execute(new ReturnAllBannedUsersForBlogCommand(ownerId, blogId, searchLogin.trim(), paginationParams));
   }
 
 }

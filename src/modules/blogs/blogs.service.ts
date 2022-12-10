@@ -293,7 +293,6 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         throw new ForbiddenException();
       }
 
-
       const createBlogBanUserDto: CreateBlogBanUserDto = {
         userId: command.userId,
         login: user.login,
@@ -311,7 +310,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
 
 ////////////////////////////////////////////////////
 export class ReturnAllBannedUsersForBlogCommand {
-  constructor(public blogId: string, public searchLogin: string, public paginationParams: PaginationParams ) {
+  constructor(public ownerId: string, public blogId: string, public searchLogin: string, public paginationParams: PaginationParams ) {
   }
 }
 
@@ -321,6 +320,14 @@ export class ReturnAllBannedUsersForBlogUseCase implements ICommandHandler<Retur
   }
 
   async execute(command: ReturnAllBannedUsersForBlogCommand) {
+    const blog = await this.blogsRepository.getOneBlog(command.blogId);
+    if (!blog) {
+      throw new NotFoundException("blog not found");
+    }
+    if(blog.blogOwnerInfo.userId !== command.ownerId){
+      throw new ForbiddenException();
+    }
+
     const result = await this.blogsRepository.getAllBannedUsersForBlog(command.blogId, command.searchLogin, command.paginationParams);
     return BlogMapper.fromBannedUserModelsToPaginator(result);
   }
