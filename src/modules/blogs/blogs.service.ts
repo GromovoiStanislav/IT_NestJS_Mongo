@@ -10,6 +10,8 @@ import { BadRequestException, ForbiddenException, NotFoundException, Unauthorize
 import { BlogOwnerDto } from "./dto/blog-owner.dto";
 import { GetUserByIdCommand } from "../users/users.service";
 import { InputBanBlogDto } from "./dto/input-ban-blog.dto";
+import { BanBlogInfo } from "./dto/blog-banInfo.dto";
+import dateAt from "../../utils/DateGenerator";
 
 
 //////////////////////////////////////////////////////////////
@@ -151,7 +153,7 @@ export class GetAllBlogsUseCase implements ICommandHandler<GetAllBlogsCommand> {
   }
 
   async execute(command: GetAllBlogsCommand): Promise<PaginatorDto<ViewBlogDto[]>> {
-    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams);
+    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams,false);
     return BlogMapper.fromModelsToPaginator(result, command.withBlogOwner);
   }
 }
@@ -205,7 +207,7 @@ export class GetAllBlogsByUserIdUseCase implements ICommandHandler<GetAllBlogsBy
   }
 
   async execute(command: GetAllBlogsByUserIdCommand): Promise<PaginatorDto<ViewBlogDto[]>> {
-    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams, command.userId);
+    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams,false, command.userId);
     return BlogMapper.fromModelsToPaginator(result, false);
   }
 }
@@ -223,6 +225,13 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
   }
 
   async execute(command: BanBlogCommand): Promise<void> {
-   await this.blogsRepository.banBlog(command.blogId,command.inputBanBlog.isBanned);
+
+    const banInfo = new BanBlogInfo();
+    if (command.inputBanBlog.isBanned) {
+      banInfo.isBanned = true;
+      banInfo.banDate = dateAt();
+    }
+
+    await this.blogsRepository.banBlog(command.blogId, banInfo);
   }
 }

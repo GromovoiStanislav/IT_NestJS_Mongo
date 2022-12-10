@@ -7,6 +7,7 @@ import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { UpdateBlogDto } from "./dto/update-blog.dto";
 import { BlogOwnerDto } from "./dto/blog-owner.dto";
+import { BanBlogInfo } from "./dto/blog-banInfo.dto";
 
 
 @Injectable()
@@ -51,7 +52,7 @@ export class BlogsRepository {
                       pageSize,
                       sortBy,
                       sortDirection
-                    }: PaginationParams,
+                    }: PaginationParams, includBanned: boolean,
                     userId?: string): Promise<PaginatorDto<Blog[]>> {
 
     type FilterType = {
@@ -62,10 +63,13 @@ export class BlogsRepository {
       filter.name = RegExp(`${searchName}`, "i");
     }
     if (userId) {
-      filter['blogOwnerInfo.userId']=userId
+      filter["blogOwnerInfo.userId"] = userId;
     }
 
-    filter.isBanned = false
+    if (!includBanned) {
+      filter["banInfo.isBanned"] = false;
+    }
+
 
     const items = await this.blogModel.find(filter).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
       .limit(pageSize).skip((pageNumber - 1) * pageSize);
@@ -77,8 +81,8 @@ export class BlogsRepository {
     return { pagesCount, page, pageSize, totalCount, items };
   }
 
-  async banBlog(blogId: string, isBanned: boolean): Promise<void> {
-    return this.blogModel.findOneAndUpdate({ id: blogId }, { isBanned });
+  async banBlog(blogId: string, banInfo: BanBlogInfo): Promise<void> {
+    return this.blogModel.findOneAndUpdate({ id: blogId }, { banInfo });
   }
 
 

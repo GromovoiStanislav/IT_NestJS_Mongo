@@ -7,6 +7,7 @@ import { PaginatorDto } from "../../../commonDto/paginator.dto";
 import { UpdateBlogDto } from "./update-blog.dto";
 import dateAt from "../../../utils/DateGenerator";
 import { BlogOwnerDto } from "./blog-owner.dto";
+import { BanBlogInfo } from "./blog-banInfo.dto";
 
 export default class BlogMapper {
 
@@ -17,7 +18,7 @@ export default class BlogMapper {
     createdBlog.websiteUrl = inputBlog.websiteUrl;
     createdBlog.description = inputBlog.description;
     createdBlog.createdAt = dateAt();
-    createdBlog.isBanned = false;
+    createdBlog.banInfo = new BanBlogInfo();
     createdBlog.blogOwnerInfo = blogOwnerInfo;
     return createdBlog;
   }

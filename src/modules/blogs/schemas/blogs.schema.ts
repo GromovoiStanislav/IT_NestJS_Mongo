@@ -20,14 +20,17 @@ export class Blog {
   @Prop()
   createdAt: string;
 
-  @Prop()
-  isBanned: boolean;
-
   @Prop(raw({
     userId: { type: String },
     userLogin: { type: String }
   }))
   blogOwnerInfo: Record<string, any>;
+
+  @Prop(raw({
+    isBanned: { type: Boolean },
+    banDate: { type: String }
+  }))
+  banInfo: Record<string, any>;
 
 }
 
