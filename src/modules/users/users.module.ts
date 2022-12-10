@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { SaUsersController } from "./users.controller";
+import { BloggerUsersController, SaUsersController } from "./users.controller";
 import {
   BanUserUserUseCase,
   ClearAllUsersUseCase,
@@ -16,6 +16,7 @@ import {
 import { User, UserSchema } from "./schemas/users.schema";
 import { UsersRepository } from "./users.repository";
 import { CqrsModule } from "@nestjs/cqrs";
+import { JWT_Module } from "../jwt/jwt.module";
 
 const useCases = [
   ClearAllUsersUseCase,
@@ -32,10 +33,9 @@ const useCases = [
 ];
 
 @Module({
-  imports: [CqrsModule, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
-  controllers: [SaUsersController],
+  imports: [CqrsModule,JWT_Module, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
+  controllers: [SaUsersController, BloggerUsersController],
   providers: [...useCases, UsersRepository]
-  //exports: [ UsersRepository]
 })
 export class UsersModule {
 }

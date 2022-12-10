@@ -69,16 +69,15 @@ export class SaUsersController {
 
 @UseGuards(BearerAuthGuard)
 @Controller("blogger/users")
-export class bloggerUsersController {
+export class BloggerUsersController {
 
   constructor(private commandBus: CommandBus) {}
 
 
   @Put(":userId/ban")
-  //@HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async banUser(@Param("userId") userId: string, @Body() inputBanBlogUserDto: InputBanBlogUserDto) {
-    //await this.commandBus.execute(new BanUserForBlogCommand(userId, inputBanBlogUserDto));
-    return inputBanBlogUserDto
+    await this.commandBus.execute(new BanUserForBlogCommand(userId, inputBanBlogUserDto));
   }
 
 
