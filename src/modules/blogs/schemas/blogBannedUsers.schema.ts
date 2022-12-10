@@ -13,7 +13,7 @@ export class BlogBanUser {
   userId: string;
 
   @Prop()
-  userLogin: string;
+  login: string;
 
   @Prop()
   createdAt: string;

@@ -115,14 +115,6 @@ export class BlogsRepository {
       sortDirection
     }: PaginationParams): Promise<PaginatorDto<BlogBanUser[]>> {
 
-
-    if (sortBy === "login") {
-      sortBy = "userlogin";
-    } else if (sortBy === "id") {
-      sortBy = "userId";
-    }
-
-
     type FilterType = {
       [key: string]: unknown
     }

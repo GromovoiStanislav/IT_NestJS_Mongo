@@ -66,7 +66,7 @@ export default class BlogMapper {
       totalCount: blogs.totalCount,
       items: blogs.items.map(user => ({
         id: user.userId,
-        login: user.userLogin,
+        login: user.login,
         banInfo: {
           isBanned: true,
           banDate: user.createdAt,

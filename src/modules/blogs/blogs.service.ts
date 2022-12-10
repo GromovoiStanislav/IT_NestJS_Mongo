@@ -287,7 +287,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
 
       const createBlogBanUserDto: CreateBlogBanUserDto = {
         userId: command.userId,
-        userLogin: user.login,
+        login: user.login,
         blogId,
         banReason,
         createdAt: dateAt()
@@ -314,6 +314,5 @@ export class ReturnAllBannedUsersForBlogUseCase implements ICommandHandler<Retur
   async execute(command: ReturnAllBannedUsersForBlogCommand) {
     const result = await this.blogsRepository.getAllBannedUsersForBlog(command.blogId, command.searchLogin, command.paginationParams);
     return BlogMapper.fromBannedUserModelsToPaginator(result);
-    return result
   }
 }
