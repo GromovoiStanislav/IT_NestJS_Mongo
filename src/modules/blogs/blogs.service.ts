@@ -4,7 +4,6 @@ import { InputBlogDto } from "./dto/input-blog.dto";
 import BlogMapper from "./dto/blogsMapper";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
-import { Blog } from "./schemas/blogs.schema";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { BlogOwnerDto } from "./dto/blog-owner.dto";
@@ -12,6 +11,7 @@ import { GetUserByIdCommand } from "../users/users.service";
 import { InputBanBlogDto } from "./dto/input-ban-blog.dto";
 import { BanBlogInfo } from "./dto/blog-banInfo.dto";
 import dateAt from "../../utils/DateGenerator";
+
 
 
 //////////////////////////////////////////////////////////////
@@ -241,5 +241,22 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
     }
 
     await this.blogsRepository.banBlog(command.blogId, banInfo);
+  }
+}
+
+////////////////////////////////////////////////////
+export class GetIdBannedBlogsCommand {
+  constructor() {
+  }
+}
+
+@CommandHandler(GetIdBannedBlogsCommand)
+export class GetIdBannedBlogsUseCase implements ICommandHandler<GetIdBannedBlogsCommand> {
+  constructor(protected blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: GetIdBannedBlogsCommand): Promise<string[]> {
+    const users = await this.blogsRepository.getBanedBlogs();
+    return users.map(user => user.id)
   }
 }

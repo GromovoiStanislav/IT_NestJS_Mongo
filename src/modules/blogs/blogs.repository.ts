@@ -10,6 +10,7 @@ import { BlogOwnerDto } from "./dto/blog-owner.dto";
 import { BanBlogInfo } from "./dto/blog-banInfo.dto";
 
 
+
 @Injectable()
 export class BlogsRepository {
 
@@ -86,5 +87,8 @@ export class BlogsRepository {
     return this.blogModel.findOneAndUpdate({ id: blogId }, { banInfo });
   }
 
+  async getBanedBlogs(): Promise<Blog[]> {
+    return this.blogModel.find({ "banInfo.isBanned": true });
+  }
 
 }

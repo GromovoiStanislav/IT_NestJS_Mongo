@@ -2,7 +2,7 @@ import { PostsRepository } from "./posts.repository";
 import { InputPostDto } from "./dto/input-post.dto";
 import { ViewPostDto } from "./dto/view-post.dto";
 import PostMapper from "./dto/postsMapper";
-import { GetOneBlogCommand } from "../blogs/blogs.service";
+import { GetIdBannedBlogsCommand, GetOneBlogCommand } from "../blogs/blogs.service";
 import { Post } from "./schemas/posts.schema";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { InputBlogPostDto } from "./dto/input-blog-post.dto";
@@ -133,11 +133,14 @@ export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWit
   }
 //: Promise<ViewPostDto>
   async execute(command: GetOnePostWithLikesCommand) {
-    const post = await this.postsRepository.getOnePost(command.postId);
+    const banBlogsId = await this.commandBus.execute(new GetIdBannedBlogsCommand());
+
+    const post = await this.postsRepository.getOnePost(command.postId, banBlogsId);
     if (!post) {
       throw new NotFoundException();
     }
     const banUsersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
+
     const likes = await this.postLikesRepository.likesInfoByPostID(command.postId, command.userId, banUsersId);
     return PostMapper.fromModelToView(post, likes);
   }

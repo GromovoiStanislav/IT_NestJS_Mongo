@@ -35,16 +35,16 @@ export class PostsRepository {
   }
 
 
-  async getOnePost(postId: string): Promise<Post | null> {
-    return this.postModel.findOne({ id: postId });
+  async getOnePost(postId: string, banBlogsId: string[] = []): Promise<Post | null> {
+    return this.postModel.findOne({ id: postId,blogId: { $nin: banBlogsId } });
   }
 
   async getAllPosts({
-    pageNumber,
-    pageSize,
-    sortBy,
-    sortDirection
-  }: PaginationParams,blogId?:string): Promise<PaginatorDto<Post[]>> {
+                      pageNumber,
+                      pageSize,
+                      sortBy,
+                      sortDirection
+                    }: PaginationParams, blogId?: string): Promise<PaginatorDto<Post[]>> {
 
     type FilterType = {
       [key: string]: unknown
