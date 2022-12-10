@@ -8,6 +8,8 @@ import { UpdateBlogDto } from "./update-blog.dto";
 import dateAt from "../../../utils/DateGenerator";
 import { BlogOwnerDto } from "./blog-owner.dto";
 import { BanBlogInfo } from "./blog-banInfo.dto";
+import { ViewBanBlogUser } from "./view-blog-ban-user.dto";
+import { BlogBanUser } from "../schemas/blogBannedUsers.schema";
 
 export default class BlogMapper {
 
@@ -52,6 +54,25 @@ export default class BlogMapper {
       pageSize: blogs.pageSize,
       totalCount: blogs.totalCount,
       items: blogs.items.map(blog => BlogMapper.fromModelToView(blog, withBlogOwner))
+    };
+  }
+
+
+  static fromBannedUserModelsToPaginator(blogs: PaginatorDto<BlogBanUser[]>): PaginatorDto<ViewBanBlogUser[]> {
+    return {
+      pagesCount: blogs.pagesCount,
+      page: blogs.page,
+      pageSize: blogs.pageSize,
+      totalCount: blogs.totalCount,
+      items: blogs.items.map(user => ({
+        id: user.userId,
+        login: user.userLogin,
+        banInfo: {
+          isBanned: true,
+          banDate: user.createdAt,
+          banReason: user.banReason
+        }
+      }))
     };
   }
 

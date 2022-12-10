@@ -313,7 +313,7 @@ export class ReturnAllBannedUsersForBlogUseCase implements ICommandHandler<Retur
 
   async execute(command: ReturnAllBannedUsersForBlogCommand) {
     const result = await this.blogsRepository.getAllBannedUsersForBlog(command.blogId, command.searchLogin, command.paginationParams);
-    //return BlogMapper.fromModelsToPaginator(result);
+    return BlogMapper.fromBannedUserModelsToPaginator(result);
     return result
   }
 }
