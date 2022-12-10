@@ -284,6 +284,15 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         throw new NotFoundException("user not found");
       }
 
+      const blog = await this.blogsRepository.getOneBlog(blogId);
+      if (!blog) {
+        throw new NotFoundException("blog not found");
+      }
+
+      if(blog.blogOwnerInfo.userId !== command.userId){
+        throw new ForbiddenException();
+      }
+
 
       const createBlogBanUserDto: CreateBlogBanUserDto = {
         userId: command.userId,
