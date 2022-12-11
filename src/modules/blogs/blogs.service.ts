@@ -369,19 +369,28 @@ export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCo
     const postsId = posts.map(post=>post.id)
     const comments = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId))
 
+    const postInfo = (postId)=>{
+      const post = posts.find(post => post.id === postId)
+      return {
+        id: post.id,
+        title: post.title,
+        blogId: post.blogId,
+        blogName: post.blogName
+      }
+    }
+
     const items = comments.items.map(comment => ({
       id: comment.id,
       content: comment.content,
       createdAt: comment.createdAt,
       likesInfo: comment.likesInfo,
       commentatorInfo: {
-        userId: comment.userLogin,
+        userId: comment.userid,
         userLogin: comment.userLogin
       },
-      postInfo:{
-        id:comment.postId
-      }
+      postInfo: postInfo(comment.postid)
     }))
+
     return { ...comments, items };
   }
 }
