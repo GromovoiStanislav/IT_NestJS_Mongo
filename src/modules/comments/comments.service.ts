@@ -221,7 +221,7 @@ export class GetAllCommentsByArrayOfPostIDCommand {
 @CommandHandler(GetAllCommentsByArrayOfPostIDCommand)
 export class GetAllCommentsByArrayOfPostIDUseCase implements ICommandHandler<GetAllCommentsByArrayOfPostIDCommand> {
   constructor(
-    private commandBus: CommandBus,
+    //private commandBus: CommandBus,
     protected commentsRepository: CommentsRepository,
     protected commentLikesRepository: CommentLikesRepository
   ) {
