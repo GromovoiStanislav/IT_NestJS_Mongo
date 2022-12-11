@@ -365,19 +365,19 @@ export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCo
   async execute(command: GetAllCommentsForMyBlogsCommand) {
 
     const blogsId = (await this.blogsRepository.getAllBlogsByOwnerId(command.ownerId)).map(blog => blog.id);
-    const posts = await this.commandBus.execute(new GetAllPostsByArrayOfBlogIdCommand(blogsId))
-    const postsId = posts.map(post=>post.id)
-    const comments = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId))
+    const posts = await this.commandBus.execute(new GetAllPostsByArrayOfBlogIdCommand(blogsId));
+    const postsId = posts.map(post => post.id);
+    const comments = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId));
 
-    const postInfo = (postId)=>{
-      const post = posts.find(post => post.id === postId)
+    const postInfo = (postId) => {
+      const post = posts.find(post => post.id === postId);
       return {
         id: post.id,
         title: post.title,
         blogId: post.blogId,
         blogName: post.blogName
-      }
-    }
+      };
+    };
 
     const items = comments.items.map(comment => ({
       id: comment.id,
@@ -388,8 +388,8 @@ export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCo
         userId: comment.userid,
         userLogin: comment.userLogin
       },
-      postInfo: postInfo(comment.postid)
-    }))
+      postInfo: postInfo(comment.postId)
+    }));
 
     return { ...comments, items };
   }
