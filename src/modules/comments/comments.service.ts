@@ -235,7 +235,7 @@ export class GetAllCommentsByArrayOfPostIDUseCase implements ICommandHandler<Get
 
     const items = await Promise.all(result.items.map(async comment => {
       const likes = await this.commentLikesRepository.likesByCommentID(comment.id, command.userId, usersId);
-      return CommentsMapper.fromModelToView(comment, likes);
+      return CommentsMapper.fromModelToOwnerView(comment, likes);
     }));
 
     return { ...result, items };

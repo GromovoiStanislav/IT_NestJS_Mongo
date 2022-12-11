@@ -50,4 +50,18 @@ export default class CommentsMapper {
     return viewComment;
   }
 
+
+  static fromModelToOwnerView(comment: Comment, likes: LikesInfoDto) {
+    return {
+      id: comment.id,
+      content: comment.content,
+      userId: comment.userId,
+      userLogin: comment.userLogin,
+      createdAt: comment.createdAt,
+      postId: comment.postId,
+      likesInfo: likes,
+    };
+  }
+
+
 }

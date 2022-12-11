@@ -365,12 +365,11 @@ export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCo
   async execute(command: GetAllCommentsForMyBlogsCommand) {
 
     const blogsId = (await this.blogsRepository.getAllBlogsByOwnerId(command.ownerId)).map(blog => blog.id);
-    //const blogsId = allBlogs.map(blog => blog.id);
-    const allPosts = await this.commandBus.execute(new GetAllPostsByArrayOfBlogIdCommand(blogsId))
-    const postsId = allPosts.map(post=>post.id)
-    const result = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId))
+    const posts = await this.commandBus.execute(new GetAllPostsByArrayOfBlogIdCommand(blogsId))
+    const postsId = posts.map(post=>post.id)
+    const comments = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId))
 
-    const items = result.items.map(comment => ({
+    const items = comments.items.map(comment => ({
       id: comment.id,
       content: comment.content,
       createdAt: comment.createdAt,
@@ -379,9 +378,10 @@ export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCo
         userId: comment.userLogin,
         userLogin: comment.userLogin
       },
-      postInfo:{}
+      postInfo:{
+        id:comment.postId
+      }
     }))
-    return { ...result, items };
-
+    return { ...comments, items };
   }
 }
