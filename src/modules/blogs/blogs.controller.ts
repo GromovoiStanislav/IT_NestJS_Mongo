@@ -146,8 +146,7 @@ export class BloggerBlogsController {
     await this.commandBus.execute(new UpdatePostByBlogIdAndPostIdCommand(blogId, postId, userId, inputPost));
   }
 
-
-  @Get("blogs/comments")
+  @Get("comments")
   async getAllComments(@Pagination() paginationParams: PaginationParams,
                        @CurrentUserId() userId: string) {
     //return this.commandBus.execute(new GetAllBlogsByUserIdCommand(searchNameTerm.trim(), paginationParams, userId));
@@ -180,8 +179,6 @@ export class BloggerBlogsController {
       ]
     }
   }
-
-
 }
 
 ////////////////////////////////////////////
