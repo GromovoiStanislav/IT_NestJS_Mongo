@@ -147,6 +147,41 @@ export class BloggerBlogsController {
   }
 
 
+  @Get("blogs/comments")
+  async getAllComments(@Pagination() paginationParams: PaginationParams,
+                       @CurrentUserId() userId: string) {
+    //return this.commandBus.execute(new GetAllBlogsByUserIdCommand(searchNameTerm.trim(), paginationParams, userId));
+    return {
+      "pagesCount": 0,
+      "page": 0,
+      "pageSize": 0,
+      "totalCount": 0,
+      "items": [
+        {
+          "id": "string",
+          "content": "string",
+          "createdAt": "2022-12-11T17:39:02.257Z",
+          "likesInfo": {
+            "likesCount": 0,
+            "dislikesCount": 0,
+            "myStatus": "None"
+          },
+          "commentatorInfo": {
+            "userId": "string",
+            "userLogin": "string"
+          },
+          "postInfo": {
+            "id": "string",
+            "title": "string",
+            "blogId": "string",
+            "blogName": "string"
+          }
+        }
+      ]
+    }
+  }
+
+
 }
 
 ////////////////////////////////////////////
@@ -175,7 +210,7 @@ export class SaBlogsController {
   @Put(":blogId/ban")
   @HttpCode(HttpStatus.NO_CONTENT)
   async banBlog(@Param("blogId") blogId: string,
-                      @Body() inputBanBlogDto: InputBanBlogDto ): Promise<void> {
+                @Body() inputBanBlogDto: InputBanBlogDto): Promise<void> {
     await this.commandBus.execute(new BanBlogCommand(blogId, inputBanBlogDto));
   }
 
