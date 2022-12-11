@@ -385,7 +385,7 @@ export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCo
       createdAt: comment.createdAt,
       likesInfo: comment.likesInfo,
       commentatorInfo: {
-        userId: comment.userid,
+        userId: comment.userId,
         userLogin: comment.userLogin
       },
       postInfo: postInfo(comment.postId)
