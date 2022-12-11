@@ -14,7 +14,7 @@ import dateAt from "../../utils/DateGenerator";
 import { InputBanBlogUserDto } from "../users/dto/input-blog-ban-user.dto";
 import { CreateBlogBanUserDto } from "./dto/create-blog-ban-user.dto";
 import { GetAllPostsByArrayOfBlogIdCommand } from "../posts/posts.service";
-import { GetAllCommentsByArrayOfPostIDCommand, GetAllCommentsByPostIDCommand } from "../comments/comments.service";
+import { GetAllCommentsByArrayOfPostIDCommand } from "../comments/comments.service";
 
 
 //////////////////////////////////////////////////////////////
@@ -365,11 +365,11 @@ export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCo
   async execute(command: GetAllCommentsForMyBlogsCommand) {
 
     const blogsId = (await this.blogsRepository.getAllBlogsByOwnerId(command.ownerId)).map(blog => blog.id);
-    const allPosts = await this.commandBus.execute(new GetAllPostsByArrayOfBlogIdCommand(blogsId))
-    const postsId = allPosts.map(post=>post.id)
-    const allComments = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId))
+    // const allPosts = await this.commandBus.execute(new GetAllPostsByArrayOfBlogIdCommand(blogsId))
+    // const postsId = allPosts.map(post=>post.id)
+    // const allComments = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId))
 
-    return allComments
+    return blogsId
 
   }
 }
