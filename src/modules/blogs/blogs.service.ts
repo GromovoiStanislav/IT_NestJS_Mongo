@@ -364,13 +364,13 @@ export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCo
 
   async execute(command: GetAllCommentsForMyBlogsCommand) {
 
-    const allBlogs = await this.blogsRepository.getAllBlogsByOwnerId(command.ownerId);
+    const blogsId = (await this.blogsRepository.getAllBlogsByOwnerId(command.ownerId)).map(blog => blog.id);
     // const blogsId = allBlogs.map(blog => blog.id)
     // const allPosts = await this.commandBus.execute(new GetAllPostsByArrayOfBlogIdCommand(blogsId))
     // const postsId = allPosts.map(post=>post.id)
     // const allComments = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId))
 
-    return allBlogs
+    return blogsId
 
   }
 }
