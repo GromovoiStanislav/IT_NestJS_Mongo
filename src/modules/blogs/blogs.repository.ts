@@ -140,8 +140,7 @@ export class BlogsRepository {
   }
 
   async getAllBlogsByOwnerId(ownerId: string): Promise<Blog[]> {
-    return this.blogBannedUsersModel.find();
-    //return this.blogBannedUsersModel.find({ "blogOwnerInfo.userId": ownerId });
+    return this.blogModel.find({ "blogOwnerInfo.userId": ownerId });
   }
 
 }
