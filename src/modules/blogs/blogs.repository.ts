@@ -135,4 +135,9 @@ export class BlogsRepository {
   }
 
 
+  async findBannedUserForBlog(blogId: string, userId: string): Promise<BlogBanUser | null> {
+    return this.blogBannedUsersModel.findOne({ blogId, userId  });
+  }
+
+
 }

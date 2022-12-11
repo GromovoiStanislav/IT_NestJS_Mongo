@@ -332,3 +332,20 @@ export class ReturnAllBannedUsersForBlogUseCase implements ICommandHandler<Retur
     return BlogMapper.fromBannedUserModelsToPaginator(result);
   }
 }
+
+////////////////////////////////////////////////////
+export class IsUserBannedForBlogCommand {
+  constructor(public blogId: string, public userId: string) {
+  }
+}
+
+@CommandHandler(IsUserBannedForBlogCommand)
+export class IsUserBannedForBlogUseCase implements ICommandHandler<IsUserBannedForBlogCommand> {
+  constructor(private blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: IsUserBannedForBlogCommand):Promise<boolean> {
+    return !!(await this.blogsRepository.findBannedUserForBlog(command.blogId, command.userId));
+
+  }
+}

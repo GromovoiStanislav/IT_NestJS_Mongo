@@ -7,6 +7,7 @@ import CommentsMapper from "./dto/commentsMapper";
 import { GetOnePostCommand } from "../posts/posts.service";
 import { GetIdBannedUsersCommand, GetUserByIdCommand } from "../users/users.service";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { IsUserBannedForBlogCommand } from "../blogs/blogs.service";
 
 
 //////////////////////////////////////////////////
@@ -159,6 +160,11 @@ export class CreateCommentByPostIDUseCase implements ICommandHandler<CreateComme
     if (!post) {
       throw new NotFoundException();
     }
+
+    if(await this.commandBus.execute(new IsUserBannedForBlogCommand(post.blogId,command.userId))){
+      throw new  ForbiddenException()
+    }
+
 
     const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
 

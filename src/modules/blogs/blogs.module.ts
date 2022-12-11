@@ -10,7 +10,7 @@ import {
   GetAllBlogsByUserIdUseCase,
   GetAllBlogsUseCase,
   GetIdBannedBlogsUseCase,
-  GetOneBlogUseCase,
+  GetOneBlogUseCase, IsUserBannedForBlogUseCase,
   ReturnAllBannedUsersForBlogUseCase,
   UpdateBlogUseCase
 } from "./blogs.service";
@@ -35,7 +35,8 @@ const useCases = [
   BanBlogUseCase,
   GetIdBannedBlogsUseCase,
   BanUserForBlogUseCase,
-  ReturnAllBannedUsersForBlogUseCase
+  ReturnAllBannedUsersForBlogUseCase,
+  IsUserBannedForBlogUseCase
 ];
 
 @Module({
