@@ -62,4 +62,23 @@ export class CommentsRepository {
   }
 
 
+
+  async getAllCommentsByArrayOfPosts({
+                         pageNumber,
+                         pageSize,
+                         sortBy,
+                         sortDirection
+                       }: PaginationParams, postsId: string[]): Promise<PaginatorDto<Comment[]>> {
+
+    const items = await this.commentsModel.find({ postId: { $in: postsId }}).sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
+      .limit(pageSize).skip((pageNumber - 1) * pageSize);
+
+    const totalCount = await this.commentsModel.count({ postId: { $in: postsId }});
+    const pagesCount = Math.ceil(totalCount / pageSize);
+    const page = pageNumber;
+
+    return { pagesCount, page, pageSize, totalCount, items };
+  }
+
+
 }

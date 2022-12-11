@@ -8,7 +8,7 @@ import {
   CreateBlogUseCase,
   DeleteBlogUseCase,
   GetAllBlogsByUserIdUseCase,
-  GetAllBlogsUseCase,
+  GetAllBlogsUseCase, GetAllCommentsForMyBlogsUseCase,
   GetIdBannedBlogsUseCase,
   GetOneBlogUseCase, IsUserBannedForBlogUseCase,
   ReturnAllBannedUsersForBlogUseCase,
@@ -36,7 +36,8 @@ const useCases = [
   GetIdBannedBlogsUseCase,
   BanUserForBlogUseCase,
   ReturnAllBannedUsersForBlogUseCase,
-  IsUserBannedForBlogUseCase
+  IsUserBannedForBlogUseCase,
+  GetAllCommentsForMyBlogsUseCase
 ];
 
 @Module({

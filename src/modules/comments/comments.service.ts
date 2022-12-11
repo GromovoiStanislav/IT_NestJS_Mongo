@@ -212,6 +212,35 @@ export class GetAllCommentsByPostIDUseCase implements ICommandHandler<GetAllComm
 }
 
 
+/////////////////////////////////////////////
+export class GetAllCommentsByArrayOfPostIDCommand {
+  constructor(public paginationParams: PaginationParams, public postsId: string[], public userId:string) {
+  }
+}
+
+@CommandHandler(GetAllCommentsByArrayOfPostIDCommand)
+export class GetAllCommentsByArrayOfPostIDUseCase implements ICommandHandler<GetAllCommentsByArrayOfPostIDCommand> {
+  constructor(
+    private commandBus: CommandBus,
+    protected commentsRepository: CommentsRepository,
+    protected commentLikesRepository: CommentLikesRepository
+  ) {
+  }
+
+  async execute(command: GetAllCommentsByArrayOfPostIDCommand) {
+
+    const result = await this.commentsRepository.getAllCommentsByArrayOfPosts(command.paginationParams, command.postsId);
+    //const usersId = await this.commandBus.execute(new GetIdBannedUsersCommand());
+    const usersId = [];
+
+    const items = await Promise.all(result.items.map(async comment => {
+      const likes = await this.commentLikesRepository.likesByCommentID(comment.id, command.userId, usersId);
+      return CommentsMapper.fromModelToView(comment, likes);
+    }));
+
+    return { ...result, items };
+  }
+}
 
 
 

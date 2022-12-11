@@ -12,7 +12,7 @@ import {
   BanBlogCommand,
   BindBlogWithUserCommand,
   CreateBlogCommand,
-  DeleteBlogCommand, GetAllBlogsByUserIdCommand, GetAllBlogsCommand,
+  DeleteBlogCommand, GetAllBlogsByUserIdCommand, GetAllBlogsCommand, GetAllCommentsForMyBlogsCommand,
   GetOneBlogCommand,
   UpdateBlogCommand
 } from "./blogs.service";
@@ -124,7 +124,7 @@ export class BloggerBlogsController {
   async createPostByBlogId(@Param("blogId") blogId: string,
                            @Body() inputPost: InputBlogPostDto,
                            @CurrentUserId() userId: string): Promise<ViewPostDto> {
-    return await this.commandBus.execute(new CreatePostByBlogIdCommand(blogId, userId, inputPost));
+    return this.commandBus.execute(new CreatePostByBlogIdCommand(blogId, userId, inputPost));
   }
 
 
@@ -148,36 +148,8 @@ export class BloggerBlogsController {
 
   @Get("comments")
   async getAllComments(@Pagination() paginationParams: PaginationParams,
-                       @CurrentUserId() userId: string) {
-    //return this.commandBus.execute(new GetAllBlogsByUserIdCommand(searchNameTerm.trim(), paginationParams, userId));
-    return {
-      "pagesCount": 0,
-      "page": 0,
-      "pageSize": 0,
-      "totalCount": 0,
-      "items": [
-        {
-          "id": "string",
-          "content": "string",
-          "createdAt": "2022-12-11T17:39:02.257Z",
-          "likesInfo": {
-            "likesCount": 0,
-            "dislikesCount": 0,
-            "myStatus": "None"
-          },
-          "commentatorInfo": {
-            "userId": "string",
-            "userLogin": "string"
-          },
-          "postInfo": {
-            "id": "string",
-            "title": "string",
-            "blogId": "string",
-            "blogName": "string"
-          }
-        }
-      ]
-    }
+                       @CurrentUserId() ownerId: string) {
+    return this.commandBus.execute(new GetAllCommentsForMyBlogsCommand(ownerId,paginationParams));
   }
 }
 

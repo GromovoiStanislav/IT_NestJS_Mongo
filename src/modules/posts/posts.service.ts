@@ -328,3 +328,21 @@ export class UpdatePostByBlogIdAndPostIdUseCase implements ICommandHandler<Updat
     await this.postsRepository.updatePost(command.postId, PostMapper.fromInputBlogPostDtoToUpdateDto(command.inputPost, command.blogId, blog.name));
   }
 }
+
+
+//////////////////////////////////////////////////////////////
+export class GetAllPostsByArrayOfBlogIdCommand {
+  constructor(public blogsId: string[]) {
+  }
+}
+
+@CommandHandler(GetAllPostsByArrayOfBlogIdCommand)
+export class GetAllPostsByArrayOfBlogIdUseCase implements ICommandHandler<GetAllPostsByArrayOfBlogIdCommand> {
+  constructor(
+    protected postsRepository: PostsRepository) {
+  }
+
+  async execute(command: GetAllPostsByArrayOfBlogIdCommand): Promise<Post[]> {
+    return await this.postsRepository.getAllPostsByArrayOfBlogsId(command.blogsId);
+  }
+}

@@ -7,7 +7,7 @@ import { CommentsRepository } from "./comments.repository";
 import { CommentLikesRepository } from "./commentLikes.repository";
 import {
   ClearAllCommentsUseCase, CreateCommentByPostIDUseCase,
-  DeleteCommentUseCase, GetAllCommentsByPostIDUseCase,
+  DeleteCommentUseCase, GetAllCommentsByArrayOfPostIDUseCase, GetAllCommentsByPostIDUseCase,
   GetCommentUseCase,
   UpdateCommentLikeUseCase,
   UpdateCommentUseCase
@@ -23,7 +23,8 @@ const useCases = [
   UpdateCommentLikeUseCase,
   GetCommentUseCase,
   CreateCommentByPostIDUseCase,
-  GetAllCommentsByPostIDUseCase
+  GetAllCommentsByPostIDUseCase,
+  GetAllCommentsByArrayOfPostIDUseCase
 ];
 
 @Module({

@@ -4,7 +4,7 @@ import { PostsController } from "./posts.controller";
 import {
   ClearAllPostsUseCase, CreatePostByBlogIdUseCase,
   CreatePostUseCase, DeletePostByBlogIdAndPostIdUseCase,
-  DeletePostUseCase, GetAllPostsByBlogIdUseCase,
+  DeletePostUseCase, GetAllPostsByArrayOfBlogIdUseCase, GetAllPostsByBlogIdUseCase,
   GetAllPostsUseCase,
   GetOnePostUseCase, GetOnePostWithLikesUseCase, PostsUpdateLikeByIDUseCase, UpdatePostByBlogIdAndPostIdUseCase,
   UpdatePostUseCase
@@ -31,7 +31,8 @@ const useCases = [
   CreatePostByBlogIdUseCase,
   PostsUpdateLikeByIDUseCase,
   DeletePostByBlogIdAndPostIdUseCase,
-  UpdatePostByBlogIdAndPostIdUseCase
+  UpdatePostByBlogIdAndPostIdUseCase,
+  GetAllPostsByArrayOfBlogIdUseCase
 ];
 
 @Module({

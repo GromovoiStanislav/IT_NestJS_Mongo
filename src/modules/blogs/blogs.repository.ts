@@ -139,5 +139,8 @@ export class BlogsRepository {
     return this.blogBannedUsersModel.findOne({ blogId, userId  });
   }
 
+  async getAllBlogsByOwnerId(ownerId: string): Promise<Blog[]> {
+    return this.blogBannedUsersModel.findOne({ "blogOwnerInfo.userId": ownerId });
+  }
 
 }

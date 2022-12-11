@@ -13,6 +13,8 @@ import { BanBlogInfo } from "./dto/blog-banInfo.dto";
 import dateAt from "../../utils/DateGenerator";
 import { InputBanBlogUserDto } from "../users/dto/input-blog-ban-user.dto";
 import { CreateBlogBanUserDto } from "./dto/create-blog-ban-user.dto";
+import { GetAllPostsByArrayOfBlogIdCommand } from "../posts/posts.service";
+import { GetAllCommentsByArrayOfPostIDCommand, GetAllCommentsByPostIDCommand } from "../comments/comments.service";
 
 
 //////////////////////////////////////////////////////////////
@@ -154,15 +156,13 @@ export class GetAllBlogsUseCase implements ICommandHandler<GetAllBlogsCommand> {
   }
 
   async execute(command: GetAllBlogsCommand): Promise<PaginatorDto<ViewBlogDto[]>> {
-    let includBanned = false;
-    //let withBlogOwner = false;
+    let includeBanned = false;
 
     if (command.sa) {
-      includBanned = true;
-      //withBlogOwner = true;
+      includeBanned = true;
     }
 
-    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams, includBanned);
+    const result = await this.blogsRepository.getAllBlogs(command.searchName, command.paginationParams, includeBanned);
     return BlogMapper.fromModelsToPaginator(result, command.sa);
   }
 }
@@ -279,8 +279,8 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
     const { blogId, banReason, isBanned } = command.inputBanBlogUserDto;
     if (isBanned) {
 
-      const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId))
-      if(!user){
+      const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
+      if (!user) {
         throw new NotFoundException("user not found");
       }
 
@@ -289,7 +289,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         throw new NotFoundException("blog not found");
       }
 
-      if(blog.blogOwnerInfo.userId !== command.ownerId){
+      if (blog.blogOwnerInfo.userId !== command.ownerId) {
         throw new ForbiddenException();
       }
 
@@ -310,7 +310,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
 
 ////////////////////////////////////////////////////
 export class ReturnAllBannedUsersForBlogCommand {
-  constructor(public ownerId: string, public blogId: string, public searchLogin: string, public paginationParams: PaginationParams ) {
+  constructor(public ownerId: string, public blogId: string, public searchLogin: string, public paginationParams: PaginationParams) {
   }
 }
 
@@ -324,7 +324,7 @@ export class ReturnAllBannedUsersForBlogUseCase implements ICommandHandler<Retur
     if (!blog) {
       throw new NotFoundException("blog not found");
     }
-    if(blog.blogOwnerInfo.userId !== command.ownerId){
+    if (blog.blogOwnerInfo.userId !== command.ownerId) {
       throw new ForbiddenException();
     }
 
@@ -344,8 +344,34 @@ export class IsUserBannedForBlogUseCase implements ICommandHandler<IsUserBannedF
   constructor(private blogsRepository: BlogsRepository) {
   }
 
-  async execute(command: IsUserBannedForBlogCommand):Promise<boolean> {
+  async execute(command: IsUserBannedForBlogCommand): Promise<boolean> {
     return !!(await this.blogsRepository.findBannedUserForBlog(command.blogId, command.userId));
 
+  }
+}
+
+//////////////////////////////////////////////////////////////
+export class GetAllCommentsForMyBlogsCommand {
+  constructor(public ownerId: string, public paginationParams: PaginationParams) {
+  }
+}
+
+@CommandHandler(GetAllCommentsForMyBlogsCommand)
+export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCommentsForMyBlogsCommand> {
+  constructor(private commandBus: CommandBus,
+              private blogsRepository: BlogsRepository) {
+  }
+
+  async execute(command: GetAllCommentsForMyBlogsCommand) {
+
+    const blogsId = (await this.blogsRepository.getAllBlogsByOwnerId(command.ownerId)).map(blog => blog.id);
+    const allPosts = await this.commandBus.execute(new GetAllPostsByArrayOfBlogIdCommand(blogsId))
+    const postsId = allPosts.map(post=>post.id)
+    const allComments = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId))
+
+
+
+
+    //return BlogMapper.fromModelsToPaginator(result, command.sa);
   }
 }

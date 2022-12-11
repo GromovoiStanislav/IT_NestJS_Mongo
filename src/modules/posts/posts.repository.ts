@@ -65,4 +65,9 @@ export class PostsRepository {
   }
 
 
+  async getAllPostsByArrayOfBlogsId(blogsId: string[]): Promise<Post[]> {
+    return this.postModel.find({ blogId: { $in: blogsId } });
+  }
+
+
 }
