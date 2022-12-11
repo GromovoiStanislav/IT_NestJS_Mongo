@@ -369,9 +369,7 @@ export class GetAllCommentsForMyBlogsUseCase implements ICommandHandler<GetAllCo
     const postsId = allPosts.map(post=>post.id)
     const allComments = await this.commandBus.execute(new GetAllCommentsByArrayOfPostIDCommand(command.paginationParams, postsId, command.ownerId))
 
+    return allComments
 
-
-
-    //return BlogMapper.fromModelsToPaginator(result, command.sa);
   }
 }
